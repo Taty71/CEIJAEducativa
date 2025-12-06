@@ -1,0 +1,799 @@
+/* Espaciado vertical entre botones principales en RegistroEstd */
+.button-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  align-items: stretch;
+}
+/* Header de botones con más separación solo para RegistroEstd y ListaEstudiantes */
+.modal-header-buttons--wide {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 48px;
+  margin-bottom: 1.5rem;
+  position: relative;
+  max-width: 920px;
+  margin-left: auto;
+  margin-right: auto;
+}
+/* Modales de consulta, modificar y eliminar por DNI: ancho mayor para que los botones queden dentro */
+.busqueda-dni-container,
+.modal-modificar-container,
+.consulta-opciones {
+  max-width: 780px;
+  min-width: 340px;
+  width: 100%;
+  margin: 0 auto;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  padding: 2.2rem 2rem 2rem 2rem;
+  position: relative;
+}
+
+/* Header de los modales de registro, CRUD, etc. */
+
+.modal-header-buttons {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  margin-bottom: 1.5rem;
+  position: relative;
+  z-index: 10;
+  padding-left: 18px;
+  padding-right: 18px;
+  box-sizing: border-box;
+}
+
+.modal-header-buttons > *:first-child {
+  margin-right: auto;
+}
+.modal-header-buttons > *:last-child {
+  margin-left: auto;
+}
+
+/* Botones de cerrar y volver con margen y tamaño elegante */
+.cerrar-button,
+.volver-button {
+  margin: 0 4px;
+  min-width: 38px;
+  min-height: 38px;
+  border-radius: 50%;
+  font-size: 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(44, 64, 120, 0.08);
+  transition: background 0.2s, box-shadow 0.2s;
+}
+.cerrar-button:hover,
+.volver-button:hover {
+  background: #f0f4fa;
+  box-shadow: 0 4px 16px rgba(44, 64, 120, 0.13);
+}
+
+/* Botones de header más cerca de los bordes solo para RegistroEstd */
+.formulario-inscripcion-adm .modal-header-buttons {
+  justify-content: space-between;
+  max-width: 100%;
+  margin-left: 0;
+  margin-right: 0;
+  padding: 0 -10px 0 25px;
+}
+
+.modal-title-registro {
+  flex: 1 1 auto;
+  text-align: center;
+  margin: 0;
+  font-weight: bold;
+  color: #2d4177;
+  font-size: 1.5rem;
+  font-family: "Roboto Slab", serif;
+}
+
+/* Nuevo contenedor para header de registro más organizado */
+.registro-header-container {
+  margin-bottom: 1.2rem;
+  padding: 0;
+}
+
+.registro-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 100%;
+  margin: 0;
+  position: relative;
+  min-height: 45px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  padding: 0; /* Sin padding */
+}
+
+/* Forzar posicionamiento de botones en extremos - MÁS ESPECÍFICO */
+.registro-header-container .registro-header-row .registro-nav-left,
+.registro-header-container .registro-header-row .registro-nav-right {
+  flex: 0 0 auto !important;
+  width: auto !important;
+  height: 40px !important; /* Altura fija para ambos botones */
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  position: absolute !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  z-index: 100 !important;
+}
+
+.registro-header-container .registro-header-row .registro-nav-left {
+  left: 5px !important; /* Pegado al borde izquierdo */
+}
+
+.registro-header-container .registro-header-row .registro-nav-right {
+  right: 5px !important; /* Pegado al borde derecho */
+}
+
+.registro-header-container .registro-header-row .modal-title-registro {
+  flex: 1 1 auto !important;
+  text-align: center !important;
+  margin: 0 70px !important; /* Más margen lateral para dejar espacio a los botones */
+  font-size: 1.3rem !important;
+  color: #2d4177 !important;
+  font-weight: 600 !important;
+  position: relative !important;
+  z-index: 1 !important;
+}
+
+/* Responsive para móviles */
+@media (max-width: 768px) {
+  .registro-header-row .modal-title-registro {
+    font-size: 1.2rem;
+    margin: 0 0.2rem; /* Margen aún más pequeño en móvil */
+  }
+
+  .registro-nav-left {
+    left: 5px; /* Más cerca del borde en móvil */
+  }
+
+  .registro-nav-right {
+    right: 5px; /* Más cerca del borde en móvil */
+  }
+}
+
+/* Responsive para móviles - Continuación */
+@media (max-width: 768px) {
+  .container-preinscripcion {
+    padding: 10px;
+    margin: 10px auto;
+    max-height: calc(100vh - 80px);
+  }
+
+  .contenido-principal {
+    padding: 5px;
+  }
+
+  .form-content {
+    height: auto;
+    max-height: calc(100vh - 200px);
+  }
+}
+
+/* Header del formulario */
+.form-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 25px;
+  padding-bottom: 15px;
+  border-bottom: 2px solid #2d4177;
+}
+
+.form-title {
+  color: #2d4177;
+  font-size: 1.6rem;
+  margin: 0;
+  font-weight: 600;
+  text-align: center;
+  font-family: "Roboto Slab", serif;
+}
+
+/* Contenedor de botones del header del modal: alineados horizontalmente, sin posición absoluta */
+.modal-header-buttons {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  margin-bottom: 1.5rem;
+  position: relative;
+  z-index: 10;
+}
+
+/* Selector de modalidad */
+.selector-modalidad-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  margin: 20px auto;
+  max-width: 600px;
+  background: linear-gradient(135deg, #f8fafc 0%, #e3f2fd 100%);
+  border-radius: 15px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e1e8ed;
+}
+
+.selector-modalidad-container h2 {
+  color: #2d4177;
+  margin-bottom: 30px;
+  font-size: 1.8em;
+  font-weight: 600;
+  text-align: center;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.modalidad-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin-bottom: 30px;
+  width: 100%;
+}
+
+.button-volver {
+  padding: 10px 25px;
+  font-size: 0.95em;
+  color: #666;
+  background: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.button-volver:hover {
+  background: #e9ecef;
+  border-color: #adb5bd;
+  color: #495057;
+}
+
+/* Modalidad elegida */
+.modalidad-elegida {
+  color: #4a90e2;
+  font-weight: 600;
+  background: linear-gradient(135deg, #e3f2fd 0%, #f0f8ff 100%);
+  padding: 4px 12px;
+  border-radius: 6px;
+  border: 1px solid #4a90e2;
+  display: inline-block;
+  margin-left: 8px;
+}
+
+/* Estilo del contenedor del formulario */
+.inscripcion-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  min-height: 100vh;
+  margin-top: 5px;
+  padding: 20px;
+  background-color: #e6f7ff; /* Fondo celeste claro */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); /* Sombra elegante */
+  border-radius: 10px;
+}
+
+/* Estilo para el título */
+.inscripcion-container h2 {
+  color: #2d4177; /* Azul oscuro */
+  margin-bottom: 20px;
+  font-size: 1.5em;
+  font-weight: bold;
+  text-align: center;
+}
+
+/* Estilo para el span de modalidad */
+.modalidad-span {
+  font-size: 0.9rem; /* Tamaño más pequeño */
+  font-style: italic; /* Texto en cursiva */
+  color: #2d4177; /* Color gris oscuro */
+}
+
+/* Estilo para el contenedor de acciones */
+.accionesContainer {
+  margin-top: 10px; /* Separación entre el título y las acciones */
+  width: 100%; /* Ocupa todo el ancho disponible */
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 5px;
+  border-radius: 8px;
+  box-shadow: 1px 1px 5px 1px #313030;
+  background-color: #f5f5f5; /* Fondo claro */
+}
+
+/* Estilo para el formulario */
+.formulario-inscripcion-adm {
+  display: flex;
+  flex-direction: column;
+  margin: 20px;
+  padding: 20px;
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  color: #333;
+  font-family: "Roboto Slab", serif;
+  position: relative;
+  max-height: 95vh;
+  overflow-y: auto;
+}
+
+/* Estilo específico para el botón de cerrar */
+.button-close {
+  background-color: #6c757d !important;
+  border-color: #6c757d !important;
+}
+
+.button-close:hover {
+  background-color: #5a6268 !important;
+  border-color: #545b62 !important;
+}
+
+/* Responsive para formularios */
+@media (max-width: 768px) {
+  .formulario-inscripcion-adm {
+    margin: 10px;
+    padding: 20px;
+    max-width: 95%;
+  }
+
+  .form-content {
+    padding: 15px 10px;
+  }
+
+  .formd {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .form-datos,
+  .form-domicilio {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .form-eleccion {
+    width: 100%;
+    margin: 0;
+  }
+
+  .left-container {
+    align-items: stretch;
+    gap: 10px;
+    padding-top: 10px;
+  }
+} /* Contenedor de las columnas - Layout optimizado para menos scroll */
+.formd {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto auto auto;
+  gap: 15px;
+  align-items: start;
+}
+
+/* Datos personales ocupan las dos columnas superiores */
+.form-datos {
+  grid-column: 1 / -1; /* Ocupa todo el ancho */
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin: 0;
+  padding: 12px;
+  background: linear-gradient(135deg, #f8fafc 0%, #e8f4fd 100%);
+  border-radius: 8px;
+  border: 1px solid #e1e8ed;
+}
+
+.form-datos h3 {
+  grid-column: 1 / -1;
+  margin: 0 0 10px 0;
+  color: #2d4177;
+  font-size: 1.1rem;
+  font-weight: 600;
+  text-align: center;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #2d4177;
+}
+
+/* Domicilio ocupa las dos columnas en la segunda fila */
+.form-domicilio {
+  grid-column: 1 / -1; /* Ocupa todo el ancho */
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin: 0;
+  padding: 12px;
+  background: linear-gradient(135deg, #f0f8f0 0%, #e8f5e8 100%);
+  border-radius: 8px;
+  border: 1px solid #d1e7dd;
+}
+
+.form-domicilio h3 {
+  grid-column: 1 / -1;
+  margin: 0 0 10px 0;
+  color: #2d4177;
+  font-size: 1.1rem;
+  font-weight: 600;
+  text-align: center;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #2d4177;
+}
+
+/* Sección de elección y botones en la tercera fila */
+.form-eleccion {
+  grid-column: 1;
+  margin: 0;
+  padding: 15px;
+  background: linear-gradient(135deg, #fff8e1 0%, #f3e5ab 100%);
+  border-radius: 8px;
+  border: 1px solid #fbc02d;
+  min-height: 300px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.form-eleccion h3 {
+  margin: 0 0 15px 0;
+  color: #2d4177;
+  font-size: 1.1rem;
+  font-weight: 600;
+  text-align: center;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #2d4177;
+}
+
+/* Organización vertical de elementos académicos */
+.form-eleccion .form-group {
+  margin-bottom: 15px;
+}
+
+.form-eleccion .form-group:last-child {
+  margin-bottom: 0;
+}
+
+/* Estilos específicos para los selectores académicos */
+.form-eleccion select {
+  width: 100%;
+  padding: 8px;
+  font-size: 0.95rem;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  background-color: #fff;
+  box-sizing: border-box;
+}
+
+.form-eleccion label {
+  font-weight: 600;
+  color: #2d4177;
+  margin-bottom: 5px;
+  display: block;
+  font-size: 0.9rem;
+}
+
+/* Información de modalidad */
+.form-eleccion .modalidad-info {
+  background: rgba(255, 255, 255, 0.7);
+  padding: 8px 12px;
+  border-radius: 6px;
+  margin-bottom: 15px;
+  text-align: center;
+  border: 1px solid #f0c674;
+}
+
+.form-eleccion .modalidad-info strong {
+  color: #2d4177;
+  font-weight: 600;
+}
+
+/* Estilos para las listas de materias */
+.materias-container {
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 6px;
+  padding: 10px;
+  margin-top: 8px;
+}
+
+.materias-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  max-height: 120px;
+  overflow-y: auto;
+}
+
+.materia-item {
+  background: rgba(255, 255, 255, 0.8);
+  margin: 4px 0;
+  padding: 6px 10px;
+  border-radius: 4px;
+  border-left: 3px solid #2d4177;
+  font-size: 0.85rem;
+  color: #333;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+/* Scrollbar personalizado para la lista de materias */
+.materias-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.materias-list::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+.materias-list::-webkit-scrollbar-thumb {
+  background: #2d4177;
+  border-radius: 3px;
+}
+
+.materias-list::-webkit-scrollbar-thumb:hover {
+  background: #1a2654;
+}
+
+.form-eleccion {
+  display: flex; /* Alinea los elementos en una fila */
+  flex-direction: column;
+  align-items: flex-start; /* Alinea Modalidad y Plan arriba */
+  justify-content: flex-start;
+  margin-top: 0;
+  flex-wrap: wrap; /* Permite que los elementos se ajusten si no hay suficiente espacio */
+  gap: 12px; /* Espaciado entre los elementos */
+  min-width: 220px;
+}
+
+/* Contenedor izquierdo: Adjuntar Documentación y Estado de Inscripción alineados verticalmente */
+.left-container {
+  grid-column: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 15px;
+  margin: 0;
+  padding: 15px;
+  background: linear-gradient(135deg, #f0f4f8 0%, #d6eaf8 100%);
+  border-radius: 8px;
+  border: 1px solid #aed6f1;
+  min-height: 300px;
+}
+
+.left-container h4 {
+  margin: 0 0 15px 0;
+  color: #2d4177;
+  font-size: 1.1rem;
+  font-weight: 600;
+  text-align: center;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #2d4177;
+  width: 100%;
+}
+
+/* Estado de Inscripción arriba, botón abajo */
+.left-container .estado-inscripcion-container {
+  order: 1;
+  margin: 0;
+  width: 100%;
+}
+
+.left-container .boton-principal {
+  order: 2;
+  margin: 10px 0;
+  width: 100%;
+  max-width: 250px;
+}
+
+/* Estilo para el contenedor de acciones */
+.accionesContainer {
+  margin-top: 10px; /* Separación entre el título y las acciones */
+  width: 100%; /* Ocupa todo el ancho disponible */
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 5px;
+  border-radius: 8px;
+  box-shadow: 1px 1px 5px 1px #313030;
+  background-color: #f5f5f5; /* Fondo claro */
+}
+
+/* Asegurar que ambos botones tengan el mismo ancho */
+.form-eleccion input .selectModalidad,
+.form-eleccion select .selectPlanAnio {
+  width: 100%;
+}
+.form-eleccion .buttonD {
+  flex: 1; /* Permite que el botón ocupe el mismo espacio que el select */
+  max-width: 200px; /* Limita el ancho máximo del botón */
+  margin: 25% 25% 0 25%; /* Centra el botón horizontalmente */
+}
+/* Asegurar que ambos placeholders tengan el mismo tamaño de letra */
+.form-eleccion input::placeholder,
+.form-eleccion select::placeholder {
+  font-size: 1rem;
+  color: #313030;
+  font-style: oblique;
+}
+.form-eleccion .estado-inscripcion-container {
+  flex: 1; /* Permite que el componente EstadoInscripcion ocupe el mismo espacio que el botón */
+  max-width: 300px; /* Limita el ancho máximo del select */
+}
+.button-container-right {
+  position: absolute;
+  top: 25px; /* Ajusta la posición desde la parte superior */
+  right: 25px; /* Ajusta la posición desde la parte derecha */
+  display: flex;
+  flex-direction: column !important; /*  <‑‑  ya no reverse  */
+  gap: 0.75rem; /*  separación vertical */
+  z-index: 10;
+}
+
+/* Contenedor para centrar los botones */
+.button-container {
+  display: flex;
+  flex-direction: column; /* Cambia a diseño vertical */
+  align-items: center; /* Alinea los botones a la izquierda */
+  gap: 10px; /* Espaciado entre botones */
+  position: relative; /* Asegura que el botón "Cerrar" esté en la parte superior */
+}
+
+/* Estilos para los botones */
+
+/* Botón deshabilitado */
+.buttonF.disabled {
+  background-color: #ccc; /* Color para el estado deshabilitado */
+  cursor: not-allowed;
+}
+
+/* Select "Estado de Inscripción" */
+.estado-inscripcion-container {
+  flex: 1;
+  max-width: 300px; /* Limita el ancho máximo del select */
+}
+
+/* Estilo para las etiquetas y entradas */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 12px;
+}
+
+.form-group label {
+  font-weight: bold;
+  color: #2d4177; /* Azul oscuro */
+  margin-bottom: 5px;
+  font-size: 0.9rem;
+}
+
+.form-group input,
+.form-group select {
+  padding: 8px;
+  font-size: 0.95rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  width: 100%;
+  max-width: 100%;
+  background-color: #f9f9f9; /* Fondo claro */
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1); /* Sombra interna */
+  box-sizing: border-box;
+  min-width: 0; /* Permite que se contraiga en contenedores flex/grid */
+}
+
+/* Específico para inputs de Formik */
+.form-control {
+  padding: 8px !important;
+  font-size: 0.95rem !important;
+  border: 1px solid #ccc !important;
+  border-radius: 6px !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  background-color: #f9f9f9 !important;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+  box-sizing: border-box !important;
+  min-width: 0 !important;
+}
+
+.form-group input::placeholder,
+.form-group select::placeholder {
+  color: #999;
+  font-style: italic;
+}
+
+/* Optimización del texto de ayuda para el nuevo layout */
+.form-group .form-text {
+  font-size: 0.75rem;
+  color: #666;
+  margin-top: 2px;
+  line-height: 1.2;
+}
+
+.form-group small {
+  font-size: 0.75rem;
+  color: #666;
+  margin-top: 2px;
+  line-height: 1.2;
+}
+
+/* Ajustes responsivos */
+@media (max-width: 768px) {
+  .inscripcion-container {
+    padding: 10px;
+  }
+
+  .accionesContainer {
+    flex-direction: column;
+    gap: 10px;
+    margin: 15px 0;
+  }
+
+  .formd {
+    flex-direction: column;
+  }
+
+  .form-datos,
+  .form-domicilio,
+  .form-eleccion {
+    max-width: 100%;
+  }
+
+  .form-group input,
+  .form-group select {
+    font-size: 16px; /* Evita zoom en iOS */
+  }
+
+  .button-container {
+    flex-direction: column; /* Cambia a diseño vertical en pantallas pequeñas */
+    gap: 10px;
+  }
+
+  .buttonD,
+  .buttonF {
+    width: 100%; /* Ocupa todo el ancho disponible */
+  }
+}
+
+@media (max-width: 600px) {
+  .inscripcion-container form {
+    padding: 15px;
+  }
+
+  .form-columns {
+    flex-direction: column;
+  }
+
+  .form-group input,
+  .form-group select,
+  .form-group button {
+    padding: 10px;
+    font-size: 0.9rem;
+  }
+
+  button[type="submit"] {
+    font-size: 0.9rem;
+    padding: 10px;
+  }
+  .busqueda-dni-container,
+  .modal-modificar-container,
+  .consulta-opciones {
+    max-width: 98vw;
+    min-width: 0;
+    padding: 1.2rem 0.5rem 1.5rem 0.5rem;
+  }
+}

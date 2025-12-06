@@ -1,0 +1,396 @@
+/* Padding especial para el botón de cerrar solo en el modal de documentación */
+/* El botón de cerrar debe estar contenido dentro del modal-container */
+.modal-container .form-documentacion-close {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  z-index: 200;
+  padding: 6px;
+}
+
+.form-documentacion {
+  width: 90%; /* Ajusta el ancho del modal */
+  max-width: 800px; /* Limita el ancho máximo */
+  margin: 20px auto; /* Centra el modal */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #f4f4f4; /* Fondo claro */
+  border-radius: 12px; /* Bordes redondeados */
+  padding: 20px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Sombra suave */
+  position: relative;
+}
+
+.form-h3 span {
+  display: block; /* Asegura que el span ocupe una nueva línea */
+  font-size: 0.85em;
+  font-style: italic;
+  color: #555;
+  margin-top: 5px;
+  text-align: center; /* Centra el texto */
+}
+.form-doc-table {
+  width: 100%;
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Ajusta el grid para mejor proporción y separación */
+.doc-table-header,
+.doc-table-row {
+  display: grid;
+  grid-template-columns: 70px 1.2fr 1.5fr 1.5fr; /* Ajusta las proporciones de las columnas */
+  align-items: center;
+  gap: 20px; /* Espaciado entre las columnas */
+  padding: 10px;
+}
+
+.doc-table-row {
+  transition: background-color 0.5s, box-shadow 0.5s;
+}
+.doc-table-row:hover {
+  background-color: #71728b;
+  box-shadow: inset 0 0 8px #bfc4f7, 0 0 0 transparent;
+}
+* Columna Documento separada visualmente */ .doc-table-header > :nth-child(2),
+.doc-table-row > span:nth-child(2) {
+  border-right: 2px solid #d1d5e9;
+  padding-right: 18px;
+  margin-right: 8px;
+  font-weight: 500;
+  background: #f6f8ff;
+}
+.doc-table-row > span:nth-child(2) {
+  font-weight: bold;
+  font-size: 1rem;
+  text-align: center;
+  padding: 8px 0;
+}
+/* Columna Vista Previa separada visualmente */
+.doc-table-header > :nth-child(4),
+.doc-table-row > .preview-container {
+  border-left: 2px solid #d1d5e9;
+  padding-left: 12px;
+  margin-left: 10px;
+}
+.doc-table-header > span {
+  font-weight: 600;
+  color: #555;
+  font-size: 1.1rem;
+  text-align: center;
+  padding: 8px 0;
+}
+
+/* Input de archivo estilizado y tamaño óptimo */
+.input-container-doc {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 350px;
+  padding-right: 10px;
+  align-items: flex-start;
+  margin-bottom: 20px; /* Espaciado entre el input y la vista previa */
+}
+
+input[type="file"].small-select {
+  border: 1px solid #ccc; /* Borde gris claro */
+  border-radius: 6px; /* Bordes redondeados */
+  background-color: #f9f9f9; /* Fondo claro */
+  color: #333; /* Texto oscuro */
+  font-size: 0.9rem; /* Tamaño del texto */
+  padding: 8px 10px; /* Espaciado interno */
+  width: 100%; /* Ancho completo */
+  max-width: 300px; /* Limita el ancho máximo */
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1); /* Sombra interna */
+  margin-bottom: 10px; /* Espaciado inferior */
+  transition: border 0.3s, background-color 0.3s;
+}
+
+input[type="file"].small-select:hover {
+  border-color: #4e53e6; /* Azul oscuro */
+  background-color: #f0f4ff; /* Fondo más claro */
+}
+
+input[type="file"].small-select:disabled {
+  background-color: #e0e7ff;
+  border-color: #999;
+  color: #777;
+  cursor: not-allowed;
+}
+
+input[type="file"].small-select::-webkit-file-upload-button {
+  background: #bfc4e6;
+  color: #f6f8ff;
+  border: none;
+  border-radius: 4px;
+  padding: 6px 12px;
+  font-size: 0.95rem;
+  cursor: pointer;
+  margin-right: 8px;
+  transition: background 0.3s;
+}
+input[type="file"].small-select:hover::-webkit-file-upload-button {
+  background: #4e53e6;
+  color: #fff;
+}
+input[type="file"].small-select::file-selector-button {
+  background: #bfc4e6;
+  color: #777;
+  border: none;
+  border-radius: 4px;
+  padding: 6px 12px;
+  font-size: 0.95rem;
+  cursor: pointer;
+  margin-right: 8px;
+  transition: background 0.3s;
+}
+
+input[type="file"].small-select {
+  border: 1px solid #ccc; /* Borde gris claro */
+  border-radius: 6px; /* Bordes redondeados */
+  background-color: #f9f9f9; /* Fondo claro */
+  color: #333; /* Texto oscuro */
+  font-size: 0.9rem; /* Tamaño del texto */
+  padding: 8px 10px; /* Espaciado interno */
+  width: 100%; /* Ancho completo */
+  max-width: 300px; /* Limita el ancho máximo */
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1); /* Sombra interna */
+  margin-bottom: 10px; /* Espaciado inferior */
+  transition: border 0.3s, background-color 0.3s;
+}
+
+input[type="file"].small-select:hover {
+  border-color: #4e53e6; /* Azul oscuro */
+  background-color: #f0f4ff; /* Fondo más claro */
+}
+
+input[type="file"].small-select:disabled {
+  background-color: #e0e7ff;
+  border-color: #999;
+  color: #777;
+  cursor: not-allowed;
+}
+
+input[type="file"].small-select::-webkit-file-upload-button {
+  background: #bfc4e6;
+  color: #f6f8ff;
+  border: none;
+  border-radius: 4px;
+  padding: 6px 12px;
+  font-size: 0.95rem;
+  cursor: pointer;
+  margin-right: 8px;
+  transition: background 0.3s;
+}
+input[type="file"].small-select:hover::-webkit-file-upload-button {
+  background: #4e53e6;
+  color: #fff;
+}
+input[type="file"].small-select::file-selector-button {
+  background: #bfc4e6;
+  color: #777;
+  border: none;
+  border-radius: 4px;
+  padding: 6px 12px;
+  font-size: 0.95rem;
+  cursor: pointer;
+  margin-right: 8px;
+  transition: background 0.3s;
+}
+
+/* Vista previa delicada y alineada */
+.preview-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 12px;
+  background-color: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  min-height: 120px;
+  width: 100%;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+
+.image-preview {
+  max-width: 80px;
+  max-height: 80px;
+  width: auto;
+  height: auto;
+  border-radius: 6px;
+  border: 2px solid #e9ecef;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  object-fit: cover;
+}
+
+.pdf-preview {
+  width: 80px;
+  height: 80px;
+  border: 2px solid #dc3545;
+  border-radius: 6px;
+  background-color: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.archivo-desconocido {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 80px;
+  height: 80px;
+  background-color: #6c757d;
+  color: white;
+  border-radius: 6px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  gap: 4px;
+}
+
+.archivo-desconocido div {
+  font-size: 1.5rem;
+}
+
+.pdf-preview-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 80px;
+  height: 80px;
+  background-color: #dc3545;
+  color: white;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  gap: 4px;
+}
+
+.pdf-icon {
+  font-size: 2rem;
+}
+
+.pdf-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+}
+
+.btn-descargar {
+  display: inline-block;
+  margin-top: 0;
+  margin-left: 8px;
+  font-size: 0.9rem; /* Tamaño del texto */
+  background: #4e53e6; /* Azul oscuro */
+  color: #fff; /* Texto blanco */
+  padding: 6px 12px; /* Espaciado interno */
+  border-radius: 4px; /* Bordes redondeados */
+  text-decoration: none;
+  transition: background-color 0.3s, transform 0.2s;
+  align-self: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Sombra suave */
+}
+
+.btn-descargar:hover {
+  background: #3b42c4; /* Azul más oscuro */
+  transform: scale(1.05); /* Efecto de zoom */
+}
+
+.sin-archivo {
+  font-size: 0.9rem;
+  color: #6c757d;
+  font-style: italic;
+  text-align: center;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 80px;
+  background-color: #f8f9fa;
+  border: 2px dashed #dee2e6;
+  border-radius: 6px;
+}
+
+/* Estilos para el estado del archivo */
+.archivo-status {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 8px;
+  width: 100%;
+}
+
+.archivo-subido {
+  background: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  white-space: nowrap;
+}
+
+/* Estilos específicos para archivos existentes */
+.archivo-existente {
+  background: #fff3cd !important;
+  color: #856404 !important;
+  border: 1px solid #ffeaa7 !important;
+}
+
+/* Estilos específicos para archivos nuevos */
+.archivo-nuevo {
+  background: #d1ecf1 !important;
+  color: #0c5460 !important;
+  border: 1px solid #b8daff !important;
+}
+
+.btn-ver {
+  background: #007bff;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  text-decoration: none;
+  font-size: 0.75rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  white-space: nowrap;
+}
+
+.btn-ver:hover {
+  background: #0056b3;
+  transform: translateY(-1px);
+  text-decoration: none;
+  color: white;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+/* Responsive para pantallas pequeñas */
+@media (max-width: 900px) {
+  .doc-table-header span {
+    display: none; /* Oculta los títulos de la tabla */
+  }
+  .modal-container .form-documentacion-close {
+    right: 8px;
+    top: 8px;
+  }
+}
+
+/* Responsive para pantallas muy pequeñas */
+@media (max-width: 768px) {
+  .doc-table-header span {
+    display: none; /* Oculta los títulos de la tabla */
+  }
+}

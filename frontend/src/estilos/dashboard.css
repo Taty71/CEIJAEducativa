@@ -1,0 +1,531 @@
+/* Variables de color para uniformidad */
+:root {
+  --color-bg-main: #fff;
+  --color-btn-main: #2d4177;
+  --color-btn-shadow: #3a3a5a;
+  --color-btn-hover: #696969;
+  --color-title: #2d4177;
+}
+
+/* Estilos generales para el contenedor del dashboard */
+.dashboard-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 30px;
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+  min-height: 60vh;
+  max-width: 85vw;
+  border-radius: 20px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1), 0 10px 20px rgba(0, 0, 0, 0.05),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  margin: 3% auto;
+  position: relative;
+  overflow: hidden;
+  animation: fadeInUp 0.6s ease-out;
+}
+
+/* Animación de entrada */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Efecto de fondo animado sutil */
+.dashboard-container::before {
+  content: "";
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(
+      circle at 20% 20%,
+      rgba(45, 65, 119, 0.05) 0%,
+      transparent 50%
+    ),
+    radial-gradient(
+      circle at 80% 80%,
+      rgba(135, 206, 235, 0.05) 0%,
+      transparent 50%
+    );
+  animation: float 20s ease-in-out infinite;
+  z-index: -1;
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  33% {
+    transform: translate(10px, -10px) rotate(1deg);
+  }
+  66% {
+    transform: translate(-5px, 5px) rotate(-0.5deg);
+  }
+}
+
+/* Encabezado del dashboard */
+.dashboard-header {
+  text-align: center;
+  margin-bottom: 40px;
+  max-width: 100%;
+  position: relative;
+}
+
+.dashboard-header h1 {
+  color: var(--color-title);
+  font-size: 2.2rem;
+  margin-bottom: 15px;
+  font-weight: 700;
+  text-shadow: 0 2px 4px rgba(45, 65, 119, 0.1);
+  background: linear-gradient(135deg, #2d4177 0%, #4a6bb8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: fadeInDown 0.8s ease-out 0.2s both;
+}
+
+.dashboard-header p {
+  color: #6c757d;
+  font-size: 1.3rem;
+  font-weight: 500;
+  padding: 8px 20px;
+  background: rgba(45, 65, 119, 0.1);
+  border-radius: 25px;
+  display: inline-block;
+  animation: fadeInDown 0.8s ease-out 0.4s both;
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Contenedor de botones - Grid de 3 columnas */
+.dashboard-buttons {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 25px;
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* Animaciones escalonadas para los botones */
+.dashboard-buttons button:nth-child(1) {
+  animation: slideInButton 0.6s ease-out 0.1s both;
+}
+.dashboard-buttons button:nth-child(2) {
+  animation: slideInButton 0.6s ease-out 0.2s both;
+}
+.dashboard-buttons button:nth-child(3) {
+  animation: slideInButton 0.6s ease-out 0.3s both;
+}
+.dashboard-buttons button:nth-child(4) {
+  animation: slideInButton 0.6s ease-out 0.4s both;
+}
+.dashboard-buttons button:nth-child(5) {
+  animation: slideInButton 0.6s ease-out 0.5s both;
+}
+.dashboard-buttons button:nth-child(6) {
+  animation: slideInButton 0.6s ease-out 0.6s both;
+}
+.dashboard-buttons button:nth-child(7) {
+  animation: slideInButton 0.6s ease-out 0.7s both;
+}
+.dashboard-buttons button:nth-child(8) {
+  animation: slideInButton 0.6s ease-out 0.8s both;
+}
+.dashboard-buttons button:nth-child(9) {
+  animation: slideInButton 0.6s ease-out 0.9s both;
+}
+.dashboard-buttons button:nth-child(10) {
+  animation: slideInButton 0.6s ease-out 1s both;
+}
+
+@keyframes slideInButton {
+  from {
+    opacity: 0;
+    transform: translateY(30px) scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Estilos para los botones y enlaces con efectos 3D */
+.dashboard-buttons button,
+.dashboard-buttons .dashboard-link {
+  background: linear-gradient(145deg, #3d5aa3, #2d4177);
+  color: #fff;
+  border: none;
+  padding: 20px 15px;
+  border-radius: 15px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: center;
+  min-height: 100px;
+  position: relative;
+  box-shadow: 0 8px 16px rgba(45, 65, 119, 0.3), 0 4px 8px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-decoration: none;
+  overflow: hidden;
+}
+
+/* Efecto de brillo en hover */
+.dashboard-buttons button::before,
+.dashboard-buttons .dashboard-link::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
+  transition: left 0.5s ease;
+}
+
+/* Hover para los botones y enlaces con efecto 3D */
+.dashboard-buttons button:hover,
+.dashboard-buttons .dashboard-link:hover {
+  background: linear-gradient(145deg, #4a6bb8, #3d5aa3);
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 12px 24px rgba(45, 65, 119, 0.4), 0 8px 16px rgba(0, 0, 0, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+/* Activar efecto de brillo en hover */
+.dashboard-buttons button:hover::before,
+.dashboard-buttons .dashboard-link:hover::before {
+  left: 100%;
+}
+
+/* Efecto de presión */
+.dashboard-buttons button:active,
+.dashboard-buttons .dashboard-link:active {
+  transform: translateY(-1px) scale(0.98);
+  box-shadow: 0 4px 8px rgba(45, 65, 119, 0.2), 0 2px 4px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+/* Variaciones sutiles del azul para diferentes tipos de botones */
+.dashboard-buttons .admin-button {
+  background: linear-gradient(145deg, #4a6bb8, #3d5aa3);
+  border-left: 4px solid #5a7bc8;
+}
+
+.dashboard-buttons .admin-button:hover {
+  background: linear-gradient(145deg, #5a7bc8, #4a6bb8);
+  box-shadow: 0 12px 24px rgba(74, 107, 184, 0.4),
+    0 8px 16px rgba(0, 0, 0, 0.15), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+.dashboard-buttons .reportes-button {
+  background: linear-gradient(145deg, #2d4177, #1e2f5a);
+  border-left: 4px solid #3d5aa3;
+}
+
+.dashboard-buttons .reportes-button:hover {
+  background: linear-gradient(145deg, #3d5aa3, #2d4177);
+  box-shadow: 0 12px 24px rgba(45, 65, 119, 0.4), 0 8px 16px rgba(0, 0, 0, 0.15),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+/* Icono dentro del botón */
+.dashboard-button-icon {
+  font-size: 1.5rem;
+  margin-bottom: 8px;
+  opacity: 0.9;
+}
+
+/* Ajustes responsivos */
+@media (max-width: 1024px) {
+  .dashboard-buttons {
+    grid-template-columns: repeat(2, 1fr);
+    max-width: 600px;
+    gap: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .dashboard-container {
+    max-width: 95vw;
+    padding: 15px;
+    margin: 2% auto;
+  }
+
+  .dashboard-buttons {
+    grid-template-columns: 1fr;
+    max-width: 350px;
+    gap: 15px;
+    padding: 10px;
+  }
+
+  .dashboard-buttons button,
+  .dashboard-buttons .dashboard-link {
+    min-height: 80px;
+    font-size: 1rem;
+    padding: 15px 10px;
+  }
+
+  .dashboard-button-icon {
+    font-size: 1.3rem;
+    margin-bottom: 5px;
+  }
+}
+
+@media (max-width: 480px) {
+  .dashboard-container {
+    max-width: 98vw;
+    padding: 10px;
+  }
+
+  .dashboard-buttons {
+    max-width: 280px;
+    gap: 12px;
+  }
+
+  .dashboard-buttons button,
+  .dashboard-buttons .dashboard-link {
+    min-height: 70px;
+    font-size: 0.9rem;
+    padding: 12px 8px;
+  }
+}
+
+/* ===== ESTILOS PARA MODAL DE REPORTES DASHBOARD ===== */
+.modal-reportes-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-reportes-contenido {
+  background: white;
+  border-radius: 12px;
+  max-width: 900px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+.modal-reportes-header {
+  padding: 20px;
+  border-bottom: 1px solid #e9ecef;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-radius: 12px 12px 0 0;
+}
+
+.modal-reportes-body {
+  padding: 20px;
+}
+
+.selector-modalidad {
+  margin-bottom: 25px;
+  padding: 20px;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border-radius: 10px;
+  border: 1px solid #dee2e6;
+}
+
+.btn-modalidad-selector {
+  transition: all 0.3s ease;
+}
+
+.btn-modalidad-selector:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 123, 255, 0.3);
+}
+
+.reportes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.reporte-card {
+  background: white;
+  border: 1px solid #e9ecef;
+  border-radius: 10px;
+  padding: 20px;
+  text-align: center;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.reporte-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  border-color: #007bff;
+}
+
+/* Estilos especiales para el reporte destacado */
+.reporte-card.reporte-destacado {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: 2px solid #5a67d8;
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+.reporte-card.reporte-destacado::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -50%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
+  transform: skewX(-20deg);
+  animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    left: -50%;
+  }
+  100% {
+    left: 150%;
+  }
+}
+
+.reporte-card.reporte-destacado:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 12px 35px rgba(102, 126, 234, 0.4);
+  border-color: #4c63d2;
+}
+
+.reporte-card.reporte-destacado h4 {
+  color: #ffffff;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.reporte-card.reporte-destacado p {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.reporte-icon {
+  font-size: 2.5rem;
+  margin-bottom: 15px;
+}
+
+.reporte-card h4 {
+  color: #2d4177;
+  margin-bottom: 10px;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.reporte-card p {
+  color: #6c757d;
+  margin-bottom: 20px;
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
+.btn-reporte-accion {
+  background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  width: 100%;
+}
+
+.btn-reporte-accion:hover:not(:disabled) {
+  background: linear-gradient(135deg, #0056b3 0%, #004085 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+}
+
+/* Estilo especial para el botón destacado */
+.btn-reporte-accion.btn-destacado {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  font-weight: 700;
+  font-size: 1.05rem;
+  padding: 14px 24px;
+  box-shadow: 0 4px 15px rgba(245, 87, 108, 0.4);
+}
+
+.btn-reporte-accion.btn-destacado:hover:not(:disabled) {
+  background: linear-gradient(135deg, #f5576c 0%, #e91e63 100%);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(245, 87, 108, 0.5);
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+.btn-reporte-accion:disabled {
+  background: #6c757d;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Responsive para reportes */
+@media (max-width: 768px) {
+  .modal-reportes-contenido {
+    width: 95%;
+    max-height: 95vh;
+  }
+
+  .reportes-grid {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+
+  .selector-modalidad div {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .btn-modalidad-selector {
+    width: 100%;
+  }
+}

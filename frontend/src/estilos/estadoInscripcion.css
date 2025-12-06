@@ -1,0 +1,22 @@
+.estado-inscripcion-container .form-group {
+  margin-bottom: 20px; /* Espaciado inferior */
+}
+
+.estado-inscripcion-container .form-group select {
+  width: 100%;
+  max-width: 300px;
+  padding: 10px;
+  font-size: 1rem;
+  border: 1px solid #ccc2c2;
+  border-radius: 4px;
+  background-color: #fff;
+  color: #313030;
+  box-sizing: border-box;
+  white-space: normal;
+  word-wrap: break-word;
+}
+@media (max-width: 768px) {
+     .estado-inscripcion-container {
+        max-width: 100%; /* Asegura que los elementos ocupen todo el ancho disponible */
+    }
+}

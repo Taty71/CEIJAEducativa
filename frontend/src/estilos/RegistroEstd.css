@@ -1,0 +1,452 @@
+/* Estilos para el componente RegistroEstd */
+
+/* Contenedor principal del header */
+.registro-header-container {
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.registro-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 10px;
+}
+
+.registro-nav-left {
+  flex: 1;
+  display: flex;
+  justify-content: flex-start;
+}
+
+.registro-nav-right {
+  flex: 1;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.modal-title-registro {
+  flex: 2;
+  text-align: center;
+  margin: 0;
+  font-size: 1.5rem;
+  color: #333;
+}
+
+/* Estilos para registro pendiente */
+.mensaje-registro-pendiente {
+  background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+  border: 1px solid #2196f3;
+  border-radius: 8px;
+  padding: 15px;
+  margin: 15px 0;
+  text-align: center;
+}
+
+.mensaje-registro-pendiente h4 {
+  color: #1976d2;
+  margin: 0 0 8px 0;
+  font-size: 1.1rem;
+}
+
+.mensaje-registro-pendiente p {
+  color: #424242;
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+/* Estilos para registro web */
+.mensaje-registro-web {
+  background: linear-gradient(135deg, #fff3e0 0%, #fce4ec 100%);
+  border: 2px solid #ff9800;
+  border-radius: 10px;
+  padding: 20px;
+  margin: 15px 0;
+  text-align: center;
+  box-shadow: 0 2px 10px rgba(255, 152, 0, 0.1);
+}
+
+.mensaje-registro-web h4 {
+  color: #e65100;
+  margin: 0 0 15px 0;
+  font-size: 1.1rem;
+}
+
+.datos-registro-web {
+  text-align: left;
+  margin-bottom: 15px;
+}
+
+.datos-registro-web p {
+  color: #424242;
+  margin: 0 0 10px 0;
+  font-size: 0.95rem;
+  font-weight: bold;
+}
+
+.datos-usuario-web {
+  background-color: #f5f5f5;
+  padding: 10px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+.datos-usuario-web strong {
+  color: #333;
+}
+
+/* Sección de archivos adjuntos */
+.archivos-adjuntos-web {
+  background-color: #fffbf0;
+  border: 1px dashed #ff9800;
+  border-radius: 6px;
+  padding: 12px;
+  margin-bottom: 15px;
+}
+
+.archivos-adjuntos-web p {
+  color: #e65100;
+  margin: 0 0 8px 0;
+  font-size: 0.9rem;
+  font-weight: bold;
+}
+
+.lista-archivos-web {
+  margin: 0;
+  padding-left: 20px;
+  font-size: 0.85rem;
+  color: #666;
+}
+
+.lista-archivos-web li {
+  margin-bottom: 4px;
+}
+
+.lista-archivos-web .archivo-nombre {
+  color: #4caf50;
+  font-weight: bold;
+}
+
+.lista-archivos-web .archivo-detalle {
+  color: #999;
+  margin-left: 8px;
+  font-size: 0.8rem;
+}
+
+.sin-archivos-web {
+  color: #f44336;
+  font-size: 0.85rem;
+  margin: 0;
+}
+
+/* Nota informativa del registro web */
+.nota-registro-web {
+  font-size: 0.8rem;
+  color: #666;
+  font-style: italic;
+  margin: 0;
+}
+
+/* Versión alternativa de archivos (mejorada) */
+.archivos-adjuntos-web-v2 {
+  background-color: #fffbf0;
+  border: 1px solid #ffcc02;
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 10px;
+}
+
+.archivos-adjuntos-web-v2 p {
+  color: #f57c00;
+  margin: 0 0 8px 0;
+  font-size: 0.9rem;
+  font-weight: bold;
+}
+
+.lista-archivos-web-v2 {
+  margin: 0;
+  padding-left: 20px;
+  font-size: 0.85rem;
+  color: #666;
+}
+
+.lista-archivos-web-v2 li {
+  margin-bottom: 3px;
+}
+
+.lista-archivos-web-v2 .archivo-nombre-v2 {
+  color: #4caf50;
+  font-weight: bold;
+}
+
+.lista-archivos-web-v2 .archivo-detalle-v2 {
+  color: #999;
+  margin-left: 15px;
+  font-size: 0.8rem;
+  display: block;
+}
+
+.sin-archivos-web-v2 {
+  margin: 0;
+  font-size: 0.85rem;
+  color: #f44336;
+  font-style: italic;
+}
+
+.nota-registro-web-v2 {
+  color: #1976d2;
+  margin: 0;
+  font-size: 0.85rem;
+  font-style: italic;
+}
+
+/* Contenedor principal del formulario */
+.formd {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* Dos columnas iguales */
+  grid-template-rows: auto auto auto; /* Tres filas */
+  gap: 20px;
+  align-items: start;
+}
+
+/* Datos personales ocupan las dos columnas (fila 1) */
+.form-datos {
+  grid-column: 1 / -1; /* Ocupa todo el ancho */
+  margin: 0;
+  padding: 25px;
+  background: linear-gradient(135deg, #f8fafc 0%, #e8f4fd 100%);
+  border-radius: 12px;
+  border: 1px solid #e1e8ed;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+/* Título ocupa todo el ancho */
+.form-datos h3 {
+  margin: 0 0 20px 0;
+  color: #1a365d;
+  font-size: 1.2rem;
+  font-weight: 700;
+  text-align: center;
+  padding-bottom: 10px;
+  border-bottom: 3px solid #3182ce;
+  background: linear-gradient(90deg, #3182ce, #2c5aa0);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Domicilio ocupa las dos columnas (fila 2) */
+.form-domicilio {
+  grid-column: 1 / -1; /* Ocupa todo el ancho */
+  margin: 0;
+  padding: 25px;
+  background: linear-gradient(135deg, #f0f8f0 0%, #e8f5e8 100%);
+  border-radius: 12px;
+  border: 1px solid #d1e7dd;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+/* Título ocupa todo el ancho */
+.form-domicilio h3 {
+  margin: 0 0 20px 0;
+  color: #1a365d;
+  font-size: 1.2rem;
+  font-weight: 700;
+  text-align: center;
+  padding-bottom: 10px;
+  border-bottom: 3px solid #38a169;
+  background: linear-gradient(90deg, #38a169, #2f855a);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Información Académica (columna izquierda, fila 3) */
+.form-eleccion {
+  grid-column: 1;
+  grid-row: 3;
+  margin: 0;
+  padding: 15px;
+  background: linear-gradient(135deg, #fff8e1 0%, #f3e5ab 100%);
+  border-radius: 8px;
+  border: 1px solid #fbc02d;
+  min-height: 300px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Sección de acciones (columna derecha, fila 3) */
+.left-container {
+  grid-column: 2;
+  grid-row: 3;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  padding: 20px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #dee2e6;
+  min-height: 300px; /* Misma altura mínima que form-eleccion */
+}
+
+.left-container h4 {
+  margin: 0 0 15px 0;
+  color: #495057;
+  font-size: 1.1rem;
+  text-align: center;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #495057;
+}
+
+.button-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.button-stack .boton-principal {
+  width: 100%;
+  padding: 12px;
+  font-size: 1rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.button-stack .boton-principal:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Título específico para form-eleccion */
+.form-eleccion h3 {
+  margin: 0 0 15px 0;
+  color: #2d4177;
+  font-size: 1.1rem;
+  font-weight: 600;
+  text-align: center;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #2d4177;
+}
+
+/* Responsividad para pantallas pequeñas */
+@media (max-width: 768px) {
+  .formd {
+    grid-template-columns: 1fr; /* Una sola columna en móvil */
+    gap: 15px;
+  }
+
+  .form-datos,
+  .form-domicilio {
+    grid-column: 1;
+    grid-template-columns: 1fr; /* Una columna para los campos internos */
+  }
+
+  .form-eleccion,
+  .left-container {
+    grid-column: 1;
+    grid-row: auto;
+    min-height: 250px; /* Altura mínima fija para móvil */
+  }
+
+  .left-container h4 {
+    font-size: 1rem;
+  }
+}
+
+/* Estilos específicos para campos de formulario dentro de form-datos y form-domicilio */
+.form-datos .form-group,
+.form-domicilio .form-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 15px;
+}
+
+.form-datos .form-group label,
+.form-domicilio .form-group label {
+  font-weight: 600;
+  color: #2d4177;
+  margin-bottom: 5px;
+  font-size: 0.9rem;
+}
+
+.form-datos .form-group input,
+.form-datos .form-group select,
+.form-domicilio .form-group input,
+.form-domicilio .form-group select {
+  padding: 8px 12px;
+  font-size: 0.95rem;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  width: 100%;
+  background-color: #fff;
+  box-sizing: border-box;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.form-datos .form-group input:focus,
+.form-datos .form-group select:focus,
+.form-domicilio .form-group input:focus,
+.form-domicilio .form-group select:focus {
+  border-color: #2d4177;
+  box-shadow: 0 0 0 2px rgba(45, 65, 119, 0.1);
+  outline: none;
+}
+
+.form-datos .form-group .error,
+.form-domicilio .form-group .error {
+  color: #dc3545;
+  font-size: 0.8rem;
+  margin-top: 4px;
+}
+
+/* Estilos específicos para inputs con botones (como en Domicilio) */
+.form-domicilio .domicilio-input-con-boton {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.form-domicilio .domicilio-input-con-boton input {
+  flex: 1;
+}
+
+.form-domicilio .domicilio-input-con-boton button {
+  padding: 8px 12px;
+  background-color: #2d4177;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: background-color 0.3s ease;
+}
+
+.form-domicilio .domicilio-input-con-boton button:hover {
+  background-color: #1e2a5c;
+}
+
+/* Ajustes responsivos para formularios */
+@media (max-width: 600px) {
+  .form-datos,
+  .form-domicilio {
+    grid-template-columns: 1fr;
+    padding: 10px;
+  }
+
+  .form-datos .form-group input,
+  .form-datos .form-group select,
+  .form-domicilio .form-group input,
+  .form-domicilio .form-group select {
+    font-size: 16px; /* Evita zoom en iOS */
+  }
+}

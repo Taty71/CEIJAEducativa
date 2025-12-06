@@ -1,0 +1,266 @@
+/* Estilos para el componente VerificadorRegistroPendiente */
+
+.verificador-registro {
+  margin: 20px 0;
+  padding: 0;
+}
+
+.verificador-registro.loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  text-align: center;
+  color: #6c757d;
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #e9ecef;
+  border-top: 4px solid #2d4177;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 15px;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.registro-card {
+  background: #ffffff; /* Fondo blanco sólido */
+  border: 1px solid #e1e8ed;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.registro-header {
+  background: linear-gradient(135deg, #2d4177 0%, #1a237e 100%);
+  color: white;
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.registro-header h3 {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.tiempo-badge {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  animation: pulse 2s infinite;
+}
+
+.tiempo-badge.normal {
+  background: rgba(40, 167, 69, 0.9);
+  color: white;
+}
+
+.tiempo-badge.advertencia {
+  background: rgba(255, 193, 7, 0.9);
+  color: #212529;
+}
+
+.tiempo-badge.critico {
+  background: rgba(253, 126, 20, 0.9);
+  color: white;
+}
+
+.tiempo-badge.vencido {
+  background: rgba(220, 53, 69, 0.9);
+  color: white;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+.registro-content {
+  padding: 25px;
+}
+
+.registro-info {
+  background: #f8fafc;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 20px;
+  border-left: 4px solid #2d4177;
+}
+
+.info-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  padding: 8px 0;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.info-item:last-child {
+  margin-bottom: 0;
+  border-bottom: none;
+}
+
+.info-item strong {
+  color: #2d4177;
+  font-weight: 600;
+  min-width: 140px;
+}
+
+.info-item span {
+  color: #495057;
+  font-weight: 500;
+  text-align: right;
+}
+
+.info-item.vencimiento {
+  background: rgba(220, 53, 69, 0.05);
+  border-radius: 6px;
+  padding: 10px;
+  border-bottom: none;
+  border: 1px solid rgba(220, 53, 69, 0.2);
+}
+
+.registro-mensaje {
+  background: rgba(23, 162, 184, 0.1);
+  border-left: 4px solid #17a2b8;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.registro-mensaje.vencido {
+  background: rgba(220, 53, 69, 0.1);
+  border-left-color: #dc3545;
+}
+
+.registro-mensaje p {
+  margin: 0;
+  color: #495057;
+  line-height: 1.5;
+}
+
+.registro-actions {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.registro-actions .boton-principal {
+  flex: 1;
+  min-width: 200px;
+  transition: all 0.3s ease;
+}
+
+.registro-actions .boton-principal:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+.registro-actions .boton-principal:disabled {
+  transform: none;
+  box-shadow: none;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .registro-header {
+    text-align: center;
+    flex-direction: column;
+  }
+
+  .registro-header h3 {
+    font-size: 1.1rem;
+  }
+
+  .registro-content {
+    padding: 20px 15px;
+  }
+
+  .info-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+
+  .info-item strong {
+    min-width: auto;
+  }
+
+  .info-item span {
+    text-align: left;
+    font-size: 0.95rem;
+  }
+
+  .registro-actions {
+    flex-direction: column;
+  }
+
+  .registro-actions .boton-principal {
+    min-width: auto;
+  }
+}
+
+@media (max-width: 480px) {
+  .verificador-registro {
+    margin: 15px 0;
+  }
+
+  .registro-card {
+    border-radius: 8px;
+  }
+
+  .registro-header {
+    padding: 15px;
+  }
+
+  .registro-content {
+    padding: 15px 10px;
+  }
+
+  .registro-info {
+    padding: 15px;
+  }
+
+  .tiempo-badge {
+    font-size: 0.8rem;
+    padding: 4px 8px;
+  }
+}

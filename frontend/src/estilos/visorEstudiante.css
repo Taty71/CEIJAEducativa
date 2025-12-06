@@ -1,0 +1,820 @@
+/* Ocultar flechas de los inputs tipo number en navegadores modernos */
+.tarjeta-contenido input[type="number"]::-webkit-inner-spin-button,
+.tarjeta-contenido input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.tarjeta-contenido input[type="number"] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+/* Aumentar la altura mínima de las tarjetas para evitar corte visual */
+/* Tarjeta: altura automática, sin scroll interno */
+.tarjeta {
+  min-height: 220px;
+  max-height: none;
+  height: auto;
+  overflow: visible;
+}
+/* Inputs dentro de tarjetas: ancho completo y visualización elegante */
+.tarjeta-contenido input,
+.tarjeta-contenido select {
+  width: 100%;
+  box-sizing: border-box;
+  font-size: 1rem;
+  padding: 4px 8px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  margin-top: 2px;
+  margin-bottom: 6px;
+}
+.tarjeta {
+  background: #f8f8fc;
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+  padding: 1.8rem 2rem; /* Más padding */
+  font-size: 1rem; /* Fuente más grande */
+  font-family: "Roboto Slab", serif;
+  color: #222;
+  min-width: 300px; /* Más ancho */
+  min-height: 250px; /* Más alto */
+  transition: box-shadow 0.2s;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+.tarjeta-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.7rem;
+}
+.tarjeta-header h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #3a3a5a;
+  margin: 0;
+}
+.btn-editar-seccion {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  color: #888;
+  margin-left: auto;
+  margin-right: 0;
+  transition: color 0.2s;
+}
+.btn-editar-seccion:hover {
+  color: #3a3a5a;
+}
+.tarjeta-contenido {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  overflow: visible;
+  max-height: none;
+}
+.dato-item {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  margin-bottom: 0.2rem;
+}
+.dato-item label {
+  font-size: 0.92rem;
+  color: #666;
+  font-weight: 500;
+  min-width: 140px;
+  text-align: right;
+}
+.dato-item span,
+.dato-item input,
+.dato-item select {
+  font-size: 0.92rem;
+  font-family: "Roboto Slab", serif;
+  color: #222;
+  min-width: 120px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  border: 1px solid #e0e0e0;
+  background: #fff;
+}
+.dato-item input[type="date"] {
+  min-width: 120px;
+}
+.visor-acciones {
+  margin-top: 1rem;
+  text-align: center;
+}
+.btn-guardar-seccion,
+.btn-cancelar-seccion {
+  font-size: 0.95rem;
+  padding: 0.4rem 1.2rem;
+  border-radius: 6px;
+  border: 1px solid #bdbdbd;
+  background: #f5f5f5;
+  color: #222;
+  margin: 0 0.3rem;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+.btn-guardar-seccion:hover {
+  background: #d1e7dd;
+  color: #155724;
+}
+.btn-cancelar-seccion:hover {
+  background: #f8d7da;
+  color: #721c24;
+}
+/* Contenedor principal del visor */
+.visor-estudiante-container {
+  display: flex;
+  flex-direction: column;
+  margin: 10px auto; /* Menos margen para más espacio */
+  padding: 25px;
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  color: #333;
+  font-family: "Roboto Slab", serif;
+  position: relative;
+  max-height: 95vh; /* Más altura disponible */
+  min-height: 85vh; /* Altura mínima para mejor visibilidad */
+  width: 95%; /* Más ancho */
+  max-width: 1400px; /* Ancho máximo ampliado */
+  overflow-y: auto;
+}
+
+/* Ajuste específico para los botones del header en VisorEstudiante */
+.visor-estudiante-container .modal-header-buttons {
+  position: absolute;
+  top: 80px; /* Posicionado arriba del botón modificar */
+  right: 15px;
+  display: flex;
+  gap: 8px;
+  z-index: 1000;
+}
+
+/* Estilos específicos para modo consulta */
+.visor-estudiante-container.modo-consulta {
+  max-width: 850px;
+  width: 90vw;
+  max-height: 85vh;
+  overflow-y: auto;
+}
+
+/* Estilos específicos para modo gestión */
+.visor-estudiante-container.modo-gestion {
+  max-width: 900px;
+  width: 90%;
+}
+
+/* Header del visor */
+.visor-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  padding-bottom: 15px;
+  border-bottom: 2px solid #2d4177;
+}
+
+.visor-header h2 {
+  color: #2d4177;
+  font-size: 1.8rem;
+  margin: 0;
+}
+
+.btn-modificar-header {
+  background: linear-gradient(135deg, #ffeaa7 0%, #fab1a0 50%, #a29bfe 100%);
+  color: #2d3436;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 500;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.btn-modificar-header:hover {
+  background: linear-gradient(135deg, #fdcb6e 0%, #e17055 50%, #6c5ce7 100%);
+  transform: translateY(-1px) scale(1.02);
+  box-shadow: 0 4px 8px rgba(250, 177, 160, 0.3);
+}
+
+/* Header de tarjetas con botón de edición */
+.tarjeta-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.tarjeta-header h3 {
+  margin: 0;
+  color: #2d4177;
+  font-size: 1.1rem;
+}
+
+/* Botones de edición */
+.btn-editar-seccion {
+  background: none;
+  border: none;
+  color: #007bff;
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.btn-editar-seccion:hover {
+  background-color: rgba(0, 123, 255, 0.1);
+  transform: scale(1.1);
+}
+
+.btn-editar-campo {
+  background: none;
+  border: none;
+  color: #007bff;
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 3px;
+  transition: all 0.2s ease;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+.btn-editar-campo:hover {
+  background-color: rgba(0, 123, 255, 0.1);
+  transform: scale(1.1);
+}
+
+/* Dato item con alineación correcta */
+.dato-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid #f8f9fa;
+}
+
+.dato-item label {
+  font-weight: 600;
+  color: #495057;
+  min-width: 120px;
+  flex-shrink: 0;
+}
+
+.dato-item span {
+  flex-grow: 1;
+  text-align: left;
+  padding: 0 10px;
+}
+
+/* Documentación con acciones */
+.documento-item-tarjeta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid #f8f9fa;
+}
+
+.documento-acciones {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.btn-agregar-documentacion {
+  background-color: #28a745;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background-color 0.3s ease;
+}
+
+.btn-agregar-documentacion:hover {
+  background-color: #218838;
+}
+
+/* Contenido del visor */
+.visor-contenido {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+/* Secciones de datos */
+.seccion-datos {
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  padding: 20px;
+  border-left: 4px solid #2d4177;
+}
+
+.seccion-datos h3 {
+  color: #2d4177;
+  font-size: 1.3rem;
+  margin: 0 0 15px 0;
+  font-weight: 600;
+}
+
+/* Grid de datos */
+.datos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 15px;
+}
+
+.dato-item {
+  display: flex;
+  flex-direction: column;
+  background-color: white;
+  padding: 12px;
+  border-radius: 5px;
+  border: 1px solid #dee2e6;
+}
+
+.dato-item label {
+  font-weight: 600;
+  color: #495057;
+  font-size: 0.9rem;
+  margin-bottom: 5px;
+}
+
+.dato-item span {
+  color: #212529;
+  font-size: 1rem;
+}
+
+/* Estados */
+.estado {
+  padding: 4px 12px;
+  border-radius: 15px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  text-transform: capitalize;
+  display: inline-block;
+}
+
+.estado-inscripto {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.estado-pendiente {
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+.estado-rechazado {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+.estado-sin-estado {
+  background-color: #e9ecef;
+  color: #6c757d;
+}
+
+/* Documentación */
+.documentacion-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.documento-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: white;
+  padding: 12px;
+  border-radius: 5px;
+  border: 1px solid #dee2e6;
+  gap: 10px;
+}
+
+.documento-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+}
+
+.documento-icono {
+  font-size: 1.2rem;
+  font-weight: bold;
+  width: 20px;
+  text-align: center;
+}
+
+.documento-icono[data-estado="entregado"] {
+  color: #28a745;
+}
+
+.documento-icono[data-estado="faltante"],
+.documento-icono[data-estado="pendiente"] {
+  color: #dc3545;
+}
+
+.documento-nombre {
+  font-weight: 500;
+  color: #212529;
+  flex: 1;
+}
+
+.documento-detalles {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.documento-estado {
+  padding: 3px 8px;
+  border-radius: 10px;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.estado-entregado {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.estado-faltante {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+.estado-pendiente {
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+.documento-fecha {
+  font-size: 0.85rem;
+  color: #6c757d;
+}
+
+.btn-ver-archivo-small {
+  background-color: #6c757d;
+  color: white;
+  padding: 2px 8px;
+  border-radius: 3px;
+  text-decoration: none;
+  font-size: 0.75rem;
+  transition: background-color 0.3s;
+}
+
+.btn-ver-archivo-small:hover {
+  background-color: #5a6268;
+  text-decoration: none;
+  color: white;
+}
+
+/* Acciones del visor */
+.visor-acciones {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #e3eafc;
+  color: #2d4177;
+  border: 1px solid #b0b8d1;
+  padding: 2px 8px;
+  border-radius: 4px;
+  text-decoration: none;
+  font-size: 0.85rem;
+  transition: all 0.2s ease;
+  margin-right: 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 60px;
+  height: 22px;
+  .btn-volver:hover {
+    background-color: #5a6268;
+  }
+  background: #d0d8f6;
+  border-color: #8fa1d1;
+  color: #1a2a5a;
+  text-decoration: underline;
+  transform: scale(1.05);
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.3s;
+}
+
+.btn-modificar:hover {
+  background-color: #0056b3;
+}
+
+/* No data */
+.no-data {
+  text-align: center;
+  padding: 40px;
+  color: #666;
+}
+
+/* ==============================================
+   DISEÑO DE TARJETAS PARA MODO CONSULTA
+   ============================================== */
+
+.layout-tarjetas {
+  display: block;
+}
+
+.tarjetas-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: auto auto;
+  gap: 2px;
+  margin-top: 0.5px;
+  max-width: 600px;
+  margin: 0.5px auto 0;
+  align-items: start;
+}
+
+.tarjeta {
+  background-color: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 10px;
+  padding: 12px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  max-width: 380px;
+  height: auto; /* Altura automática */
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+/* Tarjetas de la primera fila (arriba) - menos altura */
+.tarjeta:nth-child(1),
+.tarjeta:nth-child(2) {
+  max-height: 180px;
+  margin-bottom: 0.5px; /* Mucho menos separación con las de abajo */
+}
+
+/* Tarjetas de la segunda fila (abajo) - altura normal */
+.tarjeta:nth-child(3),
+.tarjeta:nth-child(4) {
+  max-height: none;
+  margin-top: 0px; /* Mucho menos separación con las de arriba */
+}
+
+.tarjeta:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.tarjeta h3 {
+  color: #2d4177;
+  margin: 0 0 15px 0;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #2d4177;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.tarjeta-contenido {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1; /* Tomar todo el espacio disponible después del título */
+  overflow-y: auto; /* Permitir scroll si el contenido es muy largo en las tarjetas pequeñas */
+  /* Eliminamos max-height y overflow para no tener barras de scroll */
+}
+
+.tarjeta .dato-item {
+  display: flex !important;
+  flex-direction: row !important; /* Forzamos dirección horizontal */
+  align-items: center !important;
+  padding: 3px 0;
+  border-bottom: none; /* Eliminamos las líneas divisorias */
+  gap: 4px; /* Espacio pequeño entre label y valor */
+  min-height: 20px;
+  background-color: transparent !important; /* Eliminamos el fondo blanco */
+  border: none !important; /* Eliminamos el borde */
+  border-radius: 0 !important; /* Eliminamos el border-radius */
+}
+
+.tarjeta .dato-item:last-child {
+  border-bottom: none;
+}
+
+.tarjeta .dato-item label {
+  font-weight: 500 !important;
+  color: #495057 !important;
+  font-size: 0.85rem !important;
+  margin: 0 !important; /* Eliminamos el margin-bottom del estilo general */
+  white-space: nowrap; /* Evitar salto de línea en el label */
+}
+
+.tarjeta .dato-item span {
+  font-size: 0.85rem !important;
+  color: #212529 !important;
+  font-weight: 400 !important;
+  flex: 1; /* Tomar el espacio restante */
+}
+
+/* Estilos específicos para documentación en tarjeta */
+.documentacion-lista-tarjeta {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  overflow: visible;
+  max-height: none;
+}
+
+.documento-item-tarjeta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 12px;
+  background-color: #f9fafc;
+  border: 1.5px solid #cfd8dc;
+  border-radius: 7px;
+  font-size: 0.92rem;
+  margin-bottom: 2px;
+  box-shadow: 0 1px 3px rgba(44, 62, 80, 0.04);
+}
+
+.documento-nombre-corto {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #2d4177;
+  flex: 1;
+  margin-left: 10px;
+}
+
+.btn-ver-archivo-mini {
+  background: rgba(77, 103, 172, 0.1);
+  color: #4d67ac;
+  border: 1px solid rgba(77, 103, 172, 0.2);
+  padding: 2px 4px;
+  border-radius: 4px;
+  text-decoration: none;
+  font-size: 0.7rem;
+  transition: all 0.2s ease;
+  margin-right: 3px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  -webkit-backdrop-filter: blur(5px);
+  backdrop-filter: blur(5px);
+}
+
+.btn-ver-archivo-mini:hover {
+  background: rgba(77, 103, 172, 0.15);
+  border-color: rgba(77, 103, 172, 0.3);
+  text-decoration: none;
+  color: #4d67ac;
+  transform: scale(1.1);
+}
+
+.btn-subir-archivo-mini {
+  background: rgba(253, 126, 20, 0.1);
+  color: #fd7e14;
+  border: 1px solid rgba(253, 126, 20, 0.2);
+  padding: 2px 4px;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-right: 3px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  -webkit-backdrop-filter: blur(5px);
+  backdrop-filter: blur(5px);
+}
+
+.btn-subir-archivo-mini:hover {
+  background: rgba(253, 126, 20, 0.15);
+  border-color: rgba(253, 126, 20, 0.3);
+  transform: scale(1.1);
+}
+
+/* Estados en tarjetas */
+.tarjeta .estado {
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  text-align: center;
+}
+
+/* Layout vertical para modo gestión */
+.layout-vertical {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .visor-estudiante-container {
+    margin: 10px;
+    padding: 15px;
+  }
+
+  .visor-estudiante-container.modo-consulta {
+    width: 95vw;
+    max-width: none;
+  }
+
+  .visor-header {
+    flex-direction: column;
+    gap: 15px;
+    text-align: center;
+  }
+
+  /* Tarjetas en móvil: una columna */
+  .tarjetas-container {
+    grid-template-columns: 1fr;
+    gap: 15px;
+    margin: 20px 0 0 0; /* Remover auto centering en móvil */
+    max-width: none;
+  }
+
+  .tarjeta {
+    padding: 15px;
+    max-width: none; /* Permitir ancho completo en móvil */
+  }
+
+  .tarjeta h3 {
+    font-size: 1rem;
+  }
+
+  .tarjeta .dato-item {
+    /* Mantenemos flex-direction: row para que siga siendo horizontal */
+    flex-direction: row;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 0;
+  }
+
+  .tarjeta .dato-item label {
+    /* Mantenemos consistencia con el diseño horizontal */
+    font-weight: 500;
+    white-space: nowrap;
+    margin: 0;
+  }
+
+  .tarjeta .dato-item span {
+    /* Mantenemos alineación a la izquierda pero en la misma línea */
+    text-align: left;
+    flex: 1;
+  }
+
+  /* Layout vertical responsive */
+  .datos-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .visor-acciones {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .btn-volver,
+  .btn-modificar {
+    width: 100%;
+  }
+
+  .documento-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .documento-info {
+    width: 100%;
+  }
+
+  .documento-detalles {
+    width: 100%;
+    justify-content: space-between;
+  }
+}

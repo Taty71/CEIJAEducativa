@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Test Registro Pendiente - CEIJA 5</title>
+    <style>
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #f5f5f5;
+      }
+      .container {
+        background: white;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+      h1 {
+        color: #2d4177;
+        text-align: center;
+        margin-bottom: 30px;
+      }
+      button {
+        background: linear-gradient(135deg, #2d4177 0%, #4a6ba8 100%);
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 16px;
+        margin: 10px 5px;
+        transition: all 0.2s;
+      }
+      button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(45, 65, 119, 0.3);
+      }
+      button:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none;
+      }
+      #results {
+        margin-top: 20px;
+        padding: 15px;
+        border-radius: 6px;
+        background-color: #f8f9fa;
+        border-left: 4px solid #2d4177;
+        max-height: 400px;
+        overflow-y: auto;
+      }
+      pre {
+        white-space: pre-wrap;
+        word-wrap: break-word;
+        font-size: 12px;
+        line-height: 1.4;
+      }
+      .status-success {
+        border-left-color: #28a745;
+        background-color: #e8f5e8;
+      }
+      .status-error {
+        border-left-color: #dc3545;
+        background-color: #ffebee;
+      }
+      .loading {
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        border: 3px solid #f3f3f3;
+        border-top: 3px solid #2d4177;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin-right: 10px;
+      }
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>🧪 Test del Sistema de Registros Pendientes</h1>
+      <p>
+        Esta página permite probar los endpoints del sistema de registros
+        pendientes de CEIJA 5.
+      </p>
+
+      <div>
+        <button onclick="testCrearRegistro()" id="btnCrear">
+          📝 Crear Registro de Prueba
+        </button>
+        <button onclick="testObtenerRegistros()" id="btnObtener">
+          📋 Obtener Registros
+        </button>
+        <button onclick="testActualizarRegistro()" id="btnActualizar">
+          🔄 Actualizar Registro
+        </button>
+        <button onclick="testEliminarRegistro()" id="btnEliminar">
+          🗑️ Eliminar Registro
+        </button>
+        <button onclick="testEnviarEmail()" id="btnEmail">
+          📧 Enviar Email
+        </button>
+        <button onclick="limpiarResultados()" id="btnLimpiar">
+          🧹 Limpiar
+        </button>
+      </div>
+
+      <div id="results"></div>
+    </div>
+
+    <script>
+      const API_BASE = "http://localhost:5000/api";
+      const TEST_DNI = "99999999";
+
+      function mostrarResultado(titulo, contenido, esError = false) {
+        const resultsDiv = document.getElementById("results");
+        const clase = esError ? "status-error" : "status-success";
+        resultsDiv.className = clase;
+        resultsDiv.innerHTML = `
+          <h3>${titulo}</h3>
+          <pre>${contenido}</pre>
+        `;
+      }
+
+      function mostrarCargando(mensaje) {
+        const resultsDiv = document.getElementById("results");
+        resultsDiv.className = "";
+        resultsDiv.innerHTML = `
+          <div><span class="loading"></span>${mensaje}</div>
+        `;
+      }
+
+      async function testCrearRegistro() {
+        mostrarCargando("Creando registro de prueba...");
+
+        try {
+          const formData = new FormData();
+
+          // Datos de prueba
+          const datosTest = {
+            dni: TEST_DNI,
+            nombre: "Juan",
+            apellido: "Pérez",
+            email: "juan.perez@test.com",
+            telefono: "123456789",
+            cuil: `20${TEST_DNI}1`,
+            fechaNacimiento: "1990-01-01",
+            calle: "Calle Test",
+            numero: "123",
+            barrio: "Centro",
+            localidad: "Ciudad Test",
+            provincia: "Provincia Test",
+            codigoPostal: "1000",
+            modalidad: "Presencial",
+            modalidadId: "1",
+            planAnio: "2024",
+            modulos: "Básico",
+            motivoPendiente: "Test desde HTML - Documentación faltante",
+            tipoRegistro: "SIN_DOCUMENTACION",
+          };
+
+          // Agregar datos al FormData
+          Object.entries(datosTest).forEach(([key, value]) => {
+            formData.append(key, value);
+          });
+
+          const response = await fetch(`${API_BASE}/registros-pendientes`, {
+            method: "POST",
+            body: formData,
+          });
+
+          const resultado = await response.json();
+
+          if (response.ok) {
+            mostrarResultado(
+              "✅ Registro creado exitosamente",
+              JSON.stringify(resultado, null, 2)
+            );
+          } else {
+            mostrarResultado(
+              "❌ Error al crear registro",
+              JSON.stringify(resultado, null, 2),
+              true
+            );
+          }
+        } catch (error) {
+          mostrarResultado("❌ Error de conexión", error.message, true);
+        }
+      }
+
+      async function testObtenerRegistros() {
+        mostrarCargando("Obteniendo registros pendientes...");
+
+        try {
+          const response = await fetch(`${API_BASE}/registros-pendientes`);
+          const registros = await response.json();
+
+          if (response.ok) {
+            mostrarResultado(
+              `📋 ${registros.length} registro(s) encontrado(s)`,
+              JSON.stringify(registros, null, 2)
+            );
+          } else {
+            mostrarResultado(
+              "❌ Error al obtener registros",
+              JSON.stringify(registros, null, 2),
+              true
+            );
+          }
+        } catch (error) {
+          mostrarResultado("❌ Error de conexión", error.message, true);
+        }
+      }
+
+      async function testActualizarRegistro() {
+        mostrarCargando("Actualizando registro de prueba...");
+
+        try {
+          const datosActualizados = {
+            datos: {
+              telefono: "987654321",
+              email: "juan.actualizado@test.com",
+            },
+            observaciones: `Actualizado desde HTML el ${new Date().toLocaleString()}`,
+          };
+
+          const response = await fetch(
+            `${API_BASE}/registros-pendientes/${TEST_DNI}`,
+            {
+              method: "PUT",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(datosActualizados),
+            }
+          );
+
+          const resultado = await response.json();
+
+          if (response.ok) {
+            mostrarResultado(
+              "🔄 Registro actualizado exitosamente",
+              JSON.stringify(resultado, null, 2)
+            );
+          } else {
+            mostrarResultado(
+              "❌ Error al actualizar registro",
+              JSON.stringify(resultado, null, 2),
+              true
+            );
+          }
+        } catch (error) {
+          mostrarResultado("❌ Error de conexión", error.message, true);
+        }
+      }
+
+      async function testEliminarRegistro() {
+        if (!confirm(`¿Eliminar el registro de prueba con DNI ${TEST_DNI}?`))
+          return;
+
+        mostrarCargando("Eliminando registro de prueba...");
+
+        try {
+          const response = await fetch(
+            `${API_BASE}/registros-pendientes/${TEST_DNI}`,
+            {
+              method: "DELETE",
+            }
+          );
+
+          const resultado = await response.json();
+
+          if (response.ok) {
+            mostrarResultado(
+              "🗑️ Registro eliminado exitosamente",
+              JSON.stringify(resultado, null, 2)
+            );
+          } else {
+            mostrarResultado(
+              "❌ Error al eliminar registro",
+              JSON.stringify(resultado, null, 2),
+              true
+            );
+          }
+        } catch (error) {
+          mostrarResultado("❌ Error de conexión", error.message, true);
+        }
+      }
+
+      async function testEnviarEmail() {
+        mostrarCargando("Enviando email de prueba...");
+
+        try {
+          const response = await fetch(
+            `${API_BASE}/notificaciones/enviar-individual`,
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ dni: TEST_DNI }),
+            }
+          );
+
+          const resultado = await response.json();
+
+          if (response.ok) {
+            mostrarResultado(
+              "📧 Email enviado exitosamente",
+              JSON.stringify(resultado, null, 2)
+            );
+          } else {
+            mostrarResultado(
+              "❌ Error al enviar email",
+              JSON.stringify(resultado, null, 2),
+              true
+            );
+          }
+        } catch (error) {
+          mostrarResultado("❌ Error de conexión", error.message, true);
+        }
+      }
+
+      function limpiarResultados() {
+        const resultsDiv = document.getElementById("results");
+        resultsDiv.innerHTML = "";
+        resultsDiv.className = "";
+      }
+
+      // Inicialización
+      document.addEventListener("DOMContentLoaded", function () {
+        mostrarResultado(
+          "🚀 Sistema de pruebas listo",
+          "Haz clic en cualquier botón para probar los endpoints del sistema."
+        );
+      });
+    </script>
+  </body>
+</html>

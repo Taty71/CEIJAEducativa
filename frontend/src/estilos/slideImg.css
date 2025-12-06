@@ -1,0 +1,18 @@
+.carousel-wrapper {
+    position: relative;
+}
+.carousel-title {
+    position: absolute;
+    top: 10%; /* Ajusta la distancia desde la parte superior */
+    left: 50%; /* Centrado horizontal */
+    transform: translate(-50%, -10%); /* Asegura el centrado completo */
+    z-index: 10; /* Aparece sobre el carrusel */
+    color: #0d2363;
+    font-size: 3rem;
+    font-weight: bold;
+    text-shadow: 2px 2px 5px #313030; /* Sombra para destacar sobre imágenes */
+    text-align: center;
+}
+.carousel-container {
+    z-index: 1; /* Coloca el carrusel detrás del título */
+}

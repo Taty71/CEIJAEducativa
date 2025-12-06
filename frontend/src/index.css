@@ -1,0 +1,55 @@
+:root {
+  --color-fondo-principal: #313030;
+  --color-fondo-tarjeta: #f8f8fc;
+  --color-texto-principal: #222;
+  --color-texto-secundario: #666;
+  --color-acento: #2d4177;
+  --color-acento-claro: #e8f8f5;
+  --color-borde: #d1d1d1;
+  --color-header: #3a3a5a;
+  --color-shadow: rgba(0, 0, 0, 0.07);
+}
+
+html {
+  font-size: 15px; /* Reduce base for smaller text */
+}
+
+#root {
+  background-color: var(--color-fondo-principal);
+  min-height: 100vh;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Roboto Slab", serif;
+  font-optical-sizing: auto;
+  background-color: var(--color-fondo-principal);
+  font-weight: 400;
+  font-style: normal;
+}
+
+/* Asegurar que todos los elementos hereden la fuente */
+*,
+*::before,
+*::after {
+  font-family: inherit;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+div,
+span,
+button,
+input,
+textarea,
+select,
+label {
+  font-family: "Roboto Slab", serif;
+}

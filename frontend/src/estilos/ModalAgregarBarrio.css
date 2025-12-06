@@ -1,0 +1,317 @@
+/* ====================================
+   MODAL PARA AGREGAR NUEVO BARRIO
+   ==================================== */
+
+/* Overlay del modal */
+.modal-agregar-barrio-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  animation: fadeInModal 0.2s ease-in-out;
+}
+
+/* Container principal del modal */
+.modal-agregar-barrio-container {
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  min-width: 400px;
+  max-width: 500px;
+  width: 90%;
+  animation: slideInModal 0.3s ease-out;
+}
+
+/* Título del modal */
+.modal-agregar-barrio-titulo {
+  margin-top: 0;
+  margin-bottom: 20px;
+  color: #333;
+  font-size: 1.2rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Grupo de input */
+.modal-agregar-barrio-grupo {
+  margin-bottom: 15px;
+}
+
+/* Label del input */
+.modal-agregar-barrio-label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+  color: #333;
+  font-size: 14px;
+}
+
+/* Input de texto */
+.modal-agregar-barrio-input {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  box-sizing: border-box;
+  transition: border-color 0.2s ease;
+}
+
+.modal-agregar-barrio-input:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+
+.modal-agregar-barrio-input::placeholder {
+  color: #999;
+  font-style: italic;
+}
+
+/* Container de botones */
+.modal-agregar-barrio-botones {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+/* Botón base */
+.modal-agregar-barrio-btn {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.modal-agregar-barrio-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* Botón cancelar */
+.modal-agregar-barrio-btn-cancelar {
+  background-color: #6c757d;
+  color: white;
+}
+
+.modal-agregar-barrio-btn-cancelar:hover:not(:disabled) {
+  background-color: #5a6268;
+  transform: translateY(-1px);
+}
+
+/* Botón crear */
+.modal-agregar-barrio-btn-crear {
+  background-color: #28a745;
+  color: white;
+}
+
+.modal-agregar-barrio-btn-crear:hover:not(:disabled) {
+  background-color: #218838;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(40, 167, 69, 0.3);
+}
+
+.modal-agregar-barrio-btn-crear:disabled {
+  background-color: #6c757d;
+}
+
+/* Estado de guardando */
+.modal-agregar-barrio-guardando {
+  background-color: #6c757d !important;
+}
+
+/* ====================================
+   BOTONES DE AGREGAR UBICACIÓN
+   ==================================== */
+
+/* Container de input + botón */
+.domicilio-input-con-boton {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.domicilio-select-flex {
+  flex: 1;
+}
+
+/* Botón agregar ubicación */
+.btn-add-location {
+  padding: 8px 12px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 40px;
+  height: 38px; /* Misma altura que los selects */
+}
+
+.btn-add-location:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.btn-add-location:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+/* Colores específicos para cada tipo */
+.btn-add-provincia {
+  background-color: #28a745;
+  color: white;
+}
+
+.btn-add-provincia:hover:not(:disabled) {
+  background-color: #218838;
+}
+
+.btn-add-localidad {
+  background-color: #007bff;
+  color: white;
+}
+
+.btn-add-localidad:hover:not(:disabled) {
+  background-color: #0056b3;
+}
+
+.btn-add-barrio {
+  background-color: #ffc107;
+  color: black;
+}
+
+.btn-add-barrio:hover:not(:disabled) {
+  background-color: #e0a800;
+}
+
+/* ====================================
+   ANIMACIONES
+   ==================================== */
+
+@keyframes fadeInModal {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideInModal {
+  from {
+    transform: translateY(-20px) scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+/* ====================================
+   RESPONSIVE DESIGN
+   ==================================== */
+
+@media (max-width: 768px) {
+  .modal-agregar-barrio-container {
+    min-width: 300px;
+    max-width: 90%;
+    padding: 15px;
+  }
+
+  .modal-agregar-barrio-botones {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .modal-agregar-barrio-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .domicilio-input-con-boton {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .btn-add-location {
+    width: 100%;
+    height: auto;
+    padding: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .modal-agregar-barrio-overlay {
+    padding: 10px;
+  }
+
+  .modal-agregar-barrio-container {
+    padding: 10px;
+  }
+
+  .modal-agregar-barrio-titulo {
+    font-size: 1.1rem;
+  }
+}
+
+/* ====================================
+   ESTADOS ADICIONALES
+   ==================================== */
+
+/* Estado de error en input */
+.modal-agregar-barrio-input.error {
+  border-color: #dc3545;
+  box-shadow: 0 0 0 2px rgba(220, 53, 69, 0.25);
+}
+
+/* Mensaje de error */
+.modal-agregar-barrio-error {
+  color: #dc3545;
+  font-size: 12px;
+  margin-top: 5px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+/* Loading spinner */
+.modal-agregar-barrio-spinner {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border: 2px solid transparent;
+  border-top: 2px solid currentColor;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}

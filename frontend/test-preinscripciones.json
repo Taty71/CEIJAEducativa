@@ -1,0 +1,92 @@
+[
+  {
+    "id": "HIST001",
+    "timestamp": "2024-11-15T10:30:00.000Z",
+    "fechaRegistro": "15/11/2024",
+    "estado": "PREINSCRIPCION_HISTORICA",
+    "datos": {
+      "nombre": "María Elena",
+      "apellido": "González",
+      "modalidad": "PRESENCIAL",
+      "nivel": "Secundario",
+      "turno": "Mañana",
+      "planAnio": "2025"
+    },
+    "notas": "Preinscripción histórica período Nov 2024 - Feb 2025"
+  },
+  {
+    "id": "HIST002", 
+    "timestamp": "2025-01-20T14:45:00.000Z",
+    "fechaRegistro": "20/01/2025",
+    "estado": "PREINSCRIPCION_HISTORICA",
+    "datos": {
+      "nombre": "Carlos Alberto",
+      "apellido": "Rodríguez",
+      "modalidad": "SEMIPRESENCIAL",
+      "nivel": "Secundario",
+      "turno": "Vespertino",
+      "planAnio": "2025"
+    },
+    "notas": "Preinscripción histórica período Nov 2024 - Feb 2025"
+  },
+  {
+    "id": "HIST003",
+    "timestamp": "2025-02-10T09:15:00.000Z", 
+    "fechaRegistro": "10/02/2025",
+    "estado": "PREINSCRIPCION_HISTORICA",
+    "datos": {
+      "nombre": "Ana Sofía",
+      "apellido": "Martínez",
+      "modalidad": "PRESENCIAL",
+      "nivel": "Secundario", 
+      "turno": "Tarde",
+      "planAnio": "2025"
+    },
+    "notas": "Preinscripción histórica período Nov 2024 - Feb 2025"
+  },
+  {
+    "id": "ACT001",
+    "timestamp": "2025-11-05T11:20:00.000Z",
+    "fechaRegistro": "05/11/2025",
+    "estado": "PREINSCRIPCION_ACTUAL",
+    "datos": {
+      "nombre": "Luis Fernando",
+      "apellido": "Silva",
+      "modalidad": "PRESENCIAL",
+      "nivel": "Secundario",
+      "turno": "Mañana",
+      "planAnio": "2026"
+    },
+    "notas": "Preinscripción actual período Nov 2025 - Feb 2026"
+  },
+  {
+    "id": "ACT002",
+    "timestamp": "2025-12-18T16:30:00.000Z",
+    "fechaRegistro": "18/12/2025",
+    "estado": "PREINSCRIPCION_ACTUAL",
+    "datos": {
+      "nombre": "Patricia",
+      "apellido": "Fernández",
+      "modalidad": "SEMIPRESENCIAL",
+      "nivel": "Secundario",
+      "turno": "Vespertino",
+      "planAnio": "2026"
+    },
+    "notas": "Preinscripción actual período Nov 2025 - Feb 2026"
+  },
+  {
+    "id": "ACT003",
+    "timestamp": "2026-01-25T13:45:00.000Z",
+    "fechaRegistro": "25/01/2026",
+    "estado": "PREINSCRIPCION_ACTUAL",
+    "datos": {
+      "nombre": "Roberto",
+      "apellido": "Herrera",
+      "modalidad": "PRESENCIAL",
+      "nivel": "Secundario",
+      "turno": "Tarde",
+      "planAnio": "2026"
+    },
+    "notas": "Preinscripción actual período Nov 2025 - Feb 2026"
+  }
+]

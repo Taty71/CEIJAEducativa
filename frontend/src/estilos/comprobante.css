@@ -1,0 +1,118 @@
+/* Estilos para el comprobante de inscripción - Formato A5 */
+@page {
+  size: A5;
+  margin: 10mm;
+}
+
+body {
+  font-family: "Roboto Slab", serif;
+  margin: 0;
+  padding: 5px;
+  color: #333;
+  line-height: 1.3;
+  font-size: 11px;
+}
+
+.comprobante-header {
+  text-align: center;
+  border-bottom: 1px solid #2d4177;
+  padding-bottom: 8px;
+  margin-bottom: 12px;
+}
+
+.comprobante-logo {
+  font-size: 16px;
+  font-weight: bold;
+  color: #2d4177;
+  margin-bottom: 3px;
+}
+
+.comprobante-institucion {
+  font-size: 12px;
+  margin-bottom: 2px;
+}
+
+.comprobante-subtitulo {
+  font-size: 10px;
+  color: #666;
+}
+
+.comprobante-info-estudiante {
+  background-color: #f8f9fa;
+  padding: 8px;
+  border-radius: 4px;
+  margin-bottom: 8px;
+}
+
+.comprobante-info-academica {
+  background-color: #e3f2fd;
+  padding: 8px;
+  border-radius: 4px;
+  margin-bottom: 8px;
+}
+
+.comprobante-documentos-faltantes {
+  background-color: #fff3cd;
+  padding: 8px;
+  border-radius: 4px;
+  border-left: 3px solid #ffc107;
+  margin-bottom: 8px;
+}
+
+.comprobante-inscripcion-completa {
+  background-color: #d4edda;
+  padding: 8px;
+  border-radius: 4px;
+  border-left: 3px solid #28a745;
+  margin-bottom: 8px;
+}
+
+.comprobante-estado-activo {
+  color: #28a745;
+  font-weight: bold;
+}
+
+.comprobante-estado-pendiente {
+  color: #ffc107;
+  font-weight: bold;
+}
+
+.comprobante-footer {
+  margin-top: 15px;
+  text-align: center;
+  font-size: 9px;
+  color: #666;
+  border-top: 1px solid #ddd;
+  padding-top: 8px;
+}
+
+.comprobante-h3 {
+  font-size: 12px;
+  margin: 0 0 6px 0;
+  color: #2d4177;
+}
+
+.comprobante-p {
+  margin: 3px 0;
+  font-size: 10px;
+}
+
+.comprobante-ul {
+  margin: 5px 0;
+  padding-left: 15px;
+}
+
+.comprobante-li {
+  margin-bottom: 2px;
+  font-size: 10px;
+}
+
+.comprobante-sin-documentos {
+  color: #28a745;
+  font-style: italic;
+  font-size: 10px;
+}
+
+.comprobante-strong {
+  font-size: 10px;
+}

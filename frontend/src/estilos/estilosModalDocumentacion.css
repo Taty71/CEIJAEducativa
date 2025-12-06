@@ -1,0 +1,61 @@
+/* Estilos para el modal */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-documentacion {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 800px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  overflow-y: auto;
+}
+
+.modal-h3 {
+  text-align: center;
+  font-size: 1.5rem;
+  margin-bottom: 20px;
+}
+
+/* Estilos para la tabla */
+.modal-doc-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.modal-doc-table th,
+.modal-doc-table td {
+  border: 1px solid #ddd;
+  padding: 10px;
+  text-align: center;
+}
+
+.modal-doc-table th {
+  background-color: #f4f4f4;
+  font-weight: bold;
+}
+
+.modal-doc-table tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.modal-doc-table tr:hover {
+  background-color: #e0e7ff;
+}
+
+.sin-archivo {
+  font-style: italic;
+  color: #777;
+}

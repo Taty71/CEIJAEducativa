@@ -1,0 +1,64 @@
+/* Contenedor de botones */
+.consultaOpcContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px; /* Espaciado entre botones */
+  margin-top: 20px; /* Separación del componente AccionesFormulario */
+  margin-top: 48px; /* Agregar margen superior al modal de eliminar */
+  padding: 10px;
+  background-color: #f5f5f5; /* Fondo claro */
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Sombra elegante */
+}
+
+/* Estilos para los botones */
+.consultaOpcButton {
+  padding: 10px 20px;
+  background-color: #2d4177; /* Azul oscuro */
+  color: #ffffff; /* Blanco */
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  text-align: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Sombra para los botones */
+}
+
+/* Hover para los botones */
+.consultaOpcButton:hover {
+  background-color: #87ceeb; /* Azul claro al pasar el mouse */
+  color: #2d4177; /* Azul oscuro para el texto */
+  transform: scale(1.05); /* Efecto de zoom */
+}
+
+/* Ajustes responsivos */
+@media (max-width: 768px) {
+  .consultaOpcContainer {
+    flex-direction: column; /* Cambia a diseño vertical en pantallas pequeñas */
+    gap: 10px; /* Espaciado entre botones */
+  }
+
+  .consultaOpcButton {
+    width: 100%; /* Botones ocupan todo el ancho disponible */
+  }
+}
+
+/* Estilos para títulos de modales */
+.modal-title {
+  color: #495057; /* Gris oscuro del sitio */
+  margin-bottom: 0.5rem;
+  font-size: 1.6rem;
+  font-weight: 600;
+  font-family: "Roboto Slab", serif; /* Letra más elegante */
+  text-shadow: 0 2px 8px rgba(74, 144, 226, 0.2); /* Sombreado azul claro suave */
+  letter-spacing: 0.5px;
+  text-align: center;
+}
+
+.modal-subtitle {
+  color: #6b7280;
+  font-size: 1rem;
+  font-family: "Roboto Slab", serif;
+}

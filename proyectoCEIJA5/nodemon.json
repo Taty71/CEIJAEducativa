@@ -1,0 +1,10 @@
+{
+  "ignore": [
+    "data/**/*",
+    "archivosDocumento/**/*", 
+    "archivosPendientes/**/*",
+    "archivosDocWeb/**/*"
+  ],
+  "verbose": true,
+  "delay": "2500"
+}

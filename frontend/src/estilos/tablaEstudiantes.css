@@ -1,0 +1,33 @@
+/* ========================================
+   ESTILOS ESPECÍFICOS PARA TablaEstudiantes
+   (Complementan a listaEstudiantes.css)
+   ======================================== */
+
+/* Estilos específicos que NO están en listaEstudiantes.css */
+
+/* Wrapper específico para TablaEstudiantes si necesita comportamiento diferente */
+.tabla-wrapper {
+  width: 100%;
+  min-width: 0;
+  overflow-x: auto;
+  overflow-y: auto;
+}
+
+/* Ajustes responsive específicos si son necesarios */
+@media (max-width: 1024px) {
+  .tabla-wrapper {
+    max-height: calc(100vh - 280px);
+  }
+}
+
+@media (max-width: 900px) {
+  .tabla-wrapper {
+    max-height: calc(100vh - 320px);
+  }
+}
+
+@media (max-width: 600px) {
+  .tabla-wrapper {
+    max-height: calc(100vh - 340px);
+  }
+}

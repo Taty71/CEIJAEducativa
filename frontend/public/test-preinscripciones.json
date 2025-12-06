@@ -1,0 +1,82 @@
+[
+  {
+    "id": "actual_nov_2025_1",
+    "timestamp": "2025-11-15T10:30:00.000Z",
+    "fechaRegistro": "15/11/2025",
+    "horaRegistro": "10:30:00",
+    "tipo": "WEB_REGISTRATION",
+    "estado": "PREINSCRIPCION_ACTUAL",
+    "datos": {
+      "nombre": "Ana",
+      "apellido": "García",
+      "dni": "40123456",
+      "cuil": "20-40123456-8", 
+      "email": "ana.garcia@email.com",
+      "telefono": "03511234567",
+      "fechaNacimiento": "1995-03-15",
+      "modalidad": "PRESENCIAL",
+      "planAnio": "2026",
+      "modulos": "Primer Año"
+    }
+  },
+  {
+    "id": "actual_dic_2025_1",
+    "timestamp": "2025-12-05T14:20:00.000Z",
+    "fechaRegistro": "5/12/2025",
+    "horaRegistro": "14:20:00",
+    "tipo": "WEB_REGISTRATION",
+    "estado": "PREINSCRIPCION_ACTUAL",
+    "datos": {
+      "nombre": "Carlos",
+      "apellido": "López",
+      "dni": "35987654",
+      "cuil": "20-35987654-2",
+      "email": "carlos.lopez@email.com",
+      "telefono": "03517890123",
+      "fechaNacimiento": "1988-07-22",
+      "modalidad": "SEMIPRESENCIAL",
+      "planAnio": "2026",
+      "modulos": "Plan A"
+    }
+  },
+  {
+    "id": "actual_ene_2026_1",
+    "timestamp": "2026-01-20T09:15:00.000Z",
+    "fechaRegistro": "20/1/2026",
+    "horaRegistro": "09:15:00",
+    "tipo": "WEB_REGISTRATION",
+    "estado": "PREINSCRIPCION_ACTUAL",
+    "datos": {
+      "nombre": "María",
+      "apellido": "Rodríguez",
+      "dni": "42567890",
+      "cuil": "27-42567890-1",
+      "email": "maria.rodriguez@email.com",
+      "telefono": "03514567890",
+      "fechaNacimiento": "1998-12-10",
+      "modalidad": "SEMIPRESENCIAL",
+      "planAnio": "2026",
+      "modulos": "Plan B"
+    }
+  },
+  {
+    "id": "actual_feb_2026_1",
+    "timestamp": "2026-02-10T16:45:00.000Z",
+    "fechaRegistro": "10/2/2026",
+    "horaRegistro": "16:45:00",
+    "tipo": "WEB_REGISTRATION",
+    "estado": "PREINSCRIPCION_ACTUAL",
+    "datos": {
+      "nombre": "Pedro",
+      "apellido": "Martínez",
+      "dni": "38456789",
+      "cuil": "20-38456789-5",
+      "email": "pedro.martinez@email.com",
+      "telefono": "03519876543",
+      "fechaNacimiento": "1992-05-08",
+      "modalidad": "PRESENCIAL",
+      "planAnio": "2026",
+      "modulos": "Segundo Año"
+    }
+  }
+]

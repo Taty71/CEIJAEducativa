@@ -1,0 +1,270 @@
+/* Contenedor principal del buscador DNI */
+.buscador-dni-container {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 10px;
+  margin: 6px 0;
+  padding: 0 8px;
+}
+
+/* Grupo de input y botón de búsqueda */
+.buscador-dni-input-group {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  background: white;
+  border: 2px solid #2d4177;
+  border-radius: 8px;
+  padding: 0;
+  transition: all 0.3s ease;
+  position: relative; /* Para posicionamiento absoluto de la lupa */
+  min-width: 260px;
+  max-width: 680px;
+  width: 100%;
+  box-shadow: 0 2px 4px rgba(45, 65, 119, 0.06);
+  height: 32px;
+}
+
+/* wrapper provided by PanelControles to align buscador inside the controls row */
+.buscador-wrapper {
+  /* place the buscador next to the controls; allow it to expand leftwards */
+  margin-left: 12px;
+  width: 100%;
+  max-width: 680px;
+  flex: 1 1 auto;
+}
+
+.buscador-dni-input-group:focus-within {
+  box-shadow: 0 0 0 3px rgba(15, 24, 50, 0.15);
+  border-color: #4a69bd;
+  transform: translateY(-1px);
+}
+
+/* Input del DNI */
+.buscador-dni-input {
+  border: none;
+  outline: none;
+  padding: 0 46px 0 12px; /* Más padding derecho para la lupa */
+  font-size: 0.85rem;
+  width: 100%;
+  background: transparent;
+  color: #333;
+  font-family: "Roboto Slab", serif;
+  letter-spacing: 0.5px;
+  height: 32px;
+  box-sizing: border-box;
+}
+
+.buscador-dni-input::placeholder {
+  color: #666;
+  font-style: italic;
+  font-size: 0.9rem;
+}
+
+.buscador-dni-input:disabled {
+  background-color: #f8f9fa;
+  color: #323538;
+  cursor: not-allowed;
+}
+
+/* Botón de búsqueda */
+.btn-buscar-dni {
+  background: transparent;
+  color: #2d4177;
+  border: none;
+  padding: 0;
+  border-radius: 6px !important;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 32px;
+  width: 22px !important;
+  height: 22px !important;
+  box-sizing: border-box;
+  position: absolute;
+  right: 8px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  z-index: 6 !important;
+  background: rgba(45, 65, 119, 0.03) !important;
+}
+
+.btn-buscar-dni:hover:not(:disabled) {
+  color: #2d4177;
+  background: rgba(45, 65, 119, 0.05);
+}
+
+.btn-buscar-dni:active:not(:disabled) {
+  color: #1e2e5a;
+  transform: scale(0.9);
+}
+
+.btn-buscar-dni:disabled {
+  background: #e9ecef;
+  color: #6c757d;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.btn-buscar-dni svg {
+  width: 12px !important;
+  height: 12px !important;
+}
+
+/* Spinner de carga */
+.loading-spinner {
+  display: inline-block;
+  animation: spin 1s linear infinite;
+  font-size: 1.1rem;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Botón de limpiar búsqueda */
+.btn-limpiar-busqueda-dni {
+  background: linear-gradient(135deg, #6c757d, #495057);
+  color: white;
+  border: none;
+  padding: 0 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 2px 6px rgba(108, 117, 125, 0.18);
+  white-space: nowrap;
+  height: 40px;
+}
+
+.btn-limpiar-busqueda-dni:hover:not(:disabled) {
+  background: linear-gradient(135deg, #5a6268, #343a40);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(108, 117, 125, 0.3);
+}
+
+.btn-limpiar-busqueda-dni:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: 0 2px 6px rgba(108, 117, 125, 0.2);
+}
+
+.btn-limpiar-busqueda-dni:disabled {
+  background: #e9ecef;
+  color: #6c757d;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Estados de enfoque y hover mejorados */
+.buscador-dni-input:focus {
+  box-shadow: none; /* El box-shadow se maneja en el contenedor */
+}
+
+/* Animación suave para cambios de estado */
+.buscador-dni-container * {
+  transition: all 0.3s ease;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .buscador-dni-container {
+    flex-direction: column;
+    gap: 12px;
+    align-items: center;
+    margin: 20px 0;
+  }
+
+  .buscador-dni-input-group {
+    max-width: 320px;
+    width: 100%;
+  }
+
+  .buscador-dni-input {
+    font-size: 0.9rem;
+    padding: 10px 14px;
+  }
+
+  .btn-buscar-dni {
+    min-width: 48px;
+    height: 44px;
+    padding: 10px 14px;
+    font-size: 1.1rem;
+  }
+
+  .btn-limpiar-busqueda-dni {
+    width: 100%;
+    max-width: 220px;
+    justify-content: center;
+    padding: 12px 18px;
+  }
+}
+
+@media (max-width: 480px) {
+  .buscador-dni-container {
+    padding: 0 15px;
+    margin: 15px 0;
+  }
+
+  .buscador-dni-input-group {
+    max-width: 280px;
+  }
+
+  .buscador-dni-input {
+    font-size: 0.85rem;
+    padding: 10px 12px;
+  }
+
+  .buscador-dni-input::placeholder {
+    font-size: 0.8rem;
+  }
+
+  .btn-buscar-dni {
+    min-width: 44px;
+    height: 42px;
+    padding: 10px 12px;
+    font-size: 1rem;
+  }
+
+  .btn-limpiar-busqueda-dni {
+    font-size: 0.85rem;
+    padding: 10px 16px;
+  }
+}
+
+/* Efecto de focus mejorado para accesibilidad */
+.buscador-dni-input:focus,
+.btn-buscar-dni:focus,
+.btn-limpiar-busqueda-dni:focus {
+  outline: 2px solid #74b9ff;
+  outline-offset: 2px;
+}
+
+/* Estados de error (para futuras mejoras) */
+.buscador-dni-input-group.error {
+  border-color: #dc3545;
+  box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.15);
+}
+
+.buscador-dni-input-group.error .buscador-dni-input {
+  color: #dc3545;
+}
+
+/* Estados de éxito (para futuras mejoras) */
+.buscador-dni-input-group.success {
+  border-color: #28a745;
+  box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.15);
+}

@@ -1,0 +1,21 @@
+/* Estilo para el botón de volver */
+.volver-button {
+  display: flex;
+  align-items: center; /* Centra el contenido verticalmente */
+  justify-content: center; /* Centra el contenido horizontalmente */
+  padding: 6px 6px; /* Ajusta el tamaño del botón */
+  font-size: 1rem; /* Texto más grande */
+  width: 30px;
+  height: 30px;
+  border: none;
+  border-radius: 5px;
+  background-color: #1976d2; /* Azul */
+  color: #fff;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.volver-button:hover {
+  background-color: #1565c0; /* Azul más oscuro */
+  transform: scale(1.05); /* Efecto de zoom */
+}

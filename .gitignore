@@ -1,0 +1,26 @@
+# Node
+node_modules/
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+node_modules/
+.vite/
+
+
+
+
+# Build Vite/React
+dist/
+build/
+.vite/
+
+# Backend uploads (solo los archivos grandes, NO toda la carpeta)
+proyectoCEIJA5/archivosDocumento/*
+proyectoCEIJA5/archivosPendientes/*
+proyectoCEIJA5/archivosDocWeb/*
+
+# Logs
+*.log
+
+# Environment variables
+.env

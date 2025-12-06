@@ -1,0 +1,70 @@
+{
+  "encuestas": [
+    {
+      "id": 1764735011093,
+      "dni_estudiante": "",
+      "modalidad": "Semipresencial",
+      "fecha": "2025-12-03T04:10:11.083Z",
+      "respuestas": {
+        "facilidad_uso": 4,
+        "claridad_informacion": 3,
+        "tiempo_completado": "5-10 minutos",
+        "problemas_encontrados": "Campos obligatorios poco claros",
+        "sugerencias": "Dar aviso fecha a presentarse"
+      },
+      "completada": true,
+      "created_at": "2025-12-03T04:10:11.093Z"
+    },
+    {
+      "id": 1764777437364,
+      "dni_estudiante": "",
+      "modalidad": "Semipresencial",
+      "fecha": "2025-12-03T15:57:16.944Z",
+      "respuestas": {
+        "facilidad_uso": 3,
+        "claridad_informacion": 4,
+        "tiempo_completado": "5-10 minutos",
+        "problemas_encontrados": "Campos obligatorios poco claros",
+        "sugerencias": "El área de estudio no está bien aclarado"
+      },
+      "completada": true,
+      "created_at": "2025-12-03T15:57:17.364Z"
+    },
+    {
+      "id": 1764806274577,
+      "dni_estudiante": "",
+      "modalidad": "Presencial",
+      "fecha": "2025-12-03T23:57:54.569Z",
+      "respuestas": {
+        "facilidad_uso": 3,
+        "claridad_informacion": 3,
+        "tiempo_completado": "5-10 minutos",
+        "problemas_encontrados": "Errores de validación confusos",
+        "sugerencias": "Localidades cargar solo La Calera y alrededores"
+      },
+      "completada": true,
+      "created_at": "2025-12-03T23:57:54.577Z"
+    },
+    {
+      "id": 1764899476629,
+      "dni_estudiante": "",
+      "modalidad": "Presencial",
+      "fecha": "2025-12-05T01:51:16.208Z",
+      "respuestas": {
+        "facilidad_uso": 3,
+        "claridad_informacion": 3,
+        "tiempo_completado": "5-10 minutos",
+        "problemas_encontrados": "Campos obligatorios poco claros",
+        "sugerencias": "Nro de calle no deja cargar s/n"
+      },
+      "completada": true,
+      "created_at": "2025-12-05T01:51:16.629Z"
+    }
+  ],
+  "estadisticas": {
+    "total": 4,
+    "promedio_facilidad": "3.25",
+    "promedio_claridad": "3.25",
+    "ultima_actualizacion": "2025-12-05T01:51:16.629Z"
+  }
+}

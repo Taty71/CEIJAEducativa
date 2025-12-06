@@ -1,0 +1,235 @@
+/* Estilos generales para el modal */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.75);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+}
+
+.modal-content {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  max-width: 500px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  animation: modalFadeIn 0.3s ease;
+}
+
+.modal-content-large {
+  max-width: 900px;
+  width: 90%;
+  max-height: 85vh;
+  overflow-y: auto;
+}
+
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.login-box {
+  padding: 2.5rem;
+  background: linear-gradient(135deg, #f8f8fc 0%, #ffffff 100%);
+  border-radius: 16px;
+  position: relative;
+}
+
+/* Unificación de tipografía y colores en modales */
+.login-box,
+.login-box * {
+  font-family: "Roboto Slab", serif;
+}
+
+/* Labels unificadas con color azul acento */
+.login-box label {
+  color: var(--color-acento);
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin-bottom: 0.4rem;
+  display: block;
+}
+
+/* Inputs con placeholders grises */
+.login-box input,
+.login-box select {
+  font-size: 0.95rem;
+  font-family: "Roboto Slab", serif;
+}
+
+.login-box input::placeholder {
+  color: var(--color-texto-secundario);
+  font-size: 0.95rem;
+  font-family: "Roboto Slab", serif;
+}
+
+/* Botón de envío */
+.login-box button[type="submit"] {
+  font-family: "Roboto Slab", serif;
+  font-size: 0.95rem;
+}
+
+/* Texto de registro/login inferior */
+.register-text {
+  text-align: center;
+  margin-top: 1.5rem;
+  color: var(--color-texto-secundario);
+  font-size: 0.95rem;
+  font-family: "Roboto Slab", serif;
+}
+
+.register-link {
+  color: var(--color-texto-secundario);
+  text-decoration: none;
+  font-weight: 600;
+  margin-left: 0.3rem;
+  transition: color 0.2s;
+  font-family: "Roboto Slab", serif;
+  font-size: 0.95rem;
+}
+
+.register-link:hover {
+  color: var(--color-acento);
+  text-decoration: underline;
+}
+
+/* Grid de 2 columnas para registro */
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+/* Wrapper para select */
+.form-select-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  grid-column: 1 / -1;
+}
+
+.form-select-wrapper label {
+  color: var(--color-acento);
+  font-weight: 600;
+  font-size: 0.9rem;
+  font-family: "Roboto Slab", serif;
+}
+
+.form-select {
+  font-family: "Roboto Slab", serif;
+  font-size: 0.95rem;
+  color: var(--color-texto-principal);
+}
+
+/* Sección del captcha */
+.captcha-section {
+  margin: 1.25rem 0;
+  padding: 1.25rem;
+  background: white;
+  border-radius: 12px;
+  border: 2px solid var(--color-acento-claro);
+  box-shadow: 0 2px 8px rgba(45, 65, 119, 0.08);
+}
+
+/* Contenedor de botones */
+.button-container {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 1.25rem;
+}
+
+/* Mensajes de error */
+.error-message {
+  font-family: "Roboto Slab", serif;
+  color: #dc3545;
+  font-size: 0.85rem;
+  margin-top: 0.3rem;
+  display: block;
+}
+
+/* Botón de retroceso */
+.back-button {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: var(--color-acento) !important;
+  color: white !important;
+  border: 2px solid var(--color-acento-claro) !important;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 1.2rem;
+  width: 32px;
+  height: 32px;
+  min-width: 32px;
+  min-height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  transition: all 0.3s ease;
+  z-index: 10;
+  box-shadow: 0 2px 8px rgba(45, 65, 119, 0.2);
+}
+
+.back-button:hover {
+  background: var(--color-header) !important;
+  color: white !important;
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(45, 65, 119, 0.3);
+}
+
+.back-button:active {
+  transform: scale(0.95);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+
+  .modal-content-large {
+    max-width: 95%;
+  }
+
+  .login-box {
+    padding: 1.5rem;
+  }
+}
+
+/* Scrollbar personalizado */
+.modal-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.modal-content::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.modal-content::-webkit-scrollbar-thumb {
+  background: var(--color-acento);
+  border-radius: 10px;
+}
+
+.modal-content::-webkit-scrollbar-thumb:hover {
+  background: var(--color-header);
+}

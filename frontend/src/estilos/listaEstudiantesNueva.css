@@ -1,0 +1,1717 @@
+/* Floating close button at top right of modal header */
+.cerrar-button-flotante {
+  position: absolute;
+  /* move the close button higher so it sits above the header controls */
+  top: 8px;
+  right: 18px;
+  z-index: 100;
+  /* wrapper should be transparent so the inner CloseButton defines the visible circle */
+  background: transparent;
+  color: inherit;
+  border: none;
+  border-radius: 0;
+  padding: 0;
+  width: auto;
+  height: auto;
+  display: block;
+  cursor: default;
+  transition: none;
+}
+
+.cerrar-button-flotante:hover {
+  /* keep hover handled by the inner button */
+  background: transparent;
+  transform: none;
+}
+
+/* Prevent any pseudo-elements from creating rings or extra shapes */
+.cerrar-button-flotante::before,
+.cerrar-button-flotante::after {
+  display: none !important;
+}
+
+/* Force close button color inside flotante wrapper */
+.cerrar-button-flotante .cerrar-button {
+  background: #2d4177 !important;
+  color: white !important;
+  border: 1px solid #1a2654 !important;
+}
+
+.cerrar-button-flotante .cerrar-button:hover {
+  background: #3d5187 !important;
+  color: white !important;
+}
+
+.lista-header-superior {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  /* title row above controls */
+  align-items: stretch;
+  gap: 8px;
+  margin-bottom: 18px;
+}
+
+.botones-navegacion {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+  margin-top: 0;
+}
+
+/* Keep the buttons group aligned to the left so the search input can grow to the left */
+.botones-navegacion {
+  margin-right: auto;
+}
+
+.header-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.btn-ver-reportes,
+.btn-filtro-small,
+.btn-filtro,
+.btn-limpiar-busqueda,
+.btn-limpiar-busqueda-dni {
+  /* ESTILOS UNIFICADOS PROFESIONALES */
+  min-width: 100px;
+  height: 32px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  padding: 0 12px;
+  border-radius: 6px;
+  border: 1px solid #dee2e6;
+  background: white;
+  color: #495057;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  letter-spacing: 0.3px;
+  text-transform: none;
+}
+
+.btn-limpiar-busqueda {
+  margin-left: 8px;
+}
+
+/* Botón Ver Reportes - estilo distintivo pero coherente */
+.btn-ver-reportes {
+  background: #2d4177;
+  color: white;
+  border-color: #2d4177;
+  font-weight: 600;
+}
+
+.btn-ver-reportes:hover {
+  background: #1e2e5a;
+  border-color: #1e2e5a;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 6px rgba(45, 65, 119, 0.25);
+}
+
+/* Estilos mejorados para Lista de Estudiantes */
+
+.lista-estudiantes-container {
+  padding: 24px;
+  /* Allow wider container for larger screens */
+  /* make the list container wider by default so content has more room */
+  max-width: 100%;
+  width: calc(100% - 40px);
+  margin: 0 auto;
+  background: #f8f9fa;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
+}
+
+/* ===================== PAGINACIÓN ===================== */
+.seccion-paginacion {
+  background: white;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.paginacion-controles {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 8px;
+  min-height: 0;
+}
+
+.btn-paginacion {
+  height: 32px;
+  padding: 0 12px;
+  border: 1px solid #2d4177;
+  border-radius: 6px;
+  background: white;
+  color: #2d4177;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  min-width: 80px;
+}
+
+.btn-paginacion:hover:not(:disabled) {
+  background: #2d4177;
+  color: white;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(45, 65, 119, 0.2);
+}
+
+.btn-paginacion:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin: 18px 0 8px 0;
+}
+
+.pagination-btn {
+  padding: 8px 16px;
+  border: 1px solid #007bff;
+  border-radius: 6px;
+  background: white;
+  color: #007bff;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.pagination-btn:hover:not(:disabled) {
+  background: #007bff;
+  color: white;
+}
+
+.pagination-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.pagination-info {
+  font-size: 1rem;
+  color: #495057;
+  font-weight: 500;
+}
+
+/* Allow the main content wrapper to expand wider so inner containers can fill available space */
+.contenido-principal {
+  max-width: 100%;
+  width: 100%;
+  padding-left: 12px;
+  padding-right: 12px;
+  box-sizing: border-box;
+}
+
+/* Row that contains the title and the close button */
+.fila-titulo-cerrar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 18px 22px 10px 22px;
+  border-bottom: 1px solid rgba(14, 34, 58, 0.06);
+  background: transparent;
+}
+
+.titulo-left-spacer,
+.titulo-right-spacer {
+  width: 44px;
+  /* reserve space equal to close button to keep title visually centered */
+  min-width: 44px;
+}
+
+.titulo-close {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+/* Make sure the close button style matches floating style but inside row */
+.modal-header-buttons-uniforme .boton-small,
+.titulo-close .boton-small {
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border-radius: 50%;
+}
+
+/* Centered title style */
+.lista-titulo {
+  margin: 0;
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #213243;
+  text-align: center;
+  line-height: 1.1;
+}
+
+@media (max-width: 900px) {
+  .lista-titulo {
+    font-size: 1.4rem;
+  }
+
+  .titulo-left-spacer,
+  .titulo-right-spacer {
+    width: 36px;
+    min-width: 36px;
+  }
+}
+
+/* Panel de controles simplificado */
+.panel-controles {
+  background: transparent;
+  border-radius: 6px;
+  padding: 0;
+  margin: 0;
+  box-shadow: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: nowrap;
+}
+
+.grupo-filtros-estado,
+.grupo-select-estado,
+.grupo-buscador,
+.grupo-reportes {
+  display: flex;
+  align-items: center;
+}
+
+.grupo-filtros-estado {
+  flex: 0 0 auto;
+}
+
+.grupo-select-estado {
+  flex: 0 0 200px;
+}
+
+.grupo-buscador {
+  /* allow the buscador to grow so the input can expand leftwards when needed */
+  flex: 1 1 auto;
+  /* Increase minimum and maximum widths so the search input isn't cut */
+  min-width: 260px;
+  max-width: 680px;
+}
+
+/* Controls row styling to match provided mockup */
+.controls-row {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin: 8px 0 12px 0;
+}
+
+.controls-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.controls-right {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+/* Smaller, compact filter buttons - estilos ya definidos arriba */
+
+.btn-filtro-small:hover {
+  background: #f8f9fa;
+  border-color: #2d4177;
+  color: #2d4177;
+}
+
+.btn-filtro-small.activo {
+  background: #2d4177;
+  color: white;
+  border-color: #2d4177;
+}
+
+/* Place buscador to the right aligned */
+.controls-right .buscador-dni-container {
+  margin: 0;
+}
+
+.controls-right .buscador-dni-input-group {
+  max-width: 520px;
+  min-width: 320px;
+}
+
+/* Ensure the buscador input fills available space inside its group */
+.controls-right .buscador-dni-input-group .buscador-dni-input {
+  width: 100%;
+}
+
+.grupo-reportes {
+  flex: 0 0 auto;
+}
+
+.botones-filtro,
+.botones-reportes {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* Botones de filtro - hover y estados */
+.btn-filtro:hover {
+  background: #f8f9fa;
+  border-color: #2d4177;
+  color: #2d4177;
+}
+
+.btn-filtro.activo {
+  background: #2d4177;
+  color: white;
+  border-color: #2d4177;
+  box-shadow: 0 1px 3px rgba(45, 65, 119, 0.3);
+}
+
+.btn-filtro:disabled {
+  background: #f8f9fa;
+  color: #adb5bd;
+  border-color: #e9ecef;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.select-estado-inscripcion {
+  height: 32px;
+  padding: 0 12px;
+  border: 1px solid #dee2e6;
+  border-radius: 6px;
+  background: white;
+  color: #495057;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.select-estado-inscripcion:hover {
+  border-color: #2d4177;
+}
+
+.select-estado-inscripcion:focus {
+  outline: none;
+  border-color: #2d4177;
+  box-shadow: 0 0 0 2px rgba(45, 65, 119, 0.1);
+}
+
+.btn-reporte {
+  padding: 8px 16px;
+  border: 1px solid #28a745;
+  border-radius: 6px;
+  background: white;
+  color: #28a745;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.btn-reporte:hover {
+  background: #28a745;
+  color: white;
+}
+
+.btn-reporte:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-reporte-avanzado {
+  background: #17a2b8;
+  border-color: #17a2b8;
+  color: white;
+}
+
+.btn-reporte-avanzado:hover:not(:disabled) {
+  background: #138496;
+  border-color: #117a8b;
+}
+
+.btn-ir-reportes {
+  background: #6f42c1;
+  border-color: #6f42c1;
+  color: white;
+}
+
+.btn-ir-reportes:hover:not(:disabled) {
+  background: #5a32a3;
+  border-color: #512e90;
+}
+
+/* Botón principal de reportes */
+.btn-reportes-principal {
+  padding: 10px 20px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+}
+
+.btn-reportes-principal:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.btn-reportes-principal:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Modal de Reportes */
+.modal-reportes-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+}
+
+.modal-reportes-contenido {
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+  border-radius: 20px;
+  overflow-y: auto;
+  max-width: 800px;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1), 0 10px 20px rgba(0, 0, 0, 0.05),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  animation: modalAppear 0.3s ease-out;
+}
+
+@keyframes modalAppear {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(-20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.modal-reportes-header {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 15px;
+  padding: 20px 24px;
+  border-bottom: 1px solid #e9ecef;
+  background: linear-gradient(135deg, #2d4177 0%, #4a6bb8 100%);
+  color: white;
+  border-radius: 20px 20px 0 0;
+}
+
+.modal-reportes-header h3 {
+  margin: 0;
+  font-size: 1.4rem;
+  font-weight: 600;
+  flex: 1;
+}
+
+.btn-cerrar-modal {
+  background: rgba(69, 68, 68, 0.418);
+  color: rgb(96, 94, 94);
+  border: none;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  font-size: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s ease;
+}
+
+.btn-cerrar-modal:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.modal-reportes-body {
+  padding: 24px;
+}
+
+/* Improve modal UX: allow modal content to size with viewport and let overlay be the scroll container.
+   Make message textarea expand to fit content (auto-resize via JS) and avoid internal small scrollbar. */
+.modal-reportes-contenido {
+  display: flex;
+  flex-direction: column;
+  max-height: 92vh;
+}
+
+.modal-reportes-body {
+  flex: 1 1 auto;
+  overflow: visible;
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-reportes-body textarea {
+  width: 100%;
+  box-sizing: border-box;
+  resize: vertical;
+  overflow: hidden;
+  /* textarea is auto-resized by JS */
+  min-height: 120px;
+}
+
+.reportes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 20px;
+}
+
+.reporte-card {
+  background: #f8f9fa;
+  border-radius: 8px;
+  padding: 20px;
+  text-align: center;
+  transition: all 0.3s ease;
+  border: 1px solid #e9ecef;
+}
+
+.reporte-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  background: white;
+}
+
+.reporte-icon {
+  font-size: 2.5rem;
+  margin-bottom: 12px;
+}
+
+.reporte-card h4 {
+  margin: 0 0 8px 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.reporte-card p {
+  margin: 0 0 16px 0;
+  font-size: 0.9rem;
+  color: #6c757d;
+  line-height: 1.4;
+}
+
+.btn-reporte-accion {
+  width: 100%;
+  padding: 12px 18px;
+  background: linear-gradient(145deg, #3d5aa3, #2d4177);
+  color: #fff;
+  border: none;
+  border-radius: 15px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 8px 16px rgba(45, 65, 119, 0.18), 0 4px 8px rgba(0, 0, 0, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.18);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-reporte-accion:hover:not(:disabled) {
+  background: linear-gradient(145deg, #4a6bb8, #3d5aa3);
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 12px 24px rgba(45, 65, 119, 0.22),
+    0 8px 16px rgba(0, 0, 0, 0.13), inset 0 1px 0 rgba(255, 255, 255, 0.22);
+}
+
+.btn-reporte-accion:disabled {
+  background: #bfc9d9;
+  color: #f4f4f4;
+  cursor: not-allowed;
+}
+
+/* Responsive para controles */
+@media (max-width: 1200px) {
+  .panel-controles {
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .grupo-filtros-estado,
+  .grupo-select-estado,
+  .grupo-buscador,
+  .grupo-reportes {
+    justify-content: center;
+  }
+
+  .grupo-select-estado {
+    flex: none;
+  }
+
+  .grupo-buscador {
+    flex: none;
+    min-width: auto;
+  }
+}
+
+@media (max-width: 768px) {
+  .reportes-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .modal-reportes-contenido {
+    width: 95%;
+    margin: 10px;
+  }
+}
+
+/* Mensajes de error */
+.error-message {
+  background: #f8d7da;
+  border: 1px solid #f5c6cb;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 20px;
+}
+
+/*.error-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.error-icon {
+  font-size: 1.2rem;
+}
+
+.error-content p {
+  flex: 1;
+  margin: 0;
+  color: #721c24;
+}*/
+
+.btn-reintentar {
+  padding: 6px 12px;
+  background: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.btn-reintentar:hover {
+  background: #c82333;
+}
+
+/* Sección de tabla */
+.seccion-tabla {
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  margin-bottom: 20px;
+}
+
+.tabla-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  background: #f8f9fa;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.tabla-stats {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 0.9rem;
+  color: #6c757d;
+}
+
+.contador-registros {
+  font-weight: 600;
+  color: #495057;
+}
+
+.info-paginacion {
+  color: #6c757d;
+}
+
+/* Tabla */
+.tabla-container {
+  overflow-x: auto;
+}
+
+/* ESTILOS DE TABLA MOVIDOS A tablaEstudiantes.css */
+
+/* ESTILOS DE TABLA MOVIDOS A tablaEstudiantes.css */
+
+/* ESTILOS DE FILAS MOVIDOS A tablaEstudiantes.css */
+
+/* ESTILOS DE COLUMNAS MOVIDOS A tablaEstudiantes.css */
+
+/* ESTILOS DE TH COLUMNAS MOVIDOS A tablaEstudiantes.css */
+
+/* MEDIA QUERIES DE TABLA MOVIDAS A tablaEstudiantes.css */
+
+/* Elementos de tabla */
+.id-badge {
+  background: #6c757d;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 12px;
+  /* a bit larger to match increased table font */
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.nombre-completo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.nombre {
+  color: #2c3e50;
+  /* slightly larger for readability */
+  font-size: 14.75px;
+}
+
+.apellido {
+  font-weight: 600;
+  color: #33383c;
+  /* slightly larger for readability */
+  font-size: 16px;
+}
+
+.link-email {
+  color: #007bff;
+  text-decoration: none;
+}
+
+.link-email:hover {
+  text-decoration: underline;
+}
+
+.sin-email {
+  color: #6c757d;
+  font-style: italic;
+}
+
+.badge-estado {
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.badge-estado.activo {
+  background: #d4edda;
+  color: #155724;
+}
+
+.badge-estado.inactivo {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+.modalidad-badge {
+  background: #e3f2fd;
+  color: #0d47a1;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+/* Modalidad más delicada y profesional */
+.modalidad-tag {
+  background: linear-gradient(135deg, #f8f9ff 0%, #e8f0ff 100%);
+  color: #4a5568;
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 0.7rem;
+  font-weight: 400;
+  border: 1px solid #e2e8f4;
+  display: inline-block;
+  letter-spacing: 0.3px;
+  transition: all 0.2s ease;
+}
+
+.modalidad-tag:hover {
+  background: linear-gradient(135deg, #e8f0ff 0%, #d8e8ff 100%);
+  border-color: #c8d8f0;
+}
+
+/* Modalidad delicada en resumen */
+.modalidad-delicada {
+  font-size: 0.85rem !important;
+  font-weight: 400 !important;
+  color: #6b7280 !important;
+  text-transform: capitalize;
+}
+
+/* Estilos para componentes pequeños - botones ya unificados arriba */
+
+/* Paginación profesional compacta */
+.seccion-paginacion-profesional {
+  margin: 8px 0 6px 0;
+  display: flex;
+  justify-content: center;
+}
+
+.paginacion-contenedor {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: white;
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid #e9ecef;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+}
+
+.btn-paginacion-small {
+  padding: 6px 8px;
+  font-size: 0.85rem;
+  border-radius: 6px;
+  border: 1px solid #dee2e6;
+  background: white;
+  color: #495057;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  min-width: 72px;
+  height: 34px;
+}
+
+.btn-paginacion-small:hover:not(:disabled) {
+  background: #007bff;
+  color: white;
+  border-color: #007bff;
+}
+
+.btn-paginacion-small:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.info-paginacion-compacta {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 80px;
+}
+
+.pagina-info {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #495057;
+}
+
+.registros-info {
+  font-size: 0.75rem;
+  color: #6c757d;
+}
+
+/* Resumen final compacto (compacto y más discreto) */
+.resumen-final-compacto {
+  margin: 5px 0 6px 0;
+  padding: 5px 8px;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border-radius: 8px;
+  border: 1px solid #dee2e6;
+}
+
+/* Fin de resumen-final-compacto */
+
+.estadisticas-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.stat-card {
+  background: white;
+  padding: 8px 10px;
+  border-radius: 6px;
+  text-align: center;
+  border: 1px solid #e9ecef;
+  transition: transform 0.15s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.08);
+}
+
+.stat-card.activos {
+  border-left: 4px solid #28a745;
+}
+
+.stat-card.inactivos {
+  border-left: 4px solid #dc3545;
+}
+
+.stat-numero {
+  display: block;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #495057;
+  margin-bottom: 4px;
+}
+
+.stat-etiqueta {
+  font-size: 0.75rem;
+  color: #6c757d;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+
+/* Mejorar dropdown de estados */
+.grupo-select-estado {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 160px;
+}
+
+.select-label {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #495057;
+  margin: 0;
+}
+
+/* Select estado - estilos ya unificados arriba */
+
+.plan-info {
+  color: #495057;
+  font-size: 0.85rem;
+}
+
+.badge-inscripcion {
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  white-space: nowrap;
+  background: #e9ecef;
+  color: #495057;
+}
+
+.fecha-inscripcion {
+  color: #6c757d;
+  font-size: 0.85rem;
+}
+
+.btn-accion-comprobante {
+  padding: 6px 12px;
+  background: #17a2b8;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.8rem;
+  transition: background 0.2s ease;
+}
+
+.btn-accion-comprobante:hover {
+  background: #138496;
+}
+
+/* Unified professional action button style for table actions */
+.accion-boton,
+.btn-accion-comprobante,
+.btn-accion-ver,
+.btn-accion-notificar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  /* smaller action buttons */
+  min-width: 34px;
+  width: auto;
+  height: 34px;
+  padding: 4px 6px;
+  font-size: 0.86rem;
+  font-weight: 600;
+  border-radius: 6px;
+  box-shadow: 0 3px 6px rgba(39, 83, 142, 0.04);
+  transition: transform 0.12s ease, box-shadow 0.12s ease, filter 0.12s ease;
+  border: 1px solid transparent;
+  position: relative;
+  flex: 0 0 auto;
+}
+
+.accion-boton:active,
+.btn-accion-comprobante:active,
+.btn-accion-ver:active,
+.btn-accion-notificar:active {
+  transform: translateY(1px);
+}
+
+.btn-accion-ver {
+  background: #17a2b8;
+  /* match comprobante by default but can be differentiated */
+  color: white;
+  border: none;
+}
+
+.btn-accion-ver:hover {
+  background: #138496;
+}
+
+.btn-accion-comprobante {
+  background: linear-gradient(135deg, #3d8db3 0%, #2a7f9b 100%);
+  color: #fff;
+  border: none;
+}
+
+/* Tooltip for action buttons (custom, better styling than default title) */
+
+.accion-boton[data-tooltip]:hover::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 8px);
+  /* shift tooltip box left so the arrow can sit left of the icon */
+  transform: translateX(calc(-50% - 18px));
+  /* dark blue tooltip background */
+  background: #0b2545;
+  color: #fff;
+  padding: 6px 8px;
+  font-size: 0.88rem;
+  border-radius: 6px;
+  white-space: nowrap;
+  box-shadow: 0 6px 18px rgba(11, 37, 69, 0.18);
+  z-index: 50;
+}
+
+.accion-boton[data-tooltip]::before {
+  /* arrow removed: keep pseudo-element but hide it so only tooltip box shows */
+  content: "";
+  display: none;
+}
+
+/* RESPONSIVE TABLA MOVIDO A tablaEstudiantes.css */
+
+/* Increase icon size on desktop/tablet for better visibility */
+.accion-boton .accion-ico {
+  font-size: 1rem;
+}
+
+/* Give Comprobante icon a bit more emphasis */
+.btn-accion-comprobante .accion-ico {
+  font-size: 1.45rem;
+}
+
+.btn-accion-notificar.normal {
+  background: linear-gradient(90deg, #ffdca6 0%, #ffc451 100%);
+  color: #4a2f00;
+  border-color: rgba(255, 197, 80, 0.2);
+}
+
+.btn-accion-notificar.inactivo {
+  background: linear-gradient(90deg, #ffd6d6 0%, #ff9b9b 100%);
+  color: #6b0b0b;
+  border-color: rgba(255, 123, 123, 0.12);
+}
+
+.acciones-contenedor {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 2px;
+  flex-wrap: nowrap;
+  white-space: nowrap;
+  overflow-x: visible;
+  padding: 0;
+  margin: 0;
+}
+
+.acciones-contenedor .accion-boton,
+.acciones-contenedor .btn-accion-comprobante,
+.acciones-contenedor .btn-accion-ver,
+.acciones-contenedor .btn-accion-notificar {
+  margin: 0 1px;
+  display: inline-flex;
+  flex-shrink: 0;
+  /* Commented fixed small-button sizing so component-specific rules
+     (eg. tablaEstudiantesLimpio.css) can control icon/button dimensions
+     without being overridden by this generic stylesheet. If you need
+     a global icon-only style, re-enable and remove !important flags.
+  
+  min-width: 28px !important;
+  width: 28px !important;
+  height: 28px !important;
+  padding: 0 !important;
+  border-radius: 50% !important; */
+}
+
+.acciones-contenedor button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Make action icons more prominent when buttons are narrow */
+.accion-boton .accion-ico {
+  font-size: 1.1rem !important;
+}
+
+.accion-boton .accion-label {
+  display: none !important;
+}
+
+/* Medium+ responsive: use icon-only controls to avoid breaking layout */
+/* Ya no es necesario el ajuste responsive para icon-only, siempre icon-only y pequeño */
+
+/* Notificar button styles */
+.btn-accion-notificar {
+  padding: 6px 10px;
+  border-radius: 4px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  border: 1px solid transparent;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.btn-accion-notificar.normal {
+  background: linear-gradient(90deg, #ffefc0 0%, #ffe18d 100%);
+  color: #5a3d00;
+  border-color: #ffd54f88;
+}
+
+.btn-accion-notificar.inactivo {
+  background: linear-gradient(90deg, #ffd6d6 0%, #ff9b9b 100%);
+  color: #6b0b0b;
+  border-color: #ff7b7b88;
+}
+
+.btn-accion-notificar:hover:not(.disabled) {
+  filter: brightness(0.95);
+}
+
+/* Small visual tweak for actions container */
+.acciones-contenedor button {
+  margin: 0 4px;
+}
+
+.sin-acciones {
+  color: #6c757d;
+  font-style: italic;
+  font-size: 0.8rem;
+}
+
+/* Fila vacía */
+.fila-vacia td {
+  padding: 40px 20px;
+  text-align: center;
+}
+
+.mensaje-vacio {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.icono-vacio {
+  font-size: 2rem;
+}
+
+.texto-vacio {
+  color: #6c757d;
+  margin: 0;
+  font-size: 1rem;
+}
+
+.btn-limpiar-busqueda {
+  padding: 8px 16px;
+  background: #007bff;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.btn-limpiar-busqueda:hover {
+  background: #0056b3;
+}
+
+.texto-ayuda {
+  color: #6c757d;
+  font-size: 0.85rem;
+  margin: 8px 0;
+  font-style: italic;
+}
+
+.btn-recargar {
+  padding: 8px 16px;
+  background: #28a745;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  margin-top: 8px;
+}
+
+.btn-recargar:hover {
+  background: #218838;
+}
+
+/* Paginación - estilos ya definidos arriba */
+
+.info-paginacion {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.pagina-actual {
+  font-size: 1rem;
+  color: #495057;
+}
+
+.total-registros {
+  font-size: 0.85rem;
+  color: #6c757d;
+}
+
+/* Resumen final */
+.resumen-final {
+  background: white;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.estadisticas-resumen {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  flex-wrap: wrap;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.stat-valor {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #2c3e50;
+}
+
+.stat-label {
+  font-size: 0.9rem;
+  color: #6c757d;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+.modalidad-actual .stat-valor {
+  color: #007bff;
+  font-size: 1.2rem;
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+  .panel-filtros-acciones {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .botones-filtro,
+  .botones-reportes {
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 768px) {
+  .lista-header-superior {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .botones-navegacion {
+    align-self: flex-start;
+  }
+
+  .estadisticas-resumen {
+    gap: 20px;
+  }
+
+  .paginacion-controles {
+    flex-direction: column;
+    gap: 12px;
+  }
+}
+
+/* Mobile: show icon-only buttons to avoid truncation */
+@media (max-width: 600px) {
+  .acciones-contenedor {
+    display: flex;
+    gap: 6px;
+    justify-content: center;
+  }
+
+  .accion-boton {
+    min-width: 40px !important;
+    width: 40px !important;
+    height: 40px !important;
+    padding: 0 !important;
+    border-radius: 50% !important;
+    box-shadow: none !important;
+  }
+
+  .accion-boton .accion-label {
+    display: none !important;
+  }
+
+  .accion-boton .accion-ico {
+    font-size: 1.5rem;
+    line-height: 1;
+  }
+
+  /* Reduce gaps so buttons fit neatly */
+  .acciones-contenedor .accion-boton {
+    margin: 0 4px;
+  }
+}
+
+/* Estilos para resumen final */
+.resumen-final {
+  margin-top: 32px;
+  padding: 20px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.estadisticas-resumen {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.stat-item {
+  text-align: center;
+  color: white;
+  padding: 12px 16px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 10px;
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  min-width: 90px;
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.stat-item:hover {
+  transform: translateY(-2px);
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.stat-valor {
+  display: block;
+  font-size: 1.6rem;
+  font-weight: 600;
+  margin-bottom: 4px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  letter-spacing: -0.5px;
+}
+
+.stat-label {
+  font-size: 0.7rem;
+  opacity: 0.85;
+  font-weight: 500;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+}
+
+@media (max-width: 768px) {
+  .estadisticas-resumen {
+    gap: 12px;
+  }
+
+  .stat-item {
+    min-width: 70px;
+    padding: 10px 12px;
+  }
+
+  .stat-valor {
+    font-size: 1.4rem;
+  }
+}
+
+/* Additional responsive tweaks for header and controls */
+@media (max-width: 1100px) {
+  .lista-titulo {
+    font-size: 1.45rem;
+  }
+
+  .controls-right .buscador-dni-input-group {
+    max-width: 420px;
+    min-width: 220px;
+  }
+}
+
+@media (max-width: 900px) {
+  .lista-titulo {
+    font-size: 1.3rem;
+  }
+
+  .controls-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .controls-left {
+    justify-content: flex-start;
+  }
+
+  .controls-right {
+    justify-content: flex-start;
+  }
+}
+
+/* ========================================
+   RESPONSIVE STYLES FOR LISTAESTUDIANTES
+   ======================================== */
+
+/* Controls row layout */
+.controls-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.controls-left {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.controls-right {
+  display: flex;
+  align-items: center;
+  min-width: 280px;
+}
+
+/* Panel controles layout */
+.panel-controles {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.grupo-filtros-estado {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.grupo-select-estado {
+  display: flex;
+  align-items: center;
+}
+
+/* Select estado - estilos ya unificados arriba */
+
+/* Container responsive adjustments */
+.lista-estudiantes-container {
+  padding: 20px;
+  margin: 20px auto;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* Tablet breakpoint (768px - 900px) */
+@media (max-width: 900px) {
+  .lista-estudiantes-container {
+    padding: 16px;
+    margin: 16px auto;
+    width: calc(100% - 32px);
+  }
+
+  .controls-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .controls-left {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .controls-right {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .panel-controles {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .grupo-filtros-estado {
+    width: 100%;
+    justify-content: stretch;
+  }
+
+  .grupo-filtros-estado .btn-filtro-small {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .grupo-select-estado {
+    width: 100%;
+  }
+
+  .select-estado-inscripcion {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .btn-ver-reportes {
+    width: 100%;
+  }
+
+  .fila-titulo-cerrar {
+    padding: 14px 18px 8px 18px;
+  }
+
+  .lista-titulo {
+    font-size: 1.3rem;
+  }
+}
+
+/* Mobile breakpoint (max 600px) */
+@media (max-width: 600px) {
+  .lista-estudiantes-container {
+    padding: 12px;
+    margin: 12px auto;
+    width: calc(100% - 24px);
+  }
+
+  .fila-titulo-cerrar {
+    padding: 12px 14px 6px 14px;
+  }
+
+  .lista-titulo {
+    font-size: 1.1rem;
+  }
+
+  .controls-row {
+    gap: 10px;
+  }
+
+  .controls-left {
+    gap: 8px;
+  }
+
+  .btn-ver-reportes,
+  .btn-filtro-small {
+    font-size: 0.85rem;
+    height: 36px;
+    padding: 0 10px;
+  }
+
+  .select-estado-inscripcion {
+    font-size: 0.85rem;
+    height: 36px;
+  }
+
+  .grupo-filtros-estado {
+    gap: 4px;
+  }
+}
+
+/* Extra small mobile (max 400px) */
+@media (max-width: 400px) {
+  .lista-estudiantes-container {
+    padding: 10px;
+    margin: 10px auto;
+    width: calc(100% - 20px);
+  }
+
+  .lista-titulo {
+    font-size: 1rem;
+  }
+
+  .btn-ver-reportes,
+  .btn-filtro-small {
+    font-size: 0.8rem;
+    height: 34px;
+    padding: 0 8px;
+  }
+
+  .select-estado-inscripcion {
+    font-size: 0.8rem;
+    height: 34px;
+  }
+}

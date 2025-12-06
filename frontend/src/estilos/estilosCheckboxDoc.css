@@ -1,0 +1,50 @@
+/* ======== INPUT FILE ========== */
+input[type="file"] {
+  padding: 5px;
+  border: 1px solid #999;
+  border-radius: 4px;
+  background-color: #fff;
+  width: 100%;
+  max-width: 280px;
+  font-size: 0.9rem;
+  color: #444;
+}
+
+/* ======== CHECKBOX PERSONALIZADO ========== */
+input[type="checkbox"] {
+  width: 26px;
+  height: 26px;
+  appearance: none;
+  border: 2px solid #ccc;
+  border-radius: 6px;
+  background-color: #fff;
+  position: relative;
+  cursor: not-allowed;
+  transition: all 0.3s ease;
+}
+
+/* ✔ Check visual */
+input[type="checkbox"]::after {
+  content: '';
+  position: absolute;
+  width: 6px;
+  height: 12px;
+  border: solid transparent;
+  border-width: 0 3px 3px 0;
+  transform: rotate(45deg);
+  left: 9px;
+  top: 4px;
+  display: none;
+}
+
+/* ✅ APLICADO SI HAY ARCHIVO */
+input[type="checkbox"].archivo-adjunto {
+    border-color: #4e53e6;
+    background-color: #e3e6fa;
+box-shadow: 0 0 0 2px #2f2f31;
+}
+
+input[type="checkbox"].archivo-adjunto::after {
+  border-color: #4e53e6;
+  display: block;
+}

@@ -1,0 +1,957 @@
+/* Contenedor principal */
+.lista-estudiantes-container,
+.lista-estudiantes {
+  display: flex;
+  flex-direction: column;
+  margin: 10px;
+  padding: 15px;
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  color: #333;
+  font-family: "Roboto Slab", serif;
+  position: relative;
+  max-height: 95vh;
+  overflow-y: auto;
+  width: calc(100% - 20px);
+  max-width: none;
+}
+
+/* Header de la lista */
+.lista-header {
+  text-align: center;
+  margin-bottom: 10px;
+  margin-top: 5px;
+}
+
+.lista-titulo {
+  font-size: 1.4rem;
+  font-weight: 300;
+  margin-bottom: 5px;
+  color: #2d4177;
+  letter-spacing: 0.5px;
+  font-family: "Roboto Slab", serif;
+}
+
+.lista-subtitulo {
+  color: #666;
+  font-size: 0.85rem;
+  margin: 0;
+  font-weight: 300;
+  opacity: 0.8;
+}
+
+.lista-header h2 {
+  font-size: 1.8rem;
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: #2d4177;
+}
+
+.lista-header p {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+/* Contenedor de botones de filtro */
+.filtros-container {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  margin: 15px 0;
+  padding: 0 20px;
+  flex-wrap: wrap;
+}
+
+.btn-filtro {
+  padding: 8px 16px;
+  border: 2px solid #2d4177;
+  border-radius: 8px;
+  background: white;
+  color: #2d4177;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+/* Versión compacta de los botones de filtro */
+.btn-filtro.compact {
+  padding: 6px 12px;
+  font-size: 0.8rem;
+  min-width: 80px;
+}
+
+.btn-filtro:hover {
+  background: #f0f4ff;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(45, 65, 119, 0.2);
+}
+
+.btn-filtro.activo {
+  background: #2d4177;
+  color: white;
+  box-shadow: 0 2px 8px rgba(45, 65, 119, 0.3);
+}
+
+.btn-filtro.activo:hover {
+  background: #1e2e5a;
+  transform: translateY(-1px);
+}
+
+.btn-filtro.disabled,
+.btn-filtro:disabled {
+  background: #e0e0e0;
+  color: #999;
+  cursor: not-allowed;
+  opacity: 0.6;
+  transform: none;
+  box-shadow: none;
+}
+
+.btn-filtro.disabled:hover,
+.btn-filtro:disabled:hover {
+  background: #e0e0e0;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Estados de estudiante */
+.estado-estudiante {
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  display: inline-block;
+}
+
+.estado-estudiante.activo {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.estado-estudiante.inactivo {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+/* Email de estudiante */
+.email-estudiante {
+  font-size: 0.8rem;
+  color: #495057;
+  font-family: "Courier New", monospace;
+  background-color: #f8f9fa;
+  padding: 2px 6px;
+  border-radius: 4px;
+  border: 1px solid #e9ecef;
+  display: inline-block;
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.email-estudiante:empty::before {
+  content: "Sin email";
+  color: #6c757d;
+  font-style: italic;
+}
+
+.tabla-estudiantes th:nth-child(8),
+.tabla-estudiantes td:nth-child(8) {
+  width: 200px;
+  /* o más si lo necesitás */
+  text-align: center;
+}
+
+/* Botón de comprobante */
+.btn-comprobante {
+  background: linear-gradient(135deg, #2d4177, #6c757d);
+  color: white;
+  border: none;
+  padding: 4px 10px;
+  border-radius: 5px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 1px;
+  box-shadow: 0 2px 6px rgba(45, 65, 119, 0.15);
+  max-width: 100%;
+  white-space: normal;
+  /* permite que se corte en varias líneas si es necesario */
+  text-align: center;
+  height: 32px;
+  justify-content: center;
+  letter-spacing: -0.2px;
+  white-space: nowrap;
+}
+
+/* Versión compacta del botón de comprobante */
+.btn-comprobante.compact {
+  flex-direction: column;
+  padding: 6px 8px;
+  height: auto;
+  min-height: 40px;
+  white-space: normal;
+  line-height: 1.1;
+  gap: 2px;
+}
+
+.btn-comprobante.compact .icono-comprobante {
+  font-size: 0.9rem;
+  display: block;
+}
+
+.btn-comprobante.compact .texto-comprobante {
+  font-size: 0.6rem;
+  display: block;
+  line-height: 1;
+}
+
+.btn-comprobante:hover {
+  background: linear-gradient(135deg, #1e2a4a, #5a6268);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(45, 65, 119, 0.25);
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.btn-comprobante:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 6px rgba(45, 65, 119, 0.2);
+}
+
+.sin-acciones {
+  color: #6c757d;
+  font-style: italic;
+  font-size: 0.85rem;
+  padding: 8px 16px;
+}
+
+/* Loading container */
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px;
+}
+
+/* Error y mensajes */
+.error-message {
+  background-color: #f8d7da;
+  border: 1px solid #f5c6cb;
+  border-radius: 5px;
+  padding: 15px;
+  margin-bottom: 20px;
+  text-align: center;
+  color: #721c24;
+}
+
+.mensaje-eliminacion {
+  background: linear-gradient(135deg, #d1f2eb 0%, #a3e4d7 100%);
+  border: 1px solid #7dcea0;
+  border-radius: 8px;
+  padding: 12px 20px;
+  margin-bottom: 15px;
+  text-align: center;
+  color: #0e6251;
+  font-weight: 500;
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.error-message p {
+  margin: 0 0 10px 0;
+  color: #721c24;
+}
+
+.btn-reintentar {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.btn-reintentar:hover {
+  background-color: #c82333;
+}
+
+.no-data {
+  text-align: center;
+  padding: 40px;
+  color: #666;
+}
+
+/* Contenedor de tabla */
+.tabla-container {
+  overflow-x: auto;
+  margin-bottom: 15px;
+  width: 100%;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Tabla */
+.tabla-estudiantes {
+  width: 100%;
+  min-width: 1200px;
+  border-collapse: collapse;
+  background-color: #fff;
+  font-size: 13px;
+  table-layout: auto;
+}
+
+.tabla-estudiantes th {
+  background-color: #2d4177;
+  color: white;
+  padding: 8px 4px;
+  text-align: left;
+  font-weight: bold;
+  border-bottom: 2px solid #1a2654;
+  font-size: 0.8rem;
+  white-space: normal;
+  /* Permitir salto de línea */
+  vertical-align: bottom;
+  /* Alinear al fondo para que se vea prolijo */
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.tabla-estudiantes td {
+  padding: 8px 4px;
+  border-bottom: 1px solid #ddd;
+  vertical-align: middle;
+  font-size: 13px;
+  /* Tamaño base para todas las celdas */
+}
+
+/* Ancho específico para columnas */
+.tabla-estudiantes th:nth-child(1),
+/* ID */
+.tabla-estudiantes td:nth-child(1) {
+  width: 50px;
+  text-align: center;
+}
+
+.tabla-estudiantes th:nth-child(2),
+/* DNI */
+.tabla-estudiantes td:nth-child(2) {
+  width: 90px;
+}
+
+.tabla-estudiantes th:nth-child(3),
+/* Nombre Apellido */
+.tabla-estudiantes td:nth-child(3) {
+  width: 150px;
+  text-align: left;
+}
+
+.tabla-estudiantes th:nth-child(4),
+/* Email */
+.tabla-estudiantes td:nth-child(4) {
+  width: 180px;
+  max-width: 180px;
+}
+
+.tabla-estudiantes th:nth-child(5),
+/* Curso/Plan */
+.tabla-estudiantes td:nth-child(5) {
+  width: 80px;
+  text-align: center;
+}
+
+.tabla-estudiantes th:nth-child(6),
+/* Estado de Inscripción */
+.tabla-estudiantes td:nth-child(6) {
+  width: 90px;
+  text-align: center;
+}
+
+.tabla-estudiantes th:nth-child(7),
+/* Fecha Inscripción */
+.tabla-estudiantes td:nth-child(7) {
+  width: 85px;
+  text-align: center;
+}
+
+.tabla-estudiantes th:nth-child(8),
+/* Fecha Nacimiento */
+.tabla-estudiantes td:nth-child(8) {
+  width: 85px;
+  text-align: center;
+}
+
+.tabla-estudiantes th:nth-child(9),
+/* Acciones */
+.tabla-estudiantes td:nth-child(9) {
+  width: 120px;
+  text-align: center;
+}
+
+/* === ESTILOS BASADOS EN CLASES (para TablaEstudiantes.jsx) === */
+/* Estos estilos permiten que TablaEstudiantes use las mismas definiciones */
+
+.tabla-estudiantes th.col-id,
+.tabla-estudiantes td.col-id {
+  width: 50px;
+  text-align: center;
+}
+
+.tabla-estudiantes th.col-dni,
+.tabla-estudiantes td.col-dni {
+  width: 90px;
+}
+
+.tabla-estudiantes th.col-nombre,
+.tabla-estudiantes td.col-nombre {
+  width: 150px;
+  text-align: left;
+}
+
+.tabla-estudiantes th.col-email,
+.tabla-estudiantes td.col-email {
+  width: 180px;
+  max-width: 180px;
+}
+
+.tabla-estudiantes th.col-estado-activo,
+.tabla-estudiantes td.col-estado-activo {
+  width: 70px;
+  text-align: center;
+}
+
+.tabla-estudiantes th.col-plan,
+.tabla-estudiantes td.col-plan {
+  width: 80px;
+  text-align: center;
+}
+
+.tabla-estudiantes th.col-estado-inscripcion,
+.tabla-estudiantes td.col-estado-inscripcion {
+  width: 90px;
+  text-align: center;
+}
+
+.tabla-estudiantes th.col-fecha,
+.tabla-estudiantes td.col-fecha {
+  width: 85px;
+  text-align: center;
+}
+
+.tabla-estudiantes th.col-acciones,
+.tabla-estudiantes td.col-acciones {
+  width: 120px;
+  text-align: center;
+}
+
+/* Contenedor de acciones */
+.acciones-contenedor {
+  display: flex;
+  gap: 2px;
+  flex-wrap: nowrap;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Estilos para botones SVG en TablaEstudiantes */
+.btn-accion svg,
+.btn-accion-notificar svg,
+.btn-accion-comprobante svg,
+.btn-accion-ver svg {
+  width: 20px;
+  height: 20px;
+  filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.1));
+  transition: transform 0.2s ease, filter 0.2s ease;
+}
+
+.btn-accion:hover svg,
+.btn-accion-notificar:hover svg,
+.btn-accion-comprobante:hover svg,
+.btn-accion-ver:hover svg {
+  transform: translateY(-2px) scale(1.1);
+  filter: drop-shadow(0 4px 4px rgba(0, 0, 0, 0.2));
+}
+
+/* Badges de estado e inscripción */
+.badge-estado {
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  display: inline-block;
+}
+
+.badge-estado.activo {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.badge-estado.inactivo {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+.badge-inscripcion {
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  text-transform: capitalize;
+  display: inline-block;
+}
+
+/* Estilos específicos para la estructura de TablaEstudiantes */
+.col-dni strong {
+  font-weight: normal;
+  font-size: 13px;
+}
+
+.nombre-completo {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  font-size: 13px;
+}
+
+.nombre-completo .nombre,
+.nombre-completo .apellido {
+  display: block;
+  line-height: 1.2;
+}
+
+/* Forzar transparencia en TODOS los botones de acción */
+.btn-accion,
+.btn-accion-notificar,
+.btn-accion-comprobante,
+.btn-accion-ver,
+button.btn-accion,
+button.btn-accion-notificar,
+button.btn-accion-comprobante,
+button.btn-accion-ver {
+  background: transparent !important;
+  background-color: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 4px !important;
+}
+
+.btn-accion:hover,
+.btn-accion-notificar:hover,
+.btn-accion-comprobante:hover,
+.btn-accion-ver:hover {
+  background-color: rgba(0, 0, 0, 0.05) !important;
+}
+
+/* Fix tooltip clipping on last button */
+.acciones-contenedor [data-tooltip]:last-child:hover::after,
+.acciones-grupo [data-tooltip]:last-child:hover::after {
+  left: auto;
+  right: 0;
+  transform: translateX(0);
+}
+
+.tabla-estudiantes tr:hover {
+  background-color: #f8f9fa;
+}
+
+/* Badge ID Circular */
+.id-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background-color: #e9ecef;
+  color: #6c757d;
+  font-weight: 600;
+  font-size: 0.6rem;
+}
+
+/* Estados */
+.estado {
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+.estado-inscripto {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.estado-pendiente {
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+
+.estado-completa {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.estado-anulada {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+/* Grupo de acciones */
+.acciones-grupo {
+  display: flex;
+  gap: 2px;
+  flex-wrap: nowrap;
+  justify-content: center;
+  width: 100%;
+}
+
+/* Nuevos estilos de botones 3D delicados */
+.btn-accion {
+  padding: 4px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  /* Opcional: si quieres un hover circular */
+  width: 32px;
+  height: 32px;
+}
+
+.btn-accion img {
+  width: 20px;
+  /* Ajustar tamaño del icono */
+  height: 20px;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.1));
+  /* Sombra suave al icono */
+  transition: transform 0.2s ease;
+}
+
+.btn-accion:hover img {
+  transform: translateY(-2px) scale(1.1);
+  /* Efecto de elevación 3D */
+  filter: drop-shadow(0 4px 4px rgba(0, 0, 0, 0.2));
+  /* Sombra más pronunciada al elevarse */
+}
+
+/* Tooltip Delicado */
+.btn-accion {
+  position: relative;
+}
+
+.btn-accion[data-tooltip]:hover::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  top: 100%;
+  /* Mostrar abajo */
+  left: 50%;
+  transform: translateX(-50%);
+  margin-top: 5px;
+  /* Espacio desde el botón */
+  padding: 5px 10px;
+  background-color: #333;
+  color: white;
+  font-size: 0.75rem;
+  border-radius: 4px;
+  white-space: nowrap;
+  opacity: 0;
+  animation: fadeInTooltip 0.2s forwards;
+  pointer-events: none;
+  z-index: 1000;
+  /* Asegurar que esté por encima */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+@keyframes fadeInTooltip {
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+/* Eliminar estilos de fondo antiguos */
+.btn-modificar,
+.btn-eliminar,
+.btn-ver {
+  background-color: transparent !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.btn-modificar:hover,
+.btn-eliminar:hover,
+.btn-ver:hover {
+  background-color: rgba(0, 0, 0, 0.05) !important;
+  transform: none;
+  box-shadow: none !important;
+}
+
+
+
+/* Responsive */
+@media (max-width: 768px) {
+  .lista-estudiantes-container {
+    margin: 10px;
+    padding: 15px;
+  }
+
+  .filtros-container {
+    flex-direction: column;
+    gap: 8px;
+    align-items: center;
+  }
+
+  .btn-filtro {
+    width: 100%;
+    max-width: 280px;
+    justify-content: center;
+  }
+
+  .busqueda-container {
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+  }
+
+  .busqueda-input-group {
+    max-width: 280px;
+  }
+
+  .btn-limpiar-busqueda {
+    width: 100%;
+    max-width: 200px;
+    justify-content: center;
+  }
+
+  .tabla-estudiantes {
+    font-size: 0.8rem;
+  }
+
+  .tabla-estudiantes th,
+  .tabla-estudiantes td {
+    padding: 4px 2px;
+  }
+
+  .acciones-grupo {
+    flex-direction: row;
+    gap: 6px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .btn-accion {
+    width: 28px;
+    height: 28px;
+    font-size: 12px;
+    min-width: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .acciones-estudiante {
+    gap: 2px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+}
+
+
+
+/* Paginación */
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+  margin-top: 20px;
+  padding: 15px 0;
+  border-top: 1px solid #e0e0e0;
+}
+
+.pagination-btn,
+.pagination button {
+  background-color: #2d4177;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  min-width: 80px;
+}
+
+.pagination-btn:hover:not(:disabled),
+.pagination button:hover:not(:disabled) {
+  background-color: #1e2d5a;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.pagination-btn:disabled,
+.pagination button:disabled {
+  background-color: #cccccc;
+  color: #666666;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.pagination-info,
+.pagination span {
+  font-size: 14px;
+  font-weight: 500;
+  color: #2d4177;
+  padding: 8px 12px;
+  background-color: #f5f5f5;
+  border-radius: 5px;
+  min-width: 100px;
+  text-align: center;
+}
+
+/* Modal de confirmación de eliminación */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+}
+
+.modal-confirm-delete {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  max-width: 450px;
+  width: 90%;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  animation: fadeInScale 0.3s ease-out;
+}
+
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.modal-confirm-delete h3 {
+  color: #e74c3c;
+  margin: 0 0 16px 0;
+  font-size: 1.3rem;
+  text-align: center;
+  font-weight: 600;
+}
+
+.confirm-delete-info {
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  padding: 16px;
+  margin: 16px 0;
+}
+
+.confirm-delete-info p {
+  margin: 4px 0;
+  font-size: 0.95rem;
+  color: #495057;
+}
+
+.confirm-delete-info strong {
+  color: #2d4177;
+  font-weight: 600;
+}
+
+.confirm-delete-message {
+  color: #6c757d;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  margin: 16px 0;
+  text-align: center;
+}
+
+.confirm-delete-buttons {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.btn-cancelar-delete {
+  background: #6c757d;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.btn-cancelar-delete:hover {
+  background: #5a6268;
+  transform: translateY(-1px);
+}
+
+.btn-confirmar-delete {
+  background: #e74c3c;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.btn-confirmar-delete:hover {
+  background: #c0392b;
+  transform: translateY(-1px);
+}

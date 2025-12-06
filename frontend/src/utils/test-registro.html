@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Registro Pendiente</title>
+  </head>
+  <body>
+    <h1>Test del endpoint de registro pendiente</h1>
+    <button onclick="testEndpoint()">Probar POST</button>
+    <div id="results"></div>
+
+    <script>
+      async function testEndpoint() {
+        const resultsDiv = document.getElementById("results");
+        resultsDiv.innerHTML = "Enviando...";
+
+        try {
+          const formData = new FormData();
+
+          // Datos mínimos requeridos
+          formData.append("dni", "12345678");
+          formData.append("nombre", "Test");
+          formData.append("apellido", "Usuario");
+          formData.append("email", "test@example.com");
+          formData.append("telefono", "123456789");
+          formData.append("modalidad", "Presencial");
+          formData.append("modalidadId", "1");
+          formData.append("calle", "Calle Test");
+          formData.append("numero", "123");
+          formData.append("localidad", "Ciudad Test");
+          formData.append("provincia", "Provincia Test");
+          formData.append("motivoPendiente", "Test directo desde HTML");
+          formData.append("tipoRegistro", "SIN_DOCUMENTACION");
+          formData.append("cuil", "20123456780");
+          formData.append("fechaNacimiento", "1990-01-01");
+
+          console.log("Enviando FormData...");
+
+          const response = await fetch(
+            "http://localhost:5000/api/registros-pendientes",
+            {
+              method: "POST",
+              body: formData,
+            }
+          );
+
+          console.log("Status:", response.status);
+          const responseText = await response.text();
+          console.log("Response:", responseText);
+
+          resultsDiv.innerHTML = `
+                <h3>Status: ${response.status}</h3>
+                <pre>${responseText}</pre>
+            `;
+
+          // Verificar que se guardó
+          const checkResponse = await fetch(
+            "http://localhost:5000/api/registros-pendientes"
+          );
+          const registros = await checkResponse.json();
+
+          resultsDiv.innerHTML += `
+                <h3>Registros guardados:</h3>
+                <pre>${JSON.stringify(registros, null, 2)}</pre>
+            `;
+        } catch (error) {
+          console.error("Error:", error);
+          resultsDiv.innerHTML = `<p style="color: red;">Error: ${error.message}</p>`;
+        }
+      }
+    </script>
+  </body>
+</html>

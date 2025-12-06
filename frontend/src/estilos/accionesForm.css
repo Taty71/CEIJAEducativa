@@ -1,0 +1,95 @@
+.acciones-formulario-container {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 20px;
+  margin: 20px auto;
+  background-color: #666;; /* Fondo azul claro */
+  border-radius: 10px;
+  box-shadow: inset 0 6px 10px rgba(0, 0, 128, 0.2),
+    0 4px 8px rgba(0, 0, 128, 0.2); /* Sombreado azul */
+  max-width: 800px;
+}
+
+/* Ajustar el título */
+h1 {
+  font-size: 1.8rem; /* Reducir tamaño del título */
+  font-weight: bold;
+  color: #003366; /* Azul oscuro para el texto */
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.buttonAcciones {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 15px; /* Incrementar el espacio interno */
+  margin: 10px; /* Separación entre botones */
+  border: 1px solid rgba(0, 0, 128, 0.3); /* Borde azul translúcido */
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 128, 0.2); /* Sombreado azul */
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease,
+    background-color 0.3s ease;
+}
+
+.buttonAcciones:hover {
+  transform: scale(1.05);
+  background-color: #b3e5fc; /* Fondo azul claro al hacer hover */
+  box-shadow: 0 6px 12px rgba(0, 0, 128, 0.3); /* Sombreado más pronunciado */
+}
+
+.selectedButton {
+  background-color: #b3e5fc; /* Azul claro para el botón seleccionado */
+  box-shadow: inset 0 4px 6px rgba(0, 0, 128, 0.3); /* Sombreado interno azul */
+  border: 1px solid rgba(0, 0, 128, 0.5); /* Borde más oscuro para el botón seleccionado */
+}
+
+.img {
+  width: 50px; /* Íconos más grandes */
+  height: 50px;
+  margin-bottom: 5px;
+  filter: drop-shadow(
+    0 2px 4px rgba(0, 0, 128, 0.5)
+  ); /* Resaltar los íconos con azul */
+}
+
+/* Styles to position the buttons below the form */
+@media (max-width: 768px) {
+  .acciones-formulario-container {
+    flex-direction: column;
+    width: 95%;
+    padding: 10px;
+  }
+  .buttonAcciones {
+    width: 80%;
+    height: 80px;
+    margin: 8px 0;
+    flex-direction: row;
+    justify-content: flex-start;
+    padding: 10px 15px;
+  }
+  .img {
+    margin-right: 15px;
+    margin-bottom: 0;
+    width: 30px;
+    height: 30px;
+  }
+  .buttonAcciones {
+    width: 80%;
+    height: 80px;
+    margin: 8px 0;
+    flex-direction: row;
+    justify-content: flex-start;
+    padding: 10px 15px;
+  }
+  .img {
+    margin-right: 15px;
+    margin-bottom: 0;
+    width: 30px;
+    height: 30px;
+  }
+}

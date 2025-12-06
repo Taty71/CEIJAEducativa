@@ -1,0 +1,223 @@
+/* MODAL VER LISTA ESTUDIANTE - ESTILO MODERNO Y CLARO */
+
+.modal-overlay-verestd {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(45, 65, 119, 0.35);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  -webkit-backdrop-filter: blur(2px);
+  backdrop-filter: blur(2px);
+}
+
+.modal-container-verestd {
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 8px 32px rgba(45, 65, 119, 0.18);
+  padding: 32px 28px 24px 28px;
+  max-width: 900px;
+  width: 96vw;
+  max-height: 92vh;
+  overflow-y: auto;
+  border: 2px solid #87ceeb;
+  font-family: "Roboto Slab", serif;
+  animation: modalSlideIn 0.3s cubic-bezier(0.4, 1.4, 0.6, 1);
+}
+
+@keyframes modalSlideIn {
+  0% {
+    opacity: 0;
+    transform: translateY(40px) scale(0.98);
+  }
+  100% {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.modal-header-verestd {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 18px;
+  border-bottom: 2px solid #87ceeb;
+  padding-bottom: 10px;
+}
+
+.modal-title-verestd {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #2d4177;
+  margin: 0;
+  text-shadow: 0 2px 8px rgba(135, 206, 235, 0.18);
+}
+
+.modal-subtitle-verestd {
+  font-size: 1.08rem;
+  color: #6b7a99;
+  margin-bottom: 18px;
+}
+
+.modal-container-verestd {
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 8px 32px rgba(45, 65, 119, 0.18);
+  padding: 32px 28px 24px 28px;
+  max-width: 900px;
+  width: 96vw;
+  max-height: 92vh;
+  overflow-y: auto;
+  border: 2px solid #87ceeb;
+  font-family: "Roboto Slab", serif;
+  animation: modalSlideIn 0.3s cubic-bezier(0.4, 1.4, 0.6, 1);
+  position: relative;
+  z-index: 10001;
+}
+
+/* Botón cerrar flotante arriba a la derecha */
+.modal-container-verestd .cerrar-button.boton-small {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  z-index: 10100;
+  background: #f0f0f0;
+  border: 1.5px solid #ccc;
+  box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.13);
+}
+.modal-container-verestd .cerrar-button.boton-small:hover,
+.modal-container-verestd .cerrar-button.boton-small:focus {
+  background: #e0e0e0;
+}
+
+.tarjeta-header-verestd {
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: #2d4177;
+  margin-bottom: 8px;
+  border-bottom: 1px solid #b3e0f7;
+  padding-bottom: 4px;
+}
+
+.dato-item-verestd {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 2px;
+}
+.dato-item-verestd label {
+  font-weight: 500;
+  color: #3a4a6b;
+  min-width: 110px;
+  font-size: 1rem;
+}
+.dato-item-verestd span {
+  color: #2d4177;
+  font-size: 1rem;
+  font-family: "Roboto", sans-serif;
+}
+
+.estado-badge-verestd {
+  display: inline-block;
+  padding: 3px 16px;
+  border-radius: 16px;
+  font-size: 1rem;
+  font-weight: 600;
+  background: #e3fbe3;
+  color: #2d7a2d;
+  border: 1.5px solid #b6eab6;
+}
+.estado-inactivo-verestd {
+  background: #ffeaea;
+  color: #a33a3a;
+  border-color: #ffc1c1;
+}
+.estado-pendiente-verestd {
+  background: #fffbe3;
+  color: #b89c2d;
+  border-color: #f7eab6;
+}
+
+/* Documentación presentada */
+.documentacion-verestd {
+  margin-top: 18px;
+  background: #fafdff;
+  border-radius: 10px;
+  box-shadow: 0 1px 4px rgba(135, 206, 235, 0.08);
+  border: 1.5px solid #e3f1fa;
+  padding: 18px 14px 10px 14px;
+}
+.documentacion-verestd h4 {
+  font-size: 1.13rem;
+  color: #2d4177;
+  margin-bottom: 10px;
+  font-weight: 600;
+}
+.tabla-documentacion-verestd {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+  font-size: 0.98rem;
+}
+.tabla-documentacion-verestd th,
+.tabla-documentacion-verestd td {
+  border: 1px solid #e3f1fa;
+  padding: 7px 10px;
+  text-align: left;
+}
+.tabla-documentacion-verestd th {
+  background: #eaf6fb;
+  color: #2d4177;
+  font-weight: 600;
+}
+.tabla-documentacion-verestd td {
+  background: #fff;
+}
+.tabla-documentacion-verestd a {
+  color: #2d7aaf;
+  text-decoration: underline;
+  font-weight: 500;
+}
+.tabla-documentacion-verestd a:hover {
+  color: #1a4a7a;
+}
+
+@media (max-width: 900px) {
+  .modal-container-verestd {
+    padding: 24px 4vw 12px 4vw;
+    max-width: 99vw;
+  }
+  .modal-content-verestd {
+    flex-direction: column;
+    gap: 10px;
+  }
+  .tarjeta-verestd {
+    min-width: 0;
+    width: 100%;
+    padding: 14px 8px 12px 8px;
+  }
+  .modal-container-verestd .cerrar-button.boton-small {
+    top: 8px;
+    right: 8px;
+  }
+}
+
+@media (max-width: 600px) {
+  .modal-title-verestd {
+    font-size: 1.2rem;
+  }
+  .tarjeta-header-verestd {
+    font-size: 1rem;
+  }
+  .tabla-documentacion-verestd th,
+  .tabla-documentacion-verestd td {
+    font-size: 0.92rem;
+    padding: 5px 4px;
+  }
+}

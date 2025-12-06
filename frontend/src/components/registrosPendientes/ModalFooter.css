@@ -1,0 +1,132 @@
+:root {
+  --mrp-footer-bg: #2d4177; /* azul institucional */
+  --mrp-footer-bg-dark: #1f2b50; /* alternativa más oscura */
+  --mrp-text: #ffffff;
+  --mrp-muted: #d7dbe6;
+  --mrp-radius: 8px;
+  --mrp-gap: 12px;
+}
+
+.mrp-footer {
+  background: linear-gradient(
+    180deg,
+    var(--mrp-footer-bg-dark),
+    var(--mrp-footer-bg)
+  );
+  color: var(--mrp-text);
+  padding: 10px 12px; /* más compacto */
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.mrp-footer__inner {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 12px; /* más compacto */
+  align-items: center; /* alinear columnas verticalmente */
+}
+
+.mrp-col {
+  padding: 8px 6px; /* reducir padding para compactar */
+}
+
+.mrp-title {
+  margin: 0 0 6px 0;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--mrp-text);
+}
+
+.mrp-row {
+  display: flex;
+  gap: var(--mrp-gap);
+  align-items: center;
+}
+.mrp-row--spacer {
+  height: 8px;
+}
+
+.mrp-vertical-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.mrp-btn {
+  border-radius: 16px;
+  padding: 6px 12px;
+  font-size: 0.92rem;
+  cursor: pointer;
+  border: 1px solid transparent;
+  min-width: 120px;
+  height: 30px; /* consistente con botones del dashboard */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.mrp-btn--primary {
+  background: var(--mrp-text);
+  color: var(--mrp-footer-bg);
+  font-weight: 700;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.mrp-btn--secondary {
+  background: transparent;
+  color: var(--mrp-text);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.mrp-btn--outline {
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--mrp-text);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Hover efecto tipo dashboard (como .boton-pendiente) */
+.mrp-btn:hover:not(:disabled),
+.mrp-btn:focus:not(:disabled) {
+  background: var(--color-btn-main); /* usa variable global del tema */
+  color: #ffffff;
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(45, 65, 119, 0.12);
+}
+
+.mrp-notes {
+  margin-top: 8px;
+  color: var(--mrp-muted);
+  font-size: 0.82rem;
+  line-height: 1.3;
+}
+
+/* Ensure the verify column buttons are fully visible */
+.mrp-col--verify .mrp-btn {
+  min-width: 160px;
+}
+
+/* Responsive: stack columns on small screens */
+@media (max-width: 880px) {
+  .mrp-footer__inner {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  .mrp-col {
+    padding: 10px 6px;
+  }
+  .mrp-btn {
+    min-width: 120px;
+  }
+  .mrp-col--verify .mrp-btn {
+    min-width: 100%;
+  }
+}
+
+/* Minor accessibility focus states */
+.mrp-btn:focus {
+  outline: 3px solid rgba(255, 255, 255, 0.16);
+  outline-offset: 2px;
+}
