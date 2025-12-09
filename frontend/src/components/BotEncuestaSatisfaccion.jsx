@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import axios from 'axios';
 import { useGlobalAlerts } from '../hooks/useGlobalAlerts';
+import hoodieIcon from '../assets/logos/hoodie.png';
 import '../estilos/BotEncuestaSatisfaccion.css';
 
 const BotEncuestaSatisfaccion = ({ isOpen, onClose, dniEstudiante, modalidad }) => {
@@ -9,9 +10,9 @@ const BotEncuestaSatisfaccion = ({ isOpen, onClose, dniEstudiante, modalidad }) 
     const [responses, setResponses] = useState({});
     const [isMinimized, setIsMinimized] = useState(false);
     const [showThankYou, setShowThankYou] = useState(false);
-    
+
     // Usar el hook de alertas globales del sistema
-    const { showError: showErrorAlert, showSuccess: showSuccessAlert } = useGlobalAlerts();
+    const { showError: showErrorAlert, showSuccess: showSuccessAlert, showInfo, confirmAction } = useGlobalAlerts();
 
     // Preguntas de la encuesta
     const questions = [
@@ -19,23 +20,22 @@ const BotEncuestaSatisfaccion = ({ isOpen, onClose, dniEstudiante, modalidad }) 
             id: 'facilidad_uso',
             type: 'rating',
             question: '¿Qué tan fácil te resultó completar el formulario de inscripción?',
-            options: [1, 2, 3, 4, 5],
-            labels: ['Muy difícil', 'Difícil', 'Normal', 'Fácil', 'Muy fácil']
+            options: [1, 2, 3],
+            labels: ['Difícil', 'Regular', 'Fácil']
         },
         {
             id: 'claridad_informacion',
             type: 'rating',
             question: '¿La información solicitada fue clara y comprensible?',
-            options: [1, 2, 3, 4, 5],
-            labels: ['Muy confusa', 'Confusa', 'Aceptable', 'Clara', 'Muy clara']
+            options: [1, 2, 3],
+            labels: ['Confusa', 'Clara', 'Muy clara']
         },
         {
             id: 'tiempo_completado',
             type: 'multiple',
             question: '¿Cuánto tiempo te tomó completar el formulario?',
             options: [
-                'Menos de 5 minutos',
-                '5-10 minutos',
+                'Menos de 10 minutos',
                 '10-15 minutos',
                 'Más de 15 minutos'
             ]
@@ -46,11 +46,8 @@ const BotEncuestaSatisfaccion = ({ isOpen, onClose, dniEstudiante, modalidad }) 
             question: '¿Encontraste algún problema durante el proceso?',
             options: [
                 'Ninguno',
-                'Errores de validación confusos',
-                'Dificultad subiendo archivos',
-                'Campos obligatorios poco claros',
-                'Problemas técnicos',
-                'Otro'
+                'Dificultad con el formulario',
+                'Problemas al adjuntar documentación'
             ]
         },
         {
@@ -113,12 +110,12 @@ const BotEncuestaSatisfaccion = ({ isOpen, onClose, dniEstudiante, modalidad }) 
             if (response.data.success) {
                 console.log('✅ Encuesta enviada correctamente');
                 setShowThankYou(true);
-                
+
                 // Mostrar mensaje de éxito usando el sistema de alertas
                 setTimeout(() => {
                     showSuccessAlert('¡Gracias por completar la encuesta de satisfacción!');
                 }, 500);
-                
+
                 // Cerrar después de 3 segundos
                 setTimeout(() => {
                     onClose();
@@ -126,10 +123,10 @@ const BotEncuestaSatisfaccion = ({ isOpen, onClose, dniEstudiante, modalidad }) 
             }
         } catch (error) {
             console.error('Error enviando encuesta:', error);
-            
+
             // Mostrar error usando el sistema de alertas
             showErrorAlert('No se pudo enviar la encuesta. Por favor, inténtalo nuevamente.');
-            
+
             // Permitir cerrar incluso si falla el envío
             setTimeout(() => {
                 onClose();
@@ -137,10 +134,12 @@ const BotEncuestaSatisfaccion = ({ isOpen, onClose, dniEstudiante, modalidad }) 
         }
     };
 
-    const handleClose = () => {
-        if (window.confirm('¿Seguro que deseas cerrar la encuesta? Tus respuestas no se guardarán.')) {
+    const handleClose = async () => {
+        const confirmed = await confirmAction('Lo siento por intentar ocupar más de tu tiempo, tu opinión es muy valiosa. ¿Deseas cerrar la encuesta?');
+        if (confirmed) {
             onClose();
         }
+        // Si cancela (confirmed = false), la encuesta permanece abierta
     };
 
     if (!isOpen) return null;
@@ -158,7 +157,9 @@ const BotEncuestaSatisfaccion = ({ isOpen, onClose, dniEstudiante, modalidad }) 
         return (
             <div className="bot-encuesta-container">
                 <div className="bot-encuesta-header">
-                    <div className="bot-avatar">🎓</div>
+                    <div className="bot-avatar">
+                        <img src={hoodieIcon} alt="Bot" className="bot-avatar-img" />
+                    </div>
                     <h3>¡Gracias!</h3>
                 </div>
                 <div className="bot-encuesta-body">
@@ -179,21 +180,23 @@ const BotEncuestaSatisfaccion = ({ isOpen, onClose, dniEstudiante, modalidad }) 
     return (
         <div className="bot-encuesta-container">
             <div className="bot-encuesta-header">
-                <div className="bot-avatar">🎓</div>
+                <div className="bot-avatar">
+                    <img src={hoodieIcon} alt="Bot" className="bot-avatar-img" />
+                </div>
                 <div className="bot-header-info">
                     <h3>Encuesta de Satisfacción</h3>
                     <span className="bot-progress">Pregunta {currentStep + 1} de {questions.length}</span>
                 </div>
                 <div className="bot-header-actions">
-                    <button 
-                        className="bot-btn-minimize" 
+                    <button
+                        className="bot-btn-minimize"
                         onClick={() => setIsMinimized(true)}
                         title="Minimizar"
                     >
                         ➖
                     </button>
-                    <button 
-                        className="bot-btn-close" 
+                    <button
+                        className="bot-btn-close"
                         onClick={handleClose}
                         title="Cerrar"
                     >
@@ -253,27 +256,27 @@ const BotEncuestaSatisfaccion = ({ isOpen, onClose, dniEstudiante, modalidad }) 
 
             <div className="bot-encuesta-footer">
                 <div className="progress-bar">
-                    <div 
-                        className="progress-fill" 
+                    <div
+                        className="progress-fill"
                         style={{ width: `${((currentStep + 1) / questions.length) * 100}%` }}
                     />
                 </div>
                 <div className="bot-navigation">
-                    <button 
-                        className="btn-nav btn-previous" 
+                    <button
+                        className="btn-nav btn-previous"
                         onClick={handlePrevious}
                         disabled={currentStep === 0}
                     >
                         ← Anterior
                     </button>
-                    <button 
-                        className="btn-nav btn-skip" 
+                    <button
+                        className="btn-nav btn-skip"
                         onClick={handleSkip}
                     >
                         Omitir
                     </button>
-                    <button 
-                        className="btn-nav btn-next" 
+                    <button
+                        className="btn-nav btn-next"
                         onClick={handleNext}
                         disabled={!hasResponse && currentQuestion.type !== 'text'}
                     >

@@ -27,14 +27,14 @@ export const formularioInscripcionSchema = yup.object().shape({
             then: (schema) => schema
                 .required('CUIL es requerido para DNI argentino')
                 .matches(/^\d{2}-\d{8}-\d$/, 'CUIL debe tener el formato 00-00000000-0 (11 dígitos con guiones)')
-                .test('cuil-digito-valido', 'CUIL inválido: dígito verificador incorrecto', function(value) {
+                .test('cuil-digito-valido', 'CUIL inválido: dígito verificador incorrecto', function (value) {
                     if (!value) return false;
                     const m = String(value).match(/^(\d{2})-(\d{8})-(\d)$/);
                     if (!m) return false;
                     const prefijo = m[1];
                     const dniStr = m[2];
                     const digStr = m[3];
-                    const multiplicadores = [5,4,3,2,7,6,5,4,3,2];
+                    const multiplicadores = [5, 4, 3, 2, 7, 6, 5, 4, 3, 2];
                     const cuilSinDigito = `${prefijo}${dniStr}`;
                     if (!/^[0-9]{10}$/.test(cuilSinDigito)) return false;
                     let suma = 0;
@@ -57,16 +57,21 @@ export const formularioInscripcionSchema = yup.object().shape({
         .string()
         .required('Teléfono es requerido')
         .matches(
-            /^(\+54\s?)?(\d{2,4}[-\s]?\d{4}[-\s]?\d{4}|\d{3}[-\s]?\d{3}[-\s]?\d{4}|\d{10,11})$/,
-            'Formato de teléfono inválido. Ej: 11-1234-5678, 0351-4567890 o +54 11 1234 5678'
+            /^(\+54\s?)?(\d{2,5}[-\s]?\d{5,9}|\d{2,4}[-\s]?\d{4}[-\s]?\d{4}|\d{3}[-\s]?\d{3}[-\s]?\d{4}|\d{10,13})$/,
+            'Formato inválido. Ej: 0351-4567890, 11-1234-5678, o sin guiones.'
         )
         .min(8, 'El teléfono debe tener al menos 8 dígitos')
         .max(18, 'El teléfono no puede tener más de 18 caracteres'),
-   fechaNacimiento: yup
+    fechaNacimiento: yup
         .date()
         .required('Fecha de nacimiento es requerida')
         .typeError('Fecha inválida')
-        .test('edad-valida', 'Debe tener entre 16 y 100 años', function(value) {
+        .test('ano-valido', 'El año debe tener 4 dígitos', function (value) {
+            if (!value) return true;
+            const year = new Date(value).getFullYear();
+            return year >= 1900 && year <= 9999;
+        })
+        .test('edad-valida', 'Debe ser mayor a 18 años para poder inscribirse', function (value) {
             if (!value) return false;
             const fecha = new Date(value);
             if (isNaN(fecha)) return false;
@@ -76,18 +81,22 @@ export const formularioInscripcionSchema = yup.object().shape({
             if (m < 0 || (m === 0 && hoy.getDate() < fecha.getDate())) {
                 edad--;
             }
-            return edad >= 16 && edad <= 100;
+            return edad >= 18 && edad <= 100;
         }),
     calle: yup.string().required('Calle es requerida'),
-            numero: yup
-            .number()
-            .typeError('Número es requerido')
-            .required('Número es requerido'),
+    numero: yup
+        .string()
+        .required('Número es requerido')
+        .test('es-numero-o-sn', 'Debe ser un número o "S/N"', (value) => {
+            if (!value) return false;
+            // Acepta dígitos o "s/n" (case insensitive)
+            return /^\d+$/.test(value) || /^(s\/n|sin\s*n[uú]?mero)$/i.test(value);
+        }),
     barrio: yup.string().required('Barrio es requerido'),
     localidad: yup.string().required('Localidad es requerida'),
     provincia: yup.string().required('Provincia es requerida'),
-     modalidad: yup.string().required('Modalidad es requerida'),
-     planAnio: yup
+    modalidad: yup.string().required('Modalidad es requerida'),
+    planAnio: yup
         .number()
         .typeError('Plan/Año es requerido')
         .required('Plan/Año es requerido'),
@@ -110,10 +119,10 @@ export const formularioInscripcionSchema = yup.object().shape({
         .number()
         .typeError('Estado de inscripción es requerido')
         .required('Estado de inscripción es requerido'),
-    // Sexo/Género: opcional en el formulario; utilizado sólo para ayudar a calcular CUIL si está presente
+    // Sexo/Género: obligatorio
     sexo: yup
         .string()
-        .notRequired(),
+        .required('Sexo / Género es requerido'),
 });
 export const loginValidationSchema = yup.object().shape({
     email: yup

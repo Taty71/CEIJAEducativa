@@ -59,12 +59,111 @@
       },
       "completada": true,
       "created_at": "2025-12-05T01:51:16.629Z"
+    },
+    {
+      "id": 1765219829130,
+      "dni_estudiante": "",
+      "modalidad": "Semipresencial",
+      "fecha": "2025-12-08T18:50:28.571Z",
+      "respuestas": {
+        "facilidad_uso": 3,
+        "claridad_informacion": 3,
+        "tiempo_completado": "10-15 minutos",
+        "problemas_encontrados": "Campos obligatorios poco claros",
+        "sugerencias": "No tengo nro de calle, no me deja ingresar 000 o s/n"
+      },
+      "completada": true,
+      "created_at": "2025-12-08T18:50:29.130Z"
+    },
+    {
+      "id": 1765237299874,
+      "dni_estudiante": "",
+      "modalidad": "Semipresencial",
+      "fecha": "2025-12-08T23:41:39.866Z",
+      "respuestas": {
+        "facilidad_uso": 3,
+        "claridad_informacion": 4,
+        "tiempo_completado": "10-15 minutos",
+        "problemas_encontrados": "Ninguno",
+        "sugerencias": "Sin problemas"
+      },
+      "completada": true,
+      "created_at": "2025-12-08T23:41:39.874Z"
+    },
+    {
+      "id": 1765238455323,
+      "dni_estudiante": "",
+      "modalidad": "Semipresencial",
+      "fecha": "2025-12-09T00:00:55.315Z",
+      "respuestas": {},
+      "completada": true,
+      "created_at": "2025-12-09T00:00:55.323Z"
+    },
+    {
+      "id": 1765249006493,
+      "dni_estudiante": "",
+      "modalidad": "Semipresencial",
+      "fecha": "2025-12-09T02:56:46.077Z",
+      "respuestas": {
+        "facilidad_uso": 3,
+        "claridad_informacion": 2,
+        "tiempo_completado": "5-10 minutos",
+        "problemas_encontrados": "Ninguno",
+        "sugerencias": "Gracias"
+      },
+      "completada": true,
+      "created_at": "2025-12-09T02:56:46.493Z"
+    },
+    {
+      "id": 1765250214579,
+      "dni_estudiante": "",
+      "modalidad": "Semipresencial",
+      "fecha": "2025-12-09T03:16:54.573Z",
+      "respuestas": {
+        "facilidad_uso": 3,
+        "claridad_informacion": 2,
+        "tiempo_completado": "10-15 minutos",
+        "problemas_encontrados": "Dificultad con el formulario",
+        "sugerencias": "Debería solo esta la Localidad de La Calera"
+      },
+      "completada": true,
+      "created_at": "2025-12-09T03:16:54.579Z"
+    },
+    {
+      "id": 1765250840456,
+      "dni_estudiante": "",
+      "modalidad": "Semipresencial",
+      "fecha": "2025-12-09T03:27:20.447Z",
+      "respuestas": {
+        "facilidad_uso": 2,
+        "claridad_informacion": 2,
+        "tiempo_completado": "10-15 minutos",
+        "problemas_encontrados": "Dificultad con el formulario",
+        "sugerencias": "Seleccion de barrio"
+      },
+      "completada": true,
+      "created_at": "2025-12-09T03:27:20.456Z"
+    },
+    {
+      "id": 1765253425532,
+      "dni_estudiante": "",
+      "modalidad": "Semipresencial",
+      "fecha": "2025-12-09T04:10:25.525Z",
+      "respuestas": {
+        "facilidad_uso": 3,
+        "claridad_informacion": 2,
+        "tiempo_completado": "Menos de 10 minutos",
+        "problemas_encontrados": "Problemas al adjuntar documentación",
+        "sugerencias": "Ninguna"
+      },
+      "completada": true,
+      "created_at": "2025-12-09T04:10:25.532Z"
     }
   ],
   "estadisticas": {
-    "total": 4,
-    "promedio_facilidad": "3.25",
-    "promedio_claridad": "3.25",
-    "ultima_actualizacion": "2025-12-05T01:51:16.629Z"
+    "total": 11,
+    "promedio_facilidad": "2.73",
+    "promedio_claridad": "2.55",
+    "ultima_actualizacion": "2025-12-09T04:10:25.532Z"
   }
 }

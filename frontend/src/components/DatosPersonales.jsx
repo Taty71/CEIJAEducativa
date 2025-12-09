@@ -1,4 +1,4 @@
-import {Field, ErrorMessage, useFormikContext } from 'formik';
+import { Field, ErrorMessage, useFormikContext } from 'formik';
 import { useRef, useState } from 'react';
 import { useEffect, memo } from 'react';
 import ValidadorDni from '../validaciones/ValidadorDNI.jsx';
@@ -11,7 +11,7 @@ export const DatosPersonales = memo(() => {
     const handleDniValidation = (isValid, _errorMessage) => {
         setIsDniValid(isValid);
     };
-    
+
     // Si no existe modalidadId, establecer un valor por defecto (ejemplo: 1)
     if (!values.modalidadId && values.modalidad) {
         // Si modalidad es string, puedes mapearlo a un id si es necesario
@@ -23,7 +23,7 @@ export const DatosPersonales = memo(() => {
         if (modalidadId) setFieldValue('modalidadId', modalidadId);
     }
 
-   
+
     const calcularDigitoVerificador = (prefijo, dni) => {
         const multiplicadores = [5, 4, 3, 2, 7, 6, 5, 4, 3, 2];
         const pref = String(prefijo).padStart(2, '0');
@@ -104,16 +104,16 @@ export const DatosPersonales = memo(() => {
         }
     }, [values.dni, values.tipoDocumento, setFieldValue, values.cuil, values.sexo]);
 
-    
+
     // Referencia para evitar doble validación en el mismo blur
     const blurTimeout = useRef();
     const handleDniInput = (e) => {
-    const value = e.target.value;
-    
-    if (values.tipoDocumento === 'DNI') {
-        // Solo permitir números y limitar a 8 dígitos
-        const cleaned = value.replace(/\D/g, '').slice(0, 8);
-        e.target.value = cleaned;
+        const value = e.target.value;
+
+        if (values.tipoDocumento === 'DNI') {
+            // Solo permitir números y limitar a 8 dígitos
+            const cleaned = value.replace(/\D/g, '').slice(0, 8);
+            e.target.value = cleaned;
         }
     };
     // Validación manual al salir del input
@@ -127,18 +127,18 @@ export const DatosPersonales = memo(() => {
     };
 
     return (
-    <>
-        <ValidadorDni />
-        <ValidadorSintaxisDNI onValidationChange={handleDniValidation} />
-        <div className="form-datos">
+        <>
+            <ValidadorDni />
+            <ValidadorSintaxisDNI onValidationChange={handleDniValidation} />
+            <div className="form-datos">
                 <h3>Datos Personales</h3>
-                
+
                 {/* Grupo de Nombre y Apellido en línea */}
                 <div className="nombre-apellido-group">
                     <div className="form-group">
-                         <label>Nombre:</label>
-                         <Field type="text" name="nombre" placeholder="Nombre" className="form-control" />
-                         <ErrorMessage name="nombre" component="div" className="error" />
+                        <label>Nombre:</label>
+                        <Field type="text" name="nombre" placeholder="Nombre" className="form-control" />
+                        <ErrorMessage name="nombre" component="div" className="error" />
                     </div>
                     <div className="form-group">
                         <label>Apellido:</label>
@@ -146,9 +146,22 @@ export const DatosPersonales = memo(() => {
                         <ErrorMessage name="apellido" component="div" className="error" />
                     </div>
                 </div>
-                
                 {/* Grupo de campos de documento en línea */}
                 <div className="documento-inline-group">
+                    {/* Selector de sexo/género para calcular prefijo del CUIL */}
+                    <div className="form-group">
+                        <label>Sexo / Género:</label>
+                        <Field as="select" name="sexo" className="form-control">
+                            <option value="">Seleccione sexo</option>
+                            <option value="Masculino">Masculino</option>
+                            <option value="Femenino">Femenino</option>
+                            <option value="Empresa">Empresa</option>
+                            <option value="Otro">Otro</option>
+                        </Field>
+                        <ErrorMessage name="sexo" component="div" className="error" />
+                        <small className="form-text text-muted">Prefijo: Masc(20), Fem(27), Emp(23)</small>
+                    </div>
+
                     <div className="form-group">
                         <label>Tipo de Documento:</label>
                         <Field as="select" name="tipoDocumento" className="form-control">
@@ -161,47 +174,34 @@ export const DatosPersonales = memo(() => {
                         <ErrorMessage name="tipoDocumento" component="div" className="error" />
                     </div>
 
-                    {/* Selector de sexo/género para calcular prefijo del CUIL (moved before DNI) */}
-                    <div className="form-group">
-                        <label>Sexo / Género:</label>
-                        <Field as="select" name="sexo" className="form-control">
-                            <option value="">Seleccione sexo</option>
-                            <option value="Masculino">Masculino</option>
-                            <option value="Femenino">Femenino</option>
-                            <option value="Empresa">Empresa</option>
-                            <option value="Otro">Otro</option>
-                        </Field>
-                        <ErrorMessage name="sexo" component="div" className="error" />
-                        <small className="form-text text-muted">El prefijo del CUIL se calcula según el sexo/género seleccionado si corresponde.</small>
-                    </div>
 
                     <div className="form-group">
                         <label>
-                            {values.tipoDocumento === 'DNI' ? 'DNI:' : 
-                             values.tipoDocumento === 'PASAPORTE' ? 'Número de Pasaporte:' :
-                             values.tipoDocumento === 'CEDULA' ? 'Número de Cédula:' :
-                             'Número de Documento:'}
+                            {values.tipoDocumento === 'DNI' ? 'DNI:' :
+                                values.tipoDocumento === 'PASAPORTE' ? 'Número de Pasaporte:' :
+                                    values.tipoDocumento === 'CEDULA' ? 'Número de Cédula:' :
+                                        'Número de Documento:'}
                         </label>
-                        <Field 
-                            type="text" 
-                            name="dni" 
+                        <Field
+                            type="text"
+                            name="dni"
                             placeholder={
-                                values.tipoDocumento === 'DNI' ? 'DNI (8 dígitos)' : 
-                                values.tipoDocumento === 'PASAPORTE' ? 'Número de pasaporte' :
-                                values.tipoDocumento === 'CEDULA' ? 'Número de cédula' :
-                                'Número de documento'
+                                values.tipoDocumento === 'DNI' ? 'DNI (8 dígitos)' :
+                                    values.tipoDocumento === 'PASAPORTE' ? 'Número de pasaporte' :
+                                        values.tipoDocumento === 'CEDULA' ? 'Número de cédula' :
+                                            'Número de documento'
                             }
-                            className={`form-control ${errors && errors.dni ? 'is-invalid' : ''}`} 
+                            className={`form-control ${errors && errors.dni ? 'is-invalid' : ''}`}
                             maxLength={values.tipoDocumento === 'DNI' ? 8 : 20}
                             inputMode={values.tipoDocumento === 'DNI' ? 'numeric' : 'text'}
                             pattern={values.tipoDocumento === 'DNI' ? '\\d{8}' : undefined}
                             onInput={handleDniInput}
-                             onBlur={handleDniBlur}
+                            onBlur={handleDniBlur}
                         />
                         <ErrorMessage name="dni" component="div" className="error" />
                     </div>
 
-                        {values.tipoDocumento === 'DNI' && (
+                    {values.tipoDocumento === 'DNI' && (
                         <div className="form-group">
                             <label>CUIL:</label>
                             <Field name="cuil">
@@ -213,17 +213,8 @@ export const DatosPersonales = memo(() => {
                                             placeholder="CUIL"
                                             className={`form-control ${errors && errors.cuil ? 'is-invalid' : ''}`}
                                             disabled={!isDniValid}
-                                            onChange={(e) => {
-                                                // Si el usuario edita manualmente el CUIL, desactivamos la bandera de autogenerado
-                                                form.setFieldValue('cuil', e.target.value);
-                                                try {
-                                                    // access the ref in closure
-                                                    if (autoCuilRef) autoCuilRef.current = false;
-                                                } catch {
-                                                    // ignore
-                                                }
-                                                
-                                            }}
+                                            readOnly={true}
+                                            style={{ backgroundColor: '#e9ecef', cursor: 'not-allowed' }} // Visual feedback for read-only
                                         />
                                         <ErrorMessage name="cuil" component="div" className="error" />
                                         {/* Botón para recalcular el CUIL usando sexo + dni */}
@@ -265,7 +256,7 @@ export const DatosPersonales = memo(() => {
                                 )}
                             </Field>
                             <small className="form-text text-muted">
-                                Se completa automáticamente con el DNI. Prefijo: 20 (masculino), 27 (femenino), 23 (empresa)
+                                Auto con DNI.
                             </small>
                         </div>
                     )}
@@ -279,40 +270,64 @@ export const DatosPersonales = memo(() => {
                     </div>
                 )}
 
-                    <div className="form-group">
-                        <label>Email:</label>
-                        <Field type="email" name="email" placeholder="Correo electrónico" className={`form-control ${errors && errors.email ? 'is-invalid' : ''}`} disabled={!isDniValid} />
-                        <ErrorMessage name="email" component="div" className="error" />
+                <div className="form-group">
+                    <label>Email:</label>
+                    <Field type="email" name="email" placeholder="Correo electrónico" className={`form-control ${errors && errors.email ? 'is-invalid' : ''}`} disabled={!isDniValid} />
+                    <ErrorMessage name="email" component="div" className="error" />
                     <small className="form-text text-muted">
                         Email para notificaciones y envío de comprobantes
                     </small>
                 </div>
-                
-                    <div className="form-group">
-                        <label>Teléfono/Celular:</label>
-                        <Field 
-                            type="tel" 
-                            name="telefono" 
-                            placeholder="Ej: 11-1234-5678 o 0351-4567890" 
-                            disabled={!isDniValid}
-                            className={`form-control ${errors && errors.telefono ? 'is-invalid' : ''}`}
-                            maxLength="15"
-                        />
-                        <ErrorMessage name="telefono" component="div" className="error" />
+
+                <div className="form-group">
+                    <label>Teléfono/Celular:</label>
+                    <Field
+                        type="tel"
+                        name="telefono"
+                        placeholder="Ej: 11-1234-5678 o 0351-4567890"
+                        disabled={!isDniValid}
+                        className={`form-control ${errors && errors.telefono ? 'is-invalid' : ''}`}
+                        maxLength="15"
+                    />
+                    <ErrorMessage name="telefono" component="div" className="error" />
                     <small className="form-text text-muted">
                         Incluir código de área sin el 15. Ej: 11-1234-5678
                     </small>
                 </div>
-                
+
                 <div className="form-group">
                     <label>Fecha Nacimiento:</label>
-                    <Field type="date" name="fechaNacimiento" disabled={!isDniValid}className={`form-control ${errors && errors.fechaNacimiento ? 'is-invalid' : ''}`} placeholder="Fecha de Nacimiento"/>
+                    <Field name="fechaNacimiento">
+                        {({ field, form }) => (
+                            <input
+                                {...field}
+                                type="date"
+                                disabled={!isDniValid}
+                                className={`form-control ${errors && errors.fechaNacimiento ? 'is-invalid' : ''}`}
+                                placeholder="Fecha de Nacimiento"
+                                max="9999-12-31"
+                                min="1900-01-01"
+                                onChange={(e) => {
+                                    let val = e.target.value;
+                                    // Forzar máximo 4 dígitos en el año
+                                    if (val) {
+                                        const parts = val.split('-');
+                                        if (parts[0] && parts[0].length > 4) {
+                                            parts[0] = parts[0].slice(0, 4);
+                                            val = parts.join('-');
+                                        }
+                                    }
+                                    form.setFieldValue(field.name, val);
+                                }}
+                            />
+                        )}
+                    </Field>
                     <ErrorMessage name="fechaNacimiento" component="div" className="error" />
                     {/*<small>Debug: <Field name="fechaNacimiento">{({ field }) => field.value}</Field></small>*/}
                 </div>
-            </div>                     
-    
-    </>
+            </div>
+
+        </>
     );
 });
 

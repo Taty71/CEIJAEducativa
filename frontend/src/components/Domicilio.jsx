@@ -9,7 +9,7 @@ import '../estilos/ModalAgregarBarrio.css';
 
 export const Domicilio = ({ esAdmin = false }) => {
     const { values, setFieldValue } = useFormikContext();
-    
+
     // Estados para selects dinámicos
     const [provincias, setProvincias] = useState([]);
     const [localidades, setLocalidades] = useState([]);
@@ -145,7 +145,7 @@ export const Domicilio = ({ esAdmin = false }) => {
 
             console.log('✅ Barrio creado exitosamente:', nuevo);
             setAlerta({ text: `Barrio "${nuevoBarrio}" creado exitosamente`, variant: 'success' });
-            
+
             setShowModalBarrio(false);
             setNuevoBarrio('');
         } catch (error) {
@@ -162,7 +162,7 @@ export const Domicilio = ({ esAdmin = false }) => {
                 Domicilio {esAdmin ? '(Administrador)' : ' '}
                 {loading && <span style={{ color: 'blue', marginLeft: '10px' }}>⏳</span>}
             </h3>
-            
+
             {error && (
                 <div style={{
                     background: '#ffebee',
@@ -181,13 +181,13 @@ export const Domicilio = ({ esAdmin = false }) => {
                 <Field type="text" name="calle" placeholder="Calle" className="form-control" />
                 <ErrorMessage name="calle" component="div" className="error" />
             </div>
-            
+
             <div className="form-group">
                 <label>Número:</label>
-                <Field type="number" name="numero" placeholder="Número" className="form-control" />
+                <Field type="text" name="numero" placeholder="Número o S/N" className="form-control" />
                 <ErrorMessage name="numero" component="div" className="error" />
             </div>
-            
+
             <div className="localprovincia">
                 <div className="form-group">
                     <label>Provincia:</label>
@@ -222,7 +222,7 @@ export const Domicilio = ({ esAdmin = false }) => {
                         {provincias.length} provincias disponibles
                     </small>
                 </div>
-                
+
                 <div className="form-group">
                     <label>Localidad:</label>
                     <div className="domicilio-input-con-boton">
@@ -259,7 +259,7 @@ export const Domicilio = ({ esAdmin = false }) => {
                     </small>
                 </div>
             </div>
-            
+
             <div className="form-group">
                 <label>Barrio:</label>
                 <div className="domicilio-input-con-boton">
@@ -303,7 +303,7 @@ export const Domicilio = ({ esAdmin = false }) => {
                         <h3 className="modal-agregar-barrio-titulo">
                             🏠 Agregar Nuevo Barrio
                         </h3>
-                        
+
                         <div className="modal-agregar-barrio-grupo">
                             <label className="modal-agregar-barrio-label">
                                 Nombre del barrio:
@@ -339,9 +339,8 @@ export const Domicilio = ({ esAdmin = false }) => {
                                 type="button"
                                 onClick={guardarNuevoBarrio}
                                 disabled={guardandoBarrio || !nuevoBarrio.trim()}
-                                className={`modal-agregar-barrio-btn modal-agregar-barrio-btn-crear ${
-                                    guardandoBarrio ? 'modal-agregar-barrio-guardando' : ''
-                                }`}
+                                className={`modal-agregar-barrio-btn modal-agregar-barrio-btn-crear ${guardandoBarrio ? 'modal-agregar-barrio-guardando' : ''
+                                    }`}
                             >
                                 {guardandoBarrio ? (
                                     <>
@@ -377,8 +376,8 @@ export const Domicilio = ({ esAdmin = false }) => {
 
             {/* Alertas */}
             {alerta.text && (
-                <AlertaMens 
-                    text={alerta.text} 
+                <AlertaMens
+                    text={alerta.text}
                     variant={alerta.variant}
                     onClose={() => setAlerta({ text: '', variant: '' })}
                 />
