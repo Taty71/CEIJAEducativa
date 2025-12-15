@@ -17,7 +17,7 @@ const storage = multer.diskStorage({
         const dni = (req.body.dni || 'sin_dni');
         const campo = file.fieldname; // archivo_dni, archivo_cuil, foto, etc.
         const ext = path.extname(file.originalname);
-        
+
         const filename = `${nombre}_${apellido}_${dni}_${campo}${ext}`;
         console.log(`📎 [archivos-web] Guardando archivo: ${filename}`);
         cb(null, filename);
@@ -32,13 +32,13 @@ const REGISTROS_WEB_PATH = path.join(__dirname, '..', 'data', 'Registro_Web.json
 // Función para asegurar que existe el directorio y el archivo
 const ensureFileExists = async () => {
     const dir = path.dirname(REGISTROS_WEB_PATH);
-    
+
     try {
         await fs.access(dir);
     } catch {
         await fs.mkdir(dir, { recursive: true });
     }
-    
+
     try {
         await fs.access(REGISTROS_WEB_PATH);
     } catch {
@@ -52,12 +52,12 @@ router.get('/', async (req, res) => {
         await ensureFileExists();
         const data = await fs.readFile(REGISTROS_WEB_PATH, 'utf8');
         const registros = JSON.parse(data);
-        
+
         console.log(`📋 Obteniendo ${registros.length} registros web`);
         res.json(registros);
     } catch (error) {
         console.error('Error al obtener registros web:', error);
-        res.status(500).json({ 
+        res.status(500).json({
             error: 'Error al obtener los registros web',
             userMessage: 'No se pudieron cargar los registros web. Intente nuevamente o contacte al equipo técnico.',
             technical: error.message
@@ -71,7 +71,7 @@ router.get('/', async (req, res) => {
 router.post('/', upload.any(), async (req, res) => {
     try {
         await ensureFileExists();
-        
+
         console.log('📋 [registros-web] Datos recibidos:', req.body);
         console.log('📎 [registros-web] Archivos recibidos:', req.files);
 
@@ -84,7 +84,7 @@ router.post('/', upload.any(), async (req, res) => {
                 console.log(`📎 [archivos-web] Mapeado: ${file.fieldname} → ${file.filename}`);
             });
         }
-        
+
         const nuevoRegistro = {
             id: Date.now().toString(),
             timestamp: new Date().toISOString(),
@@ -103,21 +103,22 @@ router.post('/', upload.any(), async (req, res) => {
                 fechaNacimiento: req.body.fechaNacimiento || '',
                 tipoDocumento: req.body.tipoDocumento || 'DNI',
                 paisEmision: req.body.paisEmision || 'Argentina',
-                
+                sexo: req.body.sexo || '',
+
                 // Domicilio
                 calle: req.body.calle || '',
                 numero: req.body.numero || '',
                 barrio: req.body.barrio || '',
                 localidad: req.body.localidad || '',
                 provincia: req.body.provincia || '',
-                
+
                 // Información académica
                 modalidad: req.body.modalidad || '',
                 modalidadId: req.body.modalidadId || null,
                 planAnio: req.body.planAnio || '',
                 modulos: req.body.modulos || '',
                 idModulo: req.body.idModulo || null,
-                
+
                 // Información del usuario web
                 usuario: req.body.usuario || req.user?.usuario || 'usuario_web',
                 ipAddress: req.ip || req.connection.remoteAddress,
@@ -130,25 +131,25 @@ router.post('/', upload.any(), async (req, res) => {
         // Leer registros existentes
         const data = await fs.readFile(REGISTROS_WEB_PATH, 'utf8');
         const registros = JSON.parse(data);
-        
+
         // Agregar nuevo registro
         registros.push(nuevoRegistro);
-        
+
         // Guardar archivo actualizado
         await fs.writeFile(REGISTROS_WEB_PATH, JSON.stringify(registros, null, 2));
-        
+
         console.log(`✅ Nuevo registro web creado - DNI: ${nuevoRegistro.datos.dni}, Usuario: ${nuevoRegistro.datos.usuario}`);
         console.log(`📎 Archivos guardados:`, Object.keys(archivosMap).length, 'archivos');
-        
+
         res.status(201).json({
             message: 'Registro web guardado exitosamente',
             registro: nuevoRegistro,
             archivosProcesados: Object.keys(archivosMap).length
         });
-        
+
     } catch (error) {
         console.error('Error al crear registro web:', error);
-        res.status(500).json({ 
+        res.status(500).json({
             error: 'Error al guardar el registro web',
             userMessage: 'No se pudo guardar el registro web. Verifique los datos e intente nuevamente, o contacte al equipo técnico.',
             technical: error.message
@@ -162,33 +163,33 @@ router.put('/:id', async (req, res) => {
         await ensureFileExists();
         const { id } = req.params;
         const { estado, observaciones } = req.body;
-        
+
         const data = await fs.readFile(REGISTROS_WEB_PATH, 'utf8');
         const registros = JSON.parse(data);
-        
+
         const indiceRegistro = registros.findIndex(r => r.id === id);
-        
+
         if (indiceRegistro === -1) {
             return res.status(404).json({ error: 'Registro no encontrado' });
         }
-        
+
         // Actualizar registro
         registros[indiceRegistro].estado = estado || registros[indiceRegistro].estado;
         registros[indiceRegistro].observaciones = observaciones || registros[indiceRegistro].observaciones;
         registros[indiceRegistro].fechaActualizacion = new Date().toISOString();
-        
+
         await fs.writeFile(REGISTROS_WEB_PATH, JSON.stringify(registros, null, 2));
-        
+
         console.log(`🔄 Registro web actualizado - ID: ${id}, Estado: ${estado}`);
-        
+
         res.json({
             message: 'Registro actualizado exitosamente',
             registro: registros[indiceRegistro]
         });
-        
+
     } catch (error) {
         console.error('Error al actualizar registro web:', error);
-        res.status(500).json({ 
+        res.status(500).json({
             error: 'Error al actualizar el registro web',
             userMessage: 'No se pudo actualizar el registro web. Intente nuevamente o contacte al equipo técnico.',
             technical: error.message
@@ -201,31 +202,31 @@ router.delete('/:id', async (req, res) => {
     try {
         await ensureFileExists();
         const { id } = req.params;
-        
+
         const data = await fs.readFile(REGISTROS_WEB_PATH, 'utf8');
         let registros = JSON.parse(data);
-        
+
         const registroAEliminar = registros.find(r => r.id === id);
-        
+
         if (!registroAEliminar) {
             return res.status(404).json({ error: 'Registro no encontrado' });
         }
-        
+
         // Filtrar registros (eliminar el seleccionado)
         registros = registros.filter(r => r.id !== id);
-        
+
         await fs.writeFile(REGISTROS_WEB_PATH, JSON.stringify(registros, null, 2));
-        
+
         console.log(`🗑️ Registro web eliminado - DNI: ${registroAEliminar.datos.dni}`);
-        
+
         res.json({
             message: 'Registro eliminado exitosamente',
             registroEliminado: registroAEliminar
         });
-        
+
     } catch (error) {
         console.error('Error al eliminar registro web:', error);
-        res.status(500).json({ 
+        res.status(500).json({
             error: 'Error al eliminar el registro web',
             userMessage: 'No se pudo eliminar el registro web. Intente nuevamente o contacte al equipo técnico.',
             technical: error.message
@@ -235,7 +236,7 @@ router.delete('/:id', async (req, res) => {
 
 // POST: Procesar un registro web (solo ADMIN)
 // Si la documentación está completa: guarda en la base de datos y migra archivos a archivosDocumento.
-    // Si está incompleta: mueve a Registros_Pendientes.json y marca el registro web como PROCESADO_A_PENDIENTES.
+// Si está incompleta: mueve a Registros_Pendientes.json y marca el registro web como PROCESADO_A_PENDIENTES.
 router.post('/:id/procesar', upload.any(), async (req, res) => {
     try {
         await ensureFileExists();
@@ -264,7 +265,7 @@ router.post('/:id/procesar', upload.any(), async (req, res) => {
         // Combinar datos del formulario
         const datosCompletos = { ...registro.datos, ...req.body };
         // Validar documentación (usa tu lógica de validación)
-    const { obtenerDocumentosRequeridos } = require(path.join(__dirname, '../utils/obtenerDocumentosRequeridos.js'));
+        const { obtenerDocumentosRequeridos } = require(path.join(__dirname, '../utils/obtenerDocumentosRequeridos.js'));
         const modalidad = datosCompletos.modalidad || '';
         const planAnio = datosCompletos.planAnio || '';
         const modulos = datosCompletos.modulos || '';
@@ -304,11 +305,11 @@ router.post('/:id/procesar', upload.any(), async (req, res) => {
             if (existing && existing.length > 0) {
                 // En lugar de abortar, consultar toda la información del estudiante
                 console.log(`⚠️ DNI ${datosCompletos.dni} ya existe en BD (id=${existing[0].id})`);
-                
+
                 // Obtener información completa del estudiante con inscripciones y documentación
                 const [estudianteRows] = await pool.query('SELECT * FROM estudiantes WHERE id = ?', [existing[0].id]);
                 const estudiante = estudianteRows[0];
-                
+
                 // Obtener inscripciones
                 const [inscripcionesRows] = await pool.query(`
                     SELECT 
@@ -327,7 +328,7 @@ router.post('/:id/procesar', upload.any(), async (req, res) => {
                     WHERE i.idEstudiante = ?
                     ORDER BY i.fechaInscripcion DESC
                 `, [existing[0].id]);
-                
+
                 // Para cada inscripción, obtener documentación
                 const inscripcionesConDocs = [];
                 for (const insc of inscripcionesRows) {
@@ -345,7 +346,7 @@ router.post('/:id/procesar', upload.any(), async (req, res) => {
                     `, [insc.idInscripcion]);
                     inscripcionesConDocs.push({ ...insc, documentacion: docs });
                 }
-                
+
                 // Marcar el registro web como procesado
                 registros[indiceRegistro] = {
                     ...registro,
@@ -357,7 +358,7 @@ router.post('/:id/procesar', upload.any(), async (req, res) => {
                     observaciones: (registro.observaciones || '') + `\nProcesado automáticamente: DNI ya existe en la base de datos (idEstudiante=${existing[0].id}).`
                 };
                 await fs.writeFile(REGISTROS_WEB_PATH, JSON.stringify(registros, null, 2));
-                
+
                 return res.status(200).json({
                     yaExiste: true,
                     message: 'El DNI ya está registrado en el sistema',
@@ -493,8 +494,8 @@ router.post('/:id/procesar', upload.any(), async (req, res) => {
         try {
             // Insertar estudiante en la tabla 'estudiantes'
             const [result] = await pool.query(
-                `INSERT INTO estudiantes (nombre, apellido, dni, cuil, email, telefono, fechaNacimiento, tipoDocumento, paisEmision, calle, numero, barrio, localidad, provincia, modalidad, planAnio, modulos, usuario, archivo_dni, archivo_cuil, archivo_fichaMedica, archivo_partidaNacimiento, foto, archivo_analiticoParcial, archivo_certificadoNivelPrimario, archivo_solicitudPase)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+                `INSERT INTO estudiantes (nombre, apellido, dni, cuil, email, telefono, fechaNacimiento, tipoDocumento, paisEmision, sexo, calle, numero, barrio, localidad, provincia, modalidad, planAnio, modulos, usuario, archivo_dni, archivo_cuil, archivo_fichaMedica, archivo_partidaNacimiento, foto, archivo_analiticoParcial, archivo_certificadoNivelPrimario, archivo_solicitudPase)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
                 [
                     datosCompletos.nombre,
                     datosCompletos.apellido,
@@ -505,6 +506,7 @@ router.post('/:id/procesar', upload.any(), async (req, res) => {
                     datosCompletos.fechaNacimiento,
                     datosCompletos.tipoDocumento,
                     datosCompletos.paisEmision,
+                    datosCompletos.sexo || null,
                     datosCompletos.calle,
                     datosCompletos.numero,
                     datosCompletos.barrio,
@@ -540,7 +542,7 @@ router.post('/:id/procesar', upload.any(), async (req, res) => {
                     // determinar nombre
                     const nombre = path.basename(destino);
                     const origenWeb = path.join(__dirname, '..', 'archivosDocWeb', nombre);
-                    await fs.unlink(origenWeb).catch(() => {});
+                    await fs.unlink(origenWeb).catch(() => { });
                 }
             } catch (rmErr) {
                 console.warn('⚠️ No se pudieron eliminar archivos originales de archivosDocWeb tras procesar:', rmErr.message);
@@ -554,7 +556,7 @@ router.post('/:id/procesar', upload.any(), async (req, res) => {
             // En caso de error al insertar, intentar rollback de archivos copiados
             try {
                 for (const f of copiedFiles) {
-                    await fs.unlink(f).catch(() => {});
+                    await fs.unlink(f).catch(() => { });
                 }
             } catch (cleanupErr) {
                 console.warn('⚠️ Error limpiando archivos tras fallo de inserción (registro web):', cleanupErr.message);
@@ -583,36 +585,36 @@ router.post('/:id/procesar', upload.any(), async (req, res) => {
         });
     } catch (error) {
         console.error('Error al procesar registro web:', error);
-        res.status(500).json({ 
+        res.status(500).json({
             error: 'Error al procesar el registro web',
-            message: error.message 
+            message: error.message
         });
     }
 });
 
 // POST: Mover un registro web a pendientes (solo ADMIN, acción manual)
-    // Permite mover un registro web a Registros_Pendientes.json y marcarlo como PROCESADO_A_PENDIENTES.
+// Permite mover un registro web a Registros_Pendientes.json y marcarlo como PROCESADO_A_PENDIENTES.
 router.post('/:id/mover-pendiente', async (req, res) => {
     try {
         await ensureFileExists();
         const { id } = req.params;
         const { motivoPendiente } = req.body;
-        
+
         console.log(`📋 Moviendo registro web ${id} a pendientes`);
-        
+
         // Leer registros web actuales
         const dataWeb = await fs.readFile(REGISTROS_WEB_PATH, 'utf8');
         const registrosWeb = JSON.parse(dataWeb);
-        
+
         const indiceRegistro = registrosWeb.findIndex(r => r.id === id);
         if (indiceRegistro === -1) {
             return res.status(404).json({ error: 'Registro web no encontrado' });
         }
-        
+
         const registroWeb = registrosWeb[indiceRegistro];
-        
+
         // Crear registro pendiente
-    const registroPendiente = {
+        const registroPendiente = {
             dni: registroWeb.datos.dni,
             timestamp: new Date().toISOString(),
             fechaRegistro: new Date().toLocaleDateString('es-AR'),
@@ -629,11 +631,11 @@ router.post('/:id/mover-pendiente', async (req, res) => {
             archivos: registroWeb.archivos || {},
             observaciones: `Movido desde registro web a pendientes el ${new Date().toLocaleDateString('es-AR')} - ${motivoPendiente}`
         };
-        
+
         // Leer y actualizar registros pendientes
         const REGISTROS_PENDIENTES_PATH = path.join(__dirname, '..', 'data', 'Registros_Pendientes.json');
         let registrosPendientes = [];
-        
+
         try {
             const dataPendientes = await fs.readFile(REGISTROS_PENDIENTES_PATH, 'utf8');
             registrosPendientes = JSON.parse(dataPendientes);
@@ -641,10 +643,10 @@ router.post('/:id/mover-pendiente', async (req, res) => {
             // Si no existe el archivo, crear array vacío
             registrosPendientes = [];
         }
-        
+
         registrosPendientes.push(registroPendiente);
         await fs.writeFile(REGISTROS_PENDIENTES_PATH, JSON.stringify(registrosPendientes, null, 2));
-        
+
         // Actualizar estado del registro web original
         registrosWeb[indiceRegistro] = {
             ...registroWeb,
@@ -654,20 +656,20 @@ router.post('/:id/mover-pendiente', async (req, res) => {
             motivoPendiente: motivoPendiente,
             observaciones: `Movido a registros pendientes el ${new Date().toLocaleDateString('es-AR')} - ${motivoPendiente}`
         };
-        
+
         await fs.writeFile(REGISTROS_WEB_PATH, JSON.stringify(registrosWeb, null, 2));
-        
+
         console.log(`✅ Registro web ${id} movido a pendientes exitosamente`);
-        
+
         res.json({
             message: 'Registro web movido a pendientes exitosamente',
             registroWebActualizado: registrosWeb[indiceRegistro],
             registroPendienteCreado: registroPendiente
         });
-        
+
     } catch (error) {
         console.error('Error al mover registro web a pendientes:', error);
-        res.status(500).json({ 
+        res.status(500).json({
             error: 'Error al mover el registro web a pendientes',
             userMessage: 'No se pudo mover el registro web a pendientes. Intente nuevamente o contacte al equipo técnico.',
             technical: error.message
@@ -681,7 +683,7 @@ router.get('/stats', async (req, res) => {
         await ensureFileExists();
         const data = await fs.readFile(REGISTROS_WEB_PATH, 'utf8');
         const registros = JSON.parse(data);
-        
+
         const stats = {
             total: registros.length,
             pendientes: registros.filter(r => r.estado === 'PENDIENTE').length,
@@ -691,11 +693,11 @@ router.get('/stats', async (req, res) => {
             movidosAPendientes: registros.filter(r => r.estado === 'PROCESADO_A_PENDIENTES').length,
             ultimoRegistro: registros.length > 0 ? registros[registros.length - 1].timestamp : null
         };
-        
+
         res.json(stats);
     } catch (error) {
         console.error('Error al obtener estadísticas:', error);
-        res.status(500).json({ 
+        res.status(500).json({
             error: 'Error al obtener estadísticas',
             userMessage: 'No se pudieron calcular las estadísticas. Intente nuevamente o contacte al equipo técnico.',
             technical: error.message

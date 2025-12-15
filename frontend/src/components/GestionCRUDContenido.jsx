@@ -8,6 +8,7 @@ import VistaModificar from './VistaModificar';
 import VistaVisor from './VistaVisor';
 import VistaEliminar from './VistaEliminar';
 import serviceInscripcion from '../services/serviceInscripcion';
+import serviceDatos from '../services/serviceDatos';
 import { construirEstudianteCompleto } from '../utils/utilsEstudiante';
 import { useContext } from 'react';
 import { AlertContext } from '../context/AlertContext';
@@ -57,7 +58,7 @@ const GestionCRUDContenido = ({
     switch (vistaActual) {
         case 'opciones':
             return (
-                <VistaOpciones 
+                <VistaOpciones
                     modalidadId={modalidadIdFinal}
                     modalidad={modalidad}
                     modalidadFiltrada={modalidadFiltrada}
@@ -74,7 +75,7 @@ const GestionCRUDContenido = ({
             );
         case 'opcionesModificar':
             return (
-                <VistaOpcionesModificar 
+                <VistaOpcionesModificar
                     modalidadId={modalidadIdFinal}
                     modalidad={modalidad}
                     modalidadFiltrada={modalidadFiltrada}
@@ -90,7 +91,7 @@ const GestionCRUDContenido = ({
             );
         case 'busquedaDNI':
             return (
-                <VistaBusquedaDNI 
+                <VistaBusquedaDNI
                     modalidadId={modalidadIdFinal}
                     modalidad={modalidad}
                     modalidadFiltrada={modalidadFiltrada}
@@ -154,7 +155,7 @@ const GestionCRUDContenido = ({
         }
         case 'opcionesEliminar':
             return (
-                <VistaOpcionesEliminar 
+                <VistaOpcionesEliminar
                     modalidadId={modalidadIdFinal}
                     modalidad={modalidad}
                     modalidadFiltrada={modalidadFiltrada}
@@ -170,7 +171,7 @@ const GestionCRUDContenido = ({
             );
         case 'busquedaDNIEliminar':
             return (
-                <VistaBusquedaDNI 
+                <VistaBusquedaDNI
                     modalidadId={modalidadIdFinal}
                     modalidad={modalidad}
                     modalidadFiltrada={modalidadFiltrada}
@@ -208,7 +209,7 @@ const GestionCRUDContenido = ({
             );
         case 'registro':
             return (
-                <VistaRegistro 
+                <VistaRegistro
                     modalidad={estudiante?.modalidad || 'Presencial'}
                     isAdmin={isAdmin}
                     onClose={() => handleVolverAOpciones(false, false, setVistaActual, setEstudiante)}
@@ -216,14 +217,31 @@ const GestionCRUDContenido = ({
             );
         case 'modificar':
             return (
-                <VistaModificar 
+                <VistaModificar
                     idInscripcion={estudiante?.idInscripcion}
                     isAdmin={isAdmin}
                     estudiante={estudiante}
-                    onSuccess={() => {
-                        setRefreshKey(prev => prev + 1);
-                        setVistaActual('lista');
-                        showSuccess('Estudiante modificado exitosamente.');
+                    onSuccess={async () => {
+                        // Re-consultar los datos actualizados del estudiante
+                        try {
+                            const resultado = await serviceDatos.getEstudianteCompletoByDni(estudiante.dni, modalidadIdFinal);
+                            if (resultado.success) {
+                                const estudianteCompleto = construirEstudianteCompleto(resultado);
+                                setEstudiante(estudianteCompleto);
+                                setVistaActual('visor'); // Ir al visor para ver los cambios (foto, etc.)
+                                // showSuccess('Estudiante modificado exitosamente.'); // Ya lo muestra el componente hijo, pero si queremos reforzar:
+                                // showSuccess('Datos actualizados correctamente.');
+                            } else {
+                                // Fallback a la lista si falla la recarga
+                                console.warn('No se pudieron recargar los datos del estudiante tras modificar.');
+                                setRefreshKey(prev => prev + 1);
+                                setVistaActual('lista');
+                            }
+                        } catch (error) {
+                            console.error('Error al recargar estudiante:', error);
+                            setRefreshKey(prev => prev + 1);
+                            setVistaActual('lista');
+                        }
                     }}
                 />
             );
@@ -243,7 +261,7 @@ const GestionCRUDContenido = ({
                     showError('El DNI es obligatorio para modificar.');
                     return;
                 }
-                
+
                 let datosParaBackend = {};
                 let config = {};
 
@@ -269,6 +287,7 @@ const GestionCRUDContenido = ({
                     planAnioId: estudiante.planAnioId || estudiante.planAnio_id || '',
                     modulosId: estudiante.modulosId || estudiante.modulos_id || '',
                     estadoInscripcionId: estudiante.estadoInscripcionId || estudiante.estadoInscripcion_id || '',
+                    idDivision: estudiante.idDivision || estudiante.divisionId || null,
                 };
 
                 // Actualizar solo los campos de la sección modificada
@@ -278,7 +297,8 @@ const GestionCRUDContenido = ({
                     estudianteCompleto.planAnioId = datosActualizados.planAnioId || estudiante.planAnioId;
                     estudianteCompleto.modulosId = datosActualizados.modulosId || estudiante.modulosId;
                     estudianteCompleto.estadoInscripcionId = datosActualizados.estadoInscripcionId || estudiante.estadoInscripcionId;
-                    
+                    estudianteCompleto.idDivision = datosActualizados.idDivision !== undefined ? datosActualizados.idDivision : estudiante.idDivision;
+
                     // Validaciones antes de enviar
                     if (!estudianteCompleto.modalidadId) {
                         showError('Selecciona una modalidad válida.');
@@ -296,7 +316,7 @@ const GestionCRUDContenido = ({
                         showError('Selecciona un estado de inscripción válido.');
                         return;
                     }
-                    
+
                     datosParaBackend = estudianteCompleto;
                 } else if (seccion === 'personales') {
                     estudianteCompleto.nombre = datosActualizados.nombre || estudiante.nombre;
@@ -306,7 +326,7 @@ const GestionCRUDContenido = ({
                     estudianteCompleto.fechaNacimiento = datosActualizados.fechaNacimiento || estudiante.fechaNacimiento;
                     estudianteCompleto.tipoDocumento = datosActualizados.tipoDocumento || estudiante.tipoDocumento;
                     estudianteCompleto.paisEmision = datosActualizados.paisEmision || estudiante.paisEmision;
-                    
+
                     datosParaBackend = estudianteCompleto;
                 } else if (seccion === 'domicilio') {
                     estudianteCompleto.calle = datosActualizados.calle || estudiante.calle;
@@ -314,7 +334,7 @@ const GestionCRUDContenido = ({
                     estudianteCompleto.provincia = datosActualizados.provincia || estudiante.provincia;
                     estudianteCompleto.localidad = datosActualizados.localidad || estudiante.localidad;
                     estudianteCompleto.barrio = datosActualizados.barrio || estudiante.barrio;
-                    
+
                     // Validaciones específicas para domicilio
                     if (!estudianteCompleto.provincia || estudianteCompleto.provincia.trim() === '') {
                         showError('La provincia es obligatoria.');
@@ -328,7 +348,7 @@ const GestionCRUDContenido = ({
                         showError('El barrio es obligatorio.');
                         return;
                     }
-                    
+
                     // Validar que los IDs académicos estén presentes
                     if (!estudianteCompleto.planAnioId) {
                         showError('El plan de año es obligatorio para modificar.');
@@ -346,7 +366,7 @@ const GestionCRUDContenido = ({
                         showError('El estado de inscripción es obligatorio para modificar.');
                         return;
                     }
-                    
+
                     datosParaBackend = estudianteCompleto;
                 } else if (seccion === 'documentacion') {
                     // Validación de detalleDocumentacion
@@ -382,18 +402,25 @@ const GestionCRUDContenido = ({
 
                     if (response.success) {
                         // Actualizar solo los campos modificados en el estado local
-                        setEstudiante(prevEstudiante => ({ ...prevEstudiante, ...datosActualizados }));
+                        setEstudiante(prevEstudiante => {
+                            const datosNuevos = { ...prevEstudiante, ...datosActualizados };
+                            if (response.foto) {
+                                datosNuevos.foto = response.foto;
+                            }
+                            return datosNuevos;
+                        });
                         showSuccess('Datos actualizados correctamente');
                     } else {
                         showError(response.message || 'Error al actualizar');
                     }
+                    return response;
                 } catch (error) {
                     console.error("❌ Error al modificar estudiante:", error.message);
                     showError('Error al guardar los cambios. Verifica que todos los campos estén completos.');
                 }
             };
             return (
-                <VistaVisor 
+                <VistaVisor
                     estudiante={estudiante}
                     onClose={modoModificacion
                         ? () => handleVolverAOpciones(modoModificacion, modoEliminacion, setVistaActual, setEstudiante)
@@ -412,7 +439,7 @@ const GestionCRUDContenido = ({
         }
         case 'confirmarEliminacion':
             return (
-                <VistaEliminar 
+                <VistaEliminar
                     data={{
                         success: true,
                         estudiante: {
@@ -442,7 +469,7 @@ const GestionCRUDContenido = ({
                     }}
                     onClose={() => handleVolverAOpciones(modoModificacion, modoEliminacion, setVistaActual, setEstudiante)}
                     onVolver={() => handleVolverAlternativo(setAccion)}
-                    onEliminar={async (tipoEliminacion) => {
+                    onEliminar={async (tipoEliminacion, motivo) => {
                         try {
                             let response;
                             let mensaje;
@@ -450,7 +477,7 @@ const GestionCRUDContenido = ({
                                 response = await serviceInscripcion.deleteEstd(estudiante.dni);
                                 mensaje = 'Estudiante eliminado permanentemente de la base de datos';
                             } else if (tipoEliminacion === 'logica') {
-                                response = await serviceInscripcion.deactivateEstd(estudiante.dni);
+                                response = await serviceInscripcion.deactivateEstd(estudiante.dni, motivo);
                                 mensaje = 'Estudiante desactivado exitosamente. El estudiante ya no aparecerá en las listas de consulta';
                             }
                             if (response.error) {
@@ -481,26 +508,26 @@ const GestionCRUDContenido = ({
 // - modalidad: string (nombre de modalidad, solo para mostrar o fallback)
 // - modalidadFiltrada: string (nombre de modalidad filtrada para usuarios no admin)
 GestionCRUDContenido.propTypes = {
-  isAdmin: PropTypes.bool,
-  onClose: PropTypes.func,
-  vistaInicial: PropTypes.string,
-  soloListar: PropTypes.bool,
-  modalidad: PropTypes.string,
-  modalidadId: PropTypes.number, // <-- validación agregada
-  user: PropTypes.object,
-  vistaActual: PropTypes.string.isRequired,
-  setVistaActual: PropTypes.func.isRequired,
-  estudiante: PropTypes.object,
-  setEstudiante: PropTypes.func.isRequired,
-  vistaAnterior: PropTypes.string,
-  setVistaAnterior: PropTypes.func,
-  refreshKey: PropTypes.number,
-  setRefreshKey: PropTypes.func,
-  modoModificacion: PropTypes.bool,
-  setModoModificacion: PropTypes.func,
-  modoEliminacion: PropTypes.bool,
-  setAccion: PropTypes.func,
-  modalidadFiltrada: PropTypes.string
+    isAdmin: PropTypes.bool,
+    onClose: PropTypes.func,
+    vistaInicial: PropTypes.string,
+    soloListar: PropTypes.bool,
+    modalidad: PropTypes.string,
+    modalidadId: PropTypes.number, // <-- validación agregada
+    user: PropTypes.object,
+    vistaActual: PropTypes.string.isRequired,
+    setVistaActual: PropTypes.func.isRequired,
+    estudiante: PropTypes.object,
+    setEstudiante: PropTypes.func.isRequired,
+    vistaAnterior: PropTypes.string,
+    setVistaAnterior: PropTypes.func,
+    refreshKey: PropTypes.number,
+    setRefreshKey: PropTypes.func,
+    modoModificacion: PropTypes.bool,
+    setModoModificacion: PropTypes.func,
+    modoEliminacion: PropTypes.bool,
+    setAccion: PropTypes.func,
+    modalidadFiltrada: PropTypes.string
 };
 
 export default GestionCRUDContenido;

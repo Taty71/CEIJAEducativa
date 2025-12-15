@@ -16,6 +16,7 @@ const formatDate = (dateString) => {
 
 const EliminarEstd = ({ data, onClose, onVolver, onEliminar }) => {
     const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+    const [motivoBaja, setMotivoBaja] = useState('');
 
     // Si por alguna razón el objeto no trae success true, mostramos mensaje genérico
     if (!data?.success) {
@@ -37,9 +38,10 @@ const EliminarEstd = ({ data, onClose, onVolver, onEliminar }) => {
     };
 
     const handleTipoEliminacion = (tipo) => {
-        // Llamar al callback del padre con el tipo de eliminación
-        onEliminar(tipo);
+        // Llamar al callback del padre con el tipo de eliminación y el motivo
+        onEliminar(tipo, motivoBaja);
         setShowConfirmDialog(false);
+        setMotivoBaja(''); // Reset reason
     };
 
     const cancelarEliminacion = () => {
@@ -56,11 +58,11 @@ const EliminarEstd = ({ data, onClose, onVolver, onEliminar }) => {
                 <div className="modal-header-uniforme">
                     <h2 className="modal-title-uniforme">Eliminar Estudiante</h2>
                 </div>
-                
+
                 <div className="eliminar-warning-message">
                     ⚠️ Seleccione el tipo de eliminación: puede desactivar el estudiante (recomendado) para mantener los datos en la base de datos pero ocultarlo de las listas, o eliminarlo definitivamente de la base de datos (acción irreversible)
                 </div>
-                
+
                 <div className="consultaEstdRow">
                     {/* Datos Personales */}
                     <div className="consultaEstdSection">
@@ -140,8 +142,8 @@ const EliminarEstd = ({ data, onClose, onVolver, onEliminar }) => {
                     <div className="consultaEstdSection">
                         <h3>Foto</h3>
                         <div className="eliminar-foto-container">
-                            <img 
-                                src={estudiante.foto} 
+                            <img
+                                src={estudiante.foto}
                                 alt={`Foto de ${estudiante.nombre} ${estudiante.apellido}`}
                                 className="estudiante-foto"
                             />
@@ -151,13 +153,13 @@ const EliminarEstd = ({ data, onClose, onVolver, onEliminar }) => {
 
                 {/* Botones */}
                 <div className="consultaEstdButtons">
-                    <button 
+                    <button
                         onClick={onClose}
                         className="eliminar-btn-cancelar"
                     >
                         Cancelar
                     </button>
-                    <button 
+                    <button
                         onClick={handleEliminar}
                         className="eliminar-btn-eliminar"
                     >
@@ -176,11 +178,32 @@ const EliminarEstd = ({ data, onClose, onVolver, onEliminar }) => {
                             <strong>{estudiante?.nombre} {estudiante?.apellido}</strong>{' '}
                             (DNI: <strong>{estudiante?.dni}</strong>)?
                         </p>
-                        
+
+                        {/* Selector de Motivo de Baja */}
+                        <div style={{ marginBottom: '15px', textAlign: 'left', width: '100%' }}>
+                            <label style={{ display: 'block', fontWeight: 'bold', marginBottom: '5px' }}>Motivo de la baja:</label>
+                            <select
+                                className="input-field" // Reusing styling if available, otherwise default
+                                style={{ width: '100%', padding: '8px', borderRadius: '4px', border: '1px solid #ccc' }}
+                                value={motivoBaja}
+                                onChange={(e) => setMotivoBaja(e.target.value)}
+                            >
+                                <option value="">-- Seleccione un motivo --</option>
+                                <option value="Sin Renovar Inscripción">Sin Renovar Inscripción</option>
+                                <option value="No completó Inscripción">No completó Inscripción</option>
+                                <option value="Cambio de Institución Educativa">Cambio de Institución Educativa</option>
+                                <option value="Abandono (motivos personales/laborales)">Abandono (motivos personales/laborales)</option>
+                                <option value="Egresado">Egresado</option>
+                            </select>
+                        </div>
+
                         <div className="eliminar-confirm-options">
-                            <button 
+                            <button
                                 onClick={() => handleTipoEliminacion('logica')}
                                 className="eliminar-btn-logica"
+                                disabled={!motivoBaja} // Disable if no reason selected
+                                style={{ opacity: !motivoBaja ? 0.6 : 1, cursor: !motivoBaja ? 'not-allowed' : 'pointer' }}
+                                title={!motivoBaja ? "Debe seleccionar un motivo primero" : ""}
                             >
                                 <div className="eliminar-btn-logica-title">
                                     🔒 Desactivar Estudiante (Recomendado)
@@ -189,8 +212,8 @@ const EliminarEstd = ({ data, onClose, onVolver, onEliminar }) => {
                                     El estudiante quedará oculto pero sus datos se conservarán en la base de datos
                                 </div>
                             </button>
-                            
-                            <button 
+
+                            <button
                                 onClick={() => handleTipoEliminacion('fisica')}
                                 className="eliminar-btn-fisica"
                             >
@@ -202,8 +225,8 @@ const EliminarEstd = ({ data, onClose, onVolver, onEliminar }) => {
                                 </div>
                             </button>
                         </div>
-                        
-                        <button 
+
+                        <button
                             onClick={cancelarEliminacion}
                             className="eliminar-btn-cancelar-dialog"
                         >

@@ -1,0 +1,100 @@
+.modal-acciones-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+    /* High z-index to be on top of main modal but below alerts */
+}
+
+.modal-acciones-container {
+    background: var(--color-fondo-principal, #313030);
+    width: 90%;
+    max-width: 1000px;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+    position: relative;
+    border: 1px solid var(--color-borde, #d1d1d1);
+}
+
+.modal-acciones-header {
+    background: var(--color-header, #3a3a5a);
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.modal-acciones-title {
+    color: #fff;
+    margin: 0;
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+.modal-acciones-close {
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 28px;
+    line-height: 1;
+    cursor: pointer;
+    transition: color 0.2s;
+    padding: 0;
+    margin: 0;
+}
+
+.modal-acciones-close:hover {
+    color: #fff;
+}
+
+.modal-acciones-content {
+    background: var(--color-fondo-principal, #313030);
+    /* Colors from user request */
+    --color-fondo-principal: #313030;
+    --color-fondo-tarjeta: #f8f8fc;
+    --color-texto-principal: #222;
+    --color-texto-secundario: #666;
+    --color-acento: #2d4177;
+    --color-acento-claro: #e8f8f5;
+    --color-borde: #d1d1d1;
+    --color-header: #3a3a5a;
+    --color-shadow: rgba(0, 0, 0, 0.07);
+
+    padding: 0;
+}
+
+/* Animation */
+.scale-in-center {
+    animation: scale-in-center 0.3s cubic-bezier(0.250, 0.460, 0.450, 0.940) both;
+}
+
+@keyframes scale-in-center {
+    0% {
+        transform: scale(0);
+        opacity: 1;
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* Adjustments to overwrite ModalFooter styles to fit perfectly if needed */
+.acciones-wrapper .mrp-footer {
+    position: static;
+    /* Remove fixed position if it had one */
+    width: 100%;
+    border-top: none;
+    background: transparent;
+    /* Background handled by container */
+}

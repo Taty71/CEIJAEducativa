@@ -13,13 +13,13 @@ export const useInitialValues = (modalidad, completarRegistro, datosRegistroWeb,
     // Buscar datos en sessionStorage SOLO si estamos completando un registro
     let datosSessionStorage = null;
     const esCompletarRegistro = !!(completarRegistro || completarRegistroWeb || datosRegistroPendiente || datosRegistroWeb);
-    
+
     if (esCompletarRegistro) {
         try {
             // Priorizar datos de registro web si están disponibles
             const datosWebString = sessionStorage.getItem('datosRegistroWeb');
             const datosPendienteString = sessionStorage.getItem('datosRegistroPendiente');
-            
+
             if (datosWebString) {
                 datosSessionStorage = JSON.parse(datosWebString);
                 console.log('📋 Datos de registro web encontrados en sessionStorage:', datosSessionStorage);
@@ -27,7 +27,7 @@ export const useInitialValues = (modalidad, completarRegistro, datosRegistroWeb,
                 datosSessionStorage = JSON.parse(datosPendienteString);
                 console.log('📋 Datos de registro pendiente encontrados en sessionStorage:', datosSessionStorage);
             }
-            
+
             // NO eliminar sessionStorage aquí para permitir múltiples renderizaciones
             // Los datos se eliminarán cuando se complete el registro o se cierre la página
         } catch (error) {
@@ -39,10 +39,10 @@ export const useInitialValues = (modalidad, completarRegistro, datosRegistroWeb,
         sessionStorage.removeItem('datosRegistroWeb');
         sessionStorage.removeItem('datosRegistroPendiente');
     }
-    
+
     // Determinar qué datos usar - priorizar URL > sessionStorage > localStorage
     const registroPendiente = esCompletarRegistro ? (
-        datosRegistroPendiente?.datos || datosRegistroWeb?.datos || datosSessionStorage || 
+        datosRegistroPendiente?.datos || datosRegistroWeb?.datos || datosSessionStorage ||
         (completarRegistro ? verificarRegistroPendiente(completarRegistro) : null) ||
         (completarRegistroWeb ? null : null) // Para registro web, los datos vienen de sessionStorage
     ) : null;
@@ -69,6 +69,7 @@ export const useInitialValues = (modalidad, completarRegistro, datosRegistroWeb,
             modulos: '',
             idModulo: '',
             idEstadoInscripcion: 1,
+            idDivision: null, // Campo para la división
             // Campos de documentación (archivos)
             archivo_dni: null,
             archivo_cuil: null,

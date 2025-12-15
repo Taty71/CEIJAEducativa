@@ -94,7 +94,7 @@ const ConsultaEstd = ({ data, onClose }) => {
                         <p className="modal-subtitle-verestd">Información detallada del registro académico</p>
                     </div>
                     <button className="btn-uniforme btn-secondary-uniforme" onClick={handleGenerarComprobante}>
-                       📄 Emitir Comprobante
+                        📄 Emitir Comprobante
                     </button>
                 </div>
                 <div className="modal-content-verestd">
@@ -103,47 +103,89 @@ const ConsultaEstd = ({ data, onClose }) => {
                         <div className="tarjeta-verestd">
                             <div className="tarjeta-header-verestd">Datos Personales</div>
                             <div>
+                                {estudiante?.foto && (
+                                    <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '15px' }}>
+                                        <img
+                                            src={
+                                                (() => {
+                                                    if (!estudiante.foto) return '';
+                                                    let cleanSrc = estudiante.foto.replace(/\\/g, '/');
+
+                                                    // Handle absolute paths (cache old data cleaning)
+                                                    if (cleanSrc.includes('archivosDocumento/')) {
+                                                        const parts = cleanSrc.split('archivosDocumento/');
+                                                        cleanSrc = '/archivosDocumento/' + parts[1];
+                                                    }
+
+                                                    // Construct full URL
+                                                    let fullUrl = '';
+                                                    if (cleanSrc.startsWith('http')) {
+                                                        fullUrl = cleanSrc;
+                                                    } else if (cleanSrc.startsWith('/')) {
+                                                        fullUrl = `http://localhost:5000${cleanSrc}`;
+                                                    } else {
+                                                        fullUrl = `http://localhost:5000/${cleanSrc}`;
+                                                    }
+
+                                                    // Encode URI to handle special characters (accents, spaces)
+                                                    return encodeURI(fullUrl);
+                                                })()
+                                            }
+                                            alt={`Foto de ${estudiante.nombre}`}
+                                            style={{ width: '100px', height: '100px', borderRadius: '50%', objectFit: 'cover', border: '2px solid #ccc' }}
+                                        />
+                                    </div>
+                                )}
                                 <div className="dato-item-verestd">
-                                    <label>Nombre:</label> 
+                                    <label>Nombre:</label>
                                     <span>{estudiante?.nombre || 'No especificado'}</span>
                                 </div>
                                 <div className="dato-item-verestd">
-                                    <label>Apellido:</label> 
+                                    <label>Apellido:</label>
                                     <span>{estudiante?.apellido || 'No especificado'}</span>
                                 </div>
                                 <div className="dato-item-verestd">
-                                    <label>DNI:</label> 
+                                    <label>DNI:</label>
                                     <span>{estudiante?.dni || 'No especificado'}</span>
                                 </div>
                                 <div className="dato-item-verestd">
-                                    <label>CUIL:</label> 
+                                    <label>CUIL:</label>
                                     <span>{estudiante?.cuil || 'No especificado'}</span>
                                 </div>
                                 <div className="dato-item-verestd">
-                                    <label>Email:</label> 
+                                    <label>Email:</label>
                                     <span>{estudiante?.email || 'Sin email registrado'}</span>
                                 </div>
                                 <div className="dato-item-verestd">
-                                    <label>Fecha de Nacimiento:</label> 
+                                    <label>Fecha de Nacimiento:</label>
                                     <span>{formatDate(estudiante?.fechaNacimiento)}</span>
                                 </div>
                                 <div className="dato-item-verestd">
-                                    <label>Tipo de Documento:</label> 
+                                    <label>Tipo de Documento:</label>
                                     <span>{estudiante?.tipoDocumento || 'DNI'}</span>
                                 </div>
                                 <div className="dato-item-verestd">
-                                    <label>País de Emisión:</label> 
+                                    <label>País de Emisión:</label>
                                     <span>{estudiante?.paisEmision || 'Argentina'}</span>
                                 </div>
                                 <div className="dato-item-verestd">
-                                    <label>Estado:</label> 
+                                    <label>Estado:</label>
                                     <span className={`estado-badge-verestd ${estudiante?.activo ? '' : 'estado-inactivo-verestd'}`}>
                                         {estudiante?.activo ? 'Activo' : 'Inactivo'}
                                     </span>
                                 </div>
+                                {/* Mostrar motivo de baja si está inactivo */}
+                                {!estudiante?.activo && (estudiante?.motivo_baja || estudiante?.motivoBaja) && (
+                                    <div className="dato-item-verestd" style={{ marginTop: '8px', backgroundColor: '#fff3cd', padding: '5px', borderRadius: '4px', border: '1px solid #ffeeba' }}>
+                                        <label style={{ color: '#856404' }}>Motivo de Baja:</label>
+                                        <span style={{ fontWeight: 'bold', color: '#856404' }}>
+                                            {estudiante.motivo_baja || estudiante.motivoBaja}
+                                        </span>
+                                    </div>
+                                )}
                             </div>
                         </div>
-                        
+
                         {/* Domicilio */}
                         <div className="tarjeta-verestd">
                             <div className="tarjeta-header-verestd">Domicilio</div>
@@ -151,23 +193,23 @@ const ConsultaEstd = ({ data, onClose }) => {
                                 {domicilio ? (
                                     <>
                                         <div className="dato-item-verestd">
-                                            <label>Calle:</label> 
+                                            <label>Calle:</label>
                                             <span>{domicilio.calle || 'No especificado'}</span>
                                         </div>
                                         <div className="dato-item-verestd">
-                                            <label>Número:</label> 
+                                            <label>Número:</label>
                                             <span>{domicilio.numero || 'No especificado'}</span>
                                         </div>
                                         <div className="dato-item-verestd">
-                                            <label>Barrio:</label> 
+                                            <label>Barrio:</label>
                                             <span>{domicilio.barrio || 'No especificado'}</span>
                                         </div>
                                         <div className="dato-item-verestd">
-                                            <label>Localidad:</label> 
+                                            <label>Localidad:</label>
                                             <span>{domicilio.localidad || 'No especificado'}</span>
                                         </div>
                                         <div className="dato-item-verestd">
-                                            <label>Provincia:</label> 
+                                            <label>Provincia:</label>
                                             <span>{domicilio.provincia || 'No especificado'}</span>
                                         </div>
                                     </>
@@ -178,7 +220,7 @@ const ConsultaEstd = ({ data, onClose }) => {
                                 )}
                             </div>
                         </div>
-                        
+
                         {/* Información Académica */}
                         <div className="tarjeta-verestd">
                             <div className="tarjeta-header-verestd">Información Académica</div>
@@ -186,25 +228,35 @@ const ConsultaEstd = ({ data, onClose }) => {
                                 {inscripcion ? (
                                     <>
                                         <div className="dato-item-verestd">
-                                            <label>Modalidad:</label> 
+                                            <label>Modalidad:</label>
                                             <span>{inscripcion.modalidad || 'No especificada'}</span>
                                         </div>
                                         <div className="dato-item-verestd">
-                                            <label>Curso / Plan:</label> 
+                                            <label>{(inscripcion.modalidad && String(inscripcion.modalidad).trim().toUpperCase() === 'PRESENCIAL') ? 'Año / Curso:' : 'Plan:'}</label>
                                             <span>{inscripcion.plan || inscripcion.planAnio || 'No especificado'}</span>
                                         </div>
+                                        {/* Mostrar División solo si es Presencial */}
+                                        {(inscripcion.modalidad && String(inscripcion.modalidad).trim().toUpperCase() === 'PRESENCIAL') && (
+                                            <div className="dato-item-verestd">
+                                                <label>División:</label>
+                                                <span>{inscripcion.division || 'No asignada'}</span>
+                                            </div>
+                                        )}
+                                        {/* Mostrar Módulo solo si NO es Presencial */}
+                                        {(!inscripcion.modalidad || String(inscripcion.modalidad).trim().toUpperCase() !== 'PRESENCIAL') && (
+                                            <div className="dato-item-verestd">
+                                                <label>Módulo:</label>
+                                                <span>{inscripcion.modulo || inscripcion.modulos || 'No especificado'}</span>
+                                            </div>
+                                        )}
                                         <div className="dato-item-verestd">
-                                            <label>Módulo:</label> 
-                                            <span>{inscripcion.modulo || inscripcion.modulos || 'No especificado'}</span>
-                                        </div>
-                                        <div className="dato-item-verestd">
-                                            <label>Estado de Inscripción:</label> 
-                                            <span className={`estado-badge-verestd ${inscripcion.estado?.toLowerCase() === 'pendiente' ? 'estado-pendiente-verestd' : ''}`}>
+                                            <label>Estado de Inscripción:</label>
+                                            <span className={`estado-badge-verestd ${inscripcion.estado?.toLowerCase() === 'presencial' ? 'estado-pendiente-verestd' : ''}`}>
                                                 {inscripcion.estado || 'No especificado'}
                                             </span>
                                         </div>
                                         <div className="dato-item-verestd">
-                                            <label>Fecha de Inscripción:</label> 
+                                            <label>Fecha de Inscripción:</label>
                                             <span>{formatDate(inscripcion?.fechaInscripcion)}</span>
                                         </div>
                                     </>
@@ -216,7 +268,7 @@ const ConsultaEstd = ({ data, onClose }) => {
                             </div>
                         </div>
                     </div>
-                    
+
                     {/* Documentación */}
                     <div className="documentacion-verestd">
                         <h4>Documentación Presentada</h4>

@@ -1,0 +1,342 @@
+/* Estilos para la página de Contacto */
+
+/* Container principal */
+.contacto-container {
+    width: 100%;
+    background-color: var(--color-fondo-tarjeta);
+    font-family: "Roboto Slab", serif;
+    margin-top: 150px;
+    /* Espacio para no tapar el logo */
+}
+
+/* Hero Section */
+.contacto-hero-section {
+    position: relative;
+    height: 50vh;
+    background: linear-gradient(135deg, var(--color-acento) 0%, var(--color-header) 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.contacto-hero-section::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image:
+        linear-gradient(30deg, rgba(45, 65, 119, 0.1) 12%, transparent 12.5%, transparent 87%, rgba(45, 65, 119, 0.1) 87.5%, rgba(45, 65, 119, 0.1)),
+        linear-gradient(150deg, rgba(45, 65, 119, 0.1) 12%, transparent 12.5%, transparent 87%, rgba(45, 65, 119, 0.1) 87.5%, rgba(45, 65, 119, 0.1)),
+        linear-gradient(30deg, rgba(45, 65, 119, 0.1) 12%, transparent 12.5%, transparent 87%, rgba(45, 65, 119, 0.1) 87.5%, rgba(45, 65, 119, 0.1)),
+        linear-gradient(150deg, rgba(45, 65, 119, 0.1) 12%, transparent 12.5%, transparent 87%, rgba(45, 65, 119, 0.1) 87.5%, rgba(45, 65, 119, 0.1));
+    background-size: 80px 140px;
+    background-position: 0 0, 0 0, 40px 70px, 40px 70px;
+    opacity: 0.3;
+}
+
+.contacto-hero-overlay {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    color: white;
+    animation: fadeInDown 1s ease;
+}
+
+.contacto-hero-title {
+    font-size: 3.5rem;
+    font-weight: 700;
+    margin: 0;
+    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.3);
+    animation: fadeInDown 1s ease;
+}
+
+.contacto-hero-subtitle {
+    font-size: 1.5rem;
+    margin: 10px 0 0 0;
+    font-weight: 300;
+    opacity: 0.95;
+    animation: fadeInUp 1s ease 0.2s both;
+}
+
+/* Content Wrapper */
+.contacto-content-wrapper {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 60px 30px;
+}
+
+.contacto-content-wrapper h2 {
+    text-align: center;
+    font-size: 2.5rem;
+    color: var(--color-acento);
+    margin-bottom: 40px;
+    font-weight: 700;
+    position: relative;
+    padding-bottom: 15px;
+}
+
+.contacto-content-wrapper h2::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 4px;
+    background: linear-gradient(90deg, var(--color-acento), var(--color-header));
+    border-radius: 2px;
+}
+
+/* Cards Grid */
+.contacto-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 30px;
+    margin-top: 40px;
+}
+
+.contacto-card {
+    background: white;
+    border-radius: 12px;
+    padding: 30px;
+    box-shadow: 0 4px 12px var(--color-shadow);
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+    text-align: center;
+}
+
+.contacto-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 24px rgba(45, 65, 119, 0.15);
+    border-color: var(--color-acento-claro);
+}
+
+.contacto-card-wide {
+    grid-column: span 2;
+}
+
+.contacto-card-icon {
+    font-size: 3rem;
+    margin-bottom: 15px;
+}
+
+.contacto-card h3 {
+    color: var(--color-acento);
+    font-size: 1.4rem;
+    margin: 0 0 15px 0;
+    font-weight: 600;
+}
+
+.contacto-detail {
+    color: var(--color-texto-principal);
+    font-size: 1.1rem;
+    margin: 10px 0;
+    line-height: 1.6;
+}
+
+.contacto-detail strong {
+    color: var(--color-acento);
+}
+
+.contacto-detail a {
+    color: var(--color-acento);
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.3s ease;
+}
+
+.contacto-detail a:hover {
+    color: var(--color-header);
+    text-decoration: underline;
+}
+
+.contacto-horario {
+    color: var(--color-texto-secundario);
+    font-size: 0.95rem;
+    margin-top: 10px;
+    font-style: italic;
+}
+
+/* Sección de Imagen */
+.contacto-imagen-section {
+    background: linear-gradient(to bottom, var(--color-acento-claro) 0%, white 100%);
+}
+
+.contacto-imagen-container {
+    max-width: 350px;
+    margin: 0 auto;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+.contacto-imagen {
+    width: 100%;
+    height: auto;
+    display: block;
+    transition: transform 0.3s ease;
+}
+
+.contacto-imagen:hover {
+    transform: scale(1.02);
+}
+
+/* Sección de Mapa */
+.contacto-mapa-section {
+    background-color: var(--color-fondo-tarjeta);
+}
+
+.contacto-mapa-descripcion {
+    text-align: center;
+    color: var(--color-texto-secundario);
+    font-size: 1.1rem;
+    margin-bottom: 30px;
+}
+
+.contacto-mapa-container {
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    border: 3px solid var(--color-acento-claro);
+}
+
+.contacto-mapa-container iframe {
+    display: block;
+}
+
+/* Enlace a Google Maps */
+.contacto-enlace-mapa {
+    text-align: center;
+    margin-top: 25px;
+}
+
+.btn-ver-mapa {
+    display: inline-block;
+    background: linear-gradient(135deg, var(--color-acento) 0%, var(--color-header) 100%);
+    color: white;
+    padding: 14px 30px;
+    border-radius: 50px;
+    text-decoration: none;
+    font-size: 1.1rem;
+    font-weight: 600;
+    box-shadow: 0 4px 12px rgba(45, 65, 119, 0.3);
+    transition: all 0.3s ease;
+}
+
+.btn-ver-mapa:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(45, 65, 119, 0.4);
+    background: linear-gradient(135deg, var(--color-header) 0%, var(--color-acento) 100%);
+}
+
+.btn-ver-mapa:active {
+    transform: translateY(-1px);
+}
+
+
+/* Footer Section */
+.contacto-footer-section {
+    background: linear-gradient(135deg, var(--color-acento) 0%, var(--color-header) 100%);
+    color: white;
+    text-align: center;
+    padding: 40px 20px;
+}
+
+.contacto-footer-text {
+    font-size: 1.2rem;
+    margin: 0 0 10px 0;
+    font-weight: 600;
+}
+
+.contacto-footer-address {
+    font-size: 1.1rem;
+    font-style: italic;
+    margin: 0;
+    opacity: 0.9;
+}
+
+/* Animaciones */
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .contacto-hero-title {
+        font-size: 2.5rem;
+    }
+
+    .contacto-hero-subtitle {
+        font-size: 1.2rem;
+    }
+
+    .contacto-content-wrapper {
+        padding: 40px 15px;
+    }
+
+    .contacto-content-wrapper h2 {
+        font-size: 2rem;
+    }
+
+    .contacto-cards-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .contacto-card-wide {
+        grid-column: span 1;
+    }
+
+    .contacto-card {
+        padding: 20px;
+    }
+
+    .contacto-mapa-container iframe {
+        height: 300px;
+    }
+}
+
+@media (max-width: 480px) {
+    .contacto-hero-title {
+        font-size: 2rem;
+    }
+
+    .contacto-hero-subtitle {
+        font-size: 1rem;
+    }
+
+    .contacto-card-icon {
+        font-size: 2.5rem;
+    }
+
+    .contacto-card h3 {
+        font-size: 1.2rem;
+    }
+
+    .contacto-detail {
+        font-size: 1rem;
+    }
+}

@@ -2,7 +2,7 @@ const db = require('../../db');
 
 // Utilidades para manejo de ubicaciones
 const buscarOInsertarProvincia = require('../../utils/buscarOInsertarProvincia');
-const buscarOInsertarLocalidad = require('../../utils/buscarOInsertarLocalidad');  
+const buscarOInsertarLocalidad = require('../../utils/buscarOInsertarLocalidad');
 const buscarOInsertarBarrio = require('../../utils/buscarOInsertarBarrio');
 
 const buscarOInsertarDetalleDocumentacion = require('../../utils/buscarOInsertarDetalleDocumentacion');
@@ -41,8 +41,8 @@ const insertarEstudianteCompleto = async (registro, archivosMigrados, connection
         console.log('👤 [BD] Insertando estudiante...');
         const estudianteResult = await conn.query(
             `INSERT INTO estudiantes (
-                nombre, apellido, tipoDocumento, paisEmision, dni, cuil, email, telefono, fechaNacimiento, idDomicilio
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+                nombre, apellido, tipoDocumento, paisEmision, dni, cuil, email, telefono, fechaNacimiento, sexo, idDomicilio
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
             [
                 registro.datos.nombre,
                 registro.datos.apellido,
@@ -53,6 +53,7 @@ const insertarEstudianteCompleto = async (registro, archivosMigrados, connection
                 registro.datos.email || null,
                 registro.datos.telefono || null,
                 registro.datos.fechaNacimiento || null,
+                registro.datos.sexo || null,
                 idDomicilio
             ]
         );
@@ -74,7 +75,7 @@ const insertarEstudianteCompleto = async (registro, archivosMigrados, connection
         console.log('📝 [BD] Insertando inscripción...');
         // Procesar array de módulos
         let modulosArray = [];
-        
+
         // 1. Intentar obtener módulos de registro.datos.idModulo
         if (registro.datos?.idModulo) {
             if (Array.isArray(registro.datos.idModulo)) {
@@ -89,7 +90,7 @@ const insertarEstudianteCompleto = async (registro, archivosMigrados, connection
                 }
             }
         }
-        
+
         // 2. Si no hay módulos, intentar obtener de registro.idModulo
         if (modulosArray.length === 0 && registro.idModulo) {
             if (Array.isArray(registro.idModulo)) {
@@ -104,7 +105,7 @@ const insertarEstudianteCompleto = async (registro, archivosMigrados, connection
                 }
             }
         }
-        
+
         console.log('📋 [BD] Módulo seleccionado:', {
             moduloOriginal: registro.datos?.idModulo || registro.idModulo,
             moduloProcesado: modulosArray[0],
@@ -114,29 +115,29 @@ const insertarEstudianteCompleto = async (registro, archivosMigrados, connection
         // Si modalidad es Semipresencial, idModulo es obligatorio
         const modalidadId = parseInt(registro.modalidadId || registro.datos.modalidadId);
         let inscripcionQuery, inscripcionParams;
-        
+
         if (modalidadId === 2) {
             if (modulosArray.length === 0) {
                 throw new Error('idModulo es obligatorio para modalidad Semipresencial');
             }
-            
+
             // Para modalidad Semipresencial, obtener el ID del módulo seleccionado
             let idModulo = modulosArray[0]; // Tomar el primer módulo válido del array procesado
-            
+
             if (!Number.isInteger(idModulo) || idModulo === 0) {
                 throw new Error('Se requiere un módulo válido para modalidad Semipresencial');
             }
-            
+
             // Usar nombres de columnas según esquema: fechaInscripcion, idEstudiante, idModalidad, idAnioPlan, idModulos, idEstadoInscripcion
             const idAnioPlan = parseInt(registro.planAnioId || registro.datos.planAnio) || null;
             const idEstado = parseInt(registro.idEstadoInscripcion || registro.datos.idEstadoInscripcion) || 1;
             inscripcionQuery = `INSERT INTO inscripciones (fechaInscripcion, idEstudiante, idModalidad, idAnioPlan, idModulos, idEstadoInscripcion) VALUES (CURDATE(), ?, ?, ?, ?, ?)`;
             inscripcionParams = [idEstudiante, modalidadId, idAnioPlan, idModulo, idEstado];
-            console.log(`✅ [BD] Preparando inscripción con módulo:`, { 
-                idEstudiante, 
-                modalidadId, 
-                idAnioPlan, 
-                idModulo, 
+            console.log(`✅ [BD] Preparando inscripción con módulo:`, {
+                idEstudiante,
+                modalidadId,
+                idAnioPlan,
+                idModulo,
                 idEstado,
                 query: inscripcionQuery
             });
@@ -153,16 +154,16 @@ const insertarEstudianteCompleto = async (registro, archivosMigrados, connection
                 query: inscripcionQuery
             });
         }
-        
+
         console.log('🔄 [BD] Ejecutando query de inscripción...');
         const inscripcionResult = await conn.query(inscripcionQuery, inscripcionParams);
         const idInscripcion = inscripcionResult[0]?.insertId || inscripcionResult.insertId;
-        
+
         if (!idInscripcion) {
             console.error('❌ [BD] ERROR: No se obtuvo ID de inscripción. Result:', inscripcionResult);
             throw new Error('No se pudo obtener ID de inscripción');
         }
-        
+
         console.log(`✅ [BD] Inscripción insertada con ID: ${idInscripcion}`);
 
         // 5. Insertar detalle de inscripción por cada archivo entregado (si corresponde)
@@ -230,19 +231,19 @@ const verificarEstudianteExistente = async (dni) => {
 const procesarUbicaciones = async (datos) => {
     try {
         console.log('🌍 [BD] Procesando ubicaciones...');
-        
+
         // Buscar o insertar provincia
         const provincia = await buscarOInsertarProvincia(datos.provincia);
         console.log(`   - Provincia: ${provincia.nombre} (ID: ${provincia.id})`);
-        
+
         // Buscar o insertar localidad
         const localidad = await buscarOInsertarLocalidad(datos.localidad, provincia.id);
         console.log(`   - Localidad: ${localidad.nombre} (ID: ${localidad.id})`);
-        
+
         // Buscar o insertar barrio
         const barrio = await buscarOInsertarBarrio(datos.barrio, localidad.id);
         console.log(`   - Barrio: ${barrio.nombre} (ID: ${barrio.id})`);
-        
+
         return {
             provincia,
             localidad,

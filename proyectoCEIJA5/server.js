@@ -115,19 +115,20 @@ app.use('/api/notificaciones-estudiantes', require('./routes/notificacionesEstud
 app.use('/api/generar-comprobante', require('./routes/generarComprobante'));
 app.use('/api/herramientas', require('./routes/herramientas')); // Ruta para herramientas de base de datos
 app.use('/api', encuestasRoutes); // Registrar rutas de encuestas
+app.use('/api/divisiones', require('./routes/divisiones')); // Registrar rutas de divisiones
 // Middleware para manejo de errores globales
 app.use((err, req, res, next) => {
-    console.error(err.stack);
-    res.status(500).json({ success: false, message: 'Error interno del servidor.' });
+  console.error(err.stack);
+  res.status(500).json({ success: false, message: 'Error interno del servidor.' });
 });
 
 // Ruta de prueba
 app.get('/', (_req, res) => {
-    res.send('Servidor funcionando correctamente');
+  res.send('Servidor funcionando correctamente');
 });
 
 // Inicia el servidor
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-    console.log(`Servidor corriendo en http://localhost:${PORT}`);
+  console.log(`Servidor corriendo en http://localhost:${PORT}`);
 });

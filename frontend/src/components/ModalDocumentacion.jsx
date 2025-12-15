@@ -1,13 +1,18 @@
+
 import PropTypes from 'prop-types';
-import { useState, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
+import trashIcon from '../assets/logos/trash.png'; // Import trash icon
 import CloseButton from './CloseButton';
+import { DocumentacionNameToId } from '../utils/DocumentacionMap';
 import '../estilos/estilosModalDocumentacion.css';
+import { useGlobalAlerts } from '../hooks/useGlobalAlerts';
 
 const estadosPosibles = ['Entregado', 'Faltante'];
 
 const ModalDocumentacion = ({ onClose, documentacion, onGuardarCambios }) => {
   // Copiamos la documentación para poder modificar localmente
   const [docsEdit, setDocsEdit] = useState([]);
+  const { showError, showSuccess } = useGlobalAlerts();
 
   useEffect(() => {
     // Clonamos y añadimos campo para archivo temporal (File) y url preview
@@ -31,6 +36,30 @@ const ModalDocumentacion = ({ onClose, documentacion, onGuardarCambios }) => {
     const file = e.target.files[0];
     if (!file) return;
 
+    // Validación según tipo de documento (Foto o Documento)
+    if (id === DocumentacionNameToId.foto) {
+      // Es una Foto: solo JPG/PNG
+      const allowedPhotoTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+      if (!allowedPhotoTypes.includes(file.type)) {
+        showError('Se permiten formato jpg, png en el caso foto');
+        return;
+      }
+    } else {
+      // Es un Documento: PDF o JPG/PNG
+      const allowedDocTypes = ['application/pdf', 'image/jpeg', 'image/png', 'image/jpg'];
+      if (!allowedDocTypes.includes(file.type)) {
+        showError('Se permiten formato pdf, jpg en documentos');
+        return;
+      }
+    }
+
+    // Validación de tamaño (5MB)
+    const maxSize = 5 * 1024 * 1024;
+    if (file.size > maxSize) {
+      showError('El archivo es demasiado grande. Máximo permitido: 5 MB.');
+      return;
+    }
+
     const url = URL.createObjectURL(file);
 
     setDocsEdit(prev =>
@@ -40,16 +69,18 @@ const ModalDocumentacion = ({ onClose, documentacion, onGuardarCambios }) => {
           : doc
       )
     );
+    showSuccess('Archivo subido correctamente');
   };
 
   const handleQuitarArchivo = (id) => {
     setDocsEdit(prev =>
       prev.map(doc =>
         doc.idDocumentaciones === id
-          ? { ...doc, nuevoArchivo: null, previewUrl: null, archivoDocumentacion: null }
+          ? { ...doc, nuevoArchivo: null, previewUrl: null, archivoDocumentacion: null, estadoDocumentacion: 'Faltante' }
           : doc
       )
     );
+    showSuccess('Archivo eliminado correctamente');
   };
 
   const handleGuardar = () => {
@@ -113,8 +144,10 @@ const ModalDocumentacion = ({ onClose, documentacion, onGuardarCambios }) => {
                       <button
                         type="button"
                         onClick={() => handleQuitarArchivo(doc.idDocumentaciones)}
+                        style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '4px' }}
+                        title="Eliminar documento"
                       >
-                        Quitar archivo
+                        <img src={trashIcon} alt="Eliminar" style={{ width: '20px', height: '20px' }} />
                       </button>
                     )}
                   </td>

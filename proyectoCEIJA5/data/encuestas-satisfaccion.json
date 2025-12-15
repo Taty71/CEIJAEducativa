@@ -158,12 +158,57 @@
       },
       "completada": true,
       "created_at": "2025-12-09T04:10:25.532Z"
+    },
+    {
+      "id": 1765254603790,
+      "dni_estudiante": "",
+      "modalidad": "Presencial",
+      "fecha": "2025-12-09T04:30:03.760Z",
+      "respuestas": {
+        "facilidad_uso": 2,
+        "claridad_informacion": 2,
+        "tiempo_completado": "10-15 minutos",
+        "problemas_encontrados": "Ninguno",
+        "sugerencias": "Deberia mostrarse solo la Localidad de La Calera"
+      },
+      "completada": true,
+      "created_at": "2025-12-09T04:30:03.790Z"
+    },
+    {
+      "id": 1765322954002,
+      "dni_estudiante": "",
+      "modalidad": "Semipresencial",
+      "fecha": "2025-12-09T23:29:13.973Z",
+      "respuestas": {
+        "facilidad_uso": 2,
+        "claridad_informacion": 2,
+        "tiempo_completado": "Menos de 10 minutos",
+        "problemas_encontrados": "Dificultad con el formulario",
+        "sugerencias": "En l campo sexo "
+      },
+      "completada": true,
+      "created_at": "2025-12-09T23:29:14.002Z"
+    },
+    {
+      "id": 1765647246175,
+      "dni_estudiante": "",
+      "modalidad": "Presencial",
+      "fecha": "2025-12-13T17:34:06.165Z",
+      "respuestas": {
+        "facilidad_uso": 2,
+        "claridad_informacion": 2,
+        "tiempo_completado": "10-15 minutos",
+        "problemas_encontrados": "Ninguno",
+        "sugerencias": "Un poco extenso, pero se entiende"
+      },
+      "completada": true,
+      "created_at": "2025-12-13T17:34:06.175Z"
     }
   ],
   "estadisticas": {
-    "total": 11,
-    "promedio_facilidad": "2.73",
-    "promedio_claridad": "2.55",
-    "ultima_actualizacion": "2025-12-09T04:10:25.532Z"
+    "total": 14,
+    "promedio_facilidad": "2.57",
+    "promedio_claridad": "2.43",
+    "ultima_actualizacion": "2025-12-13T17:34:06.175Z"
   }
 }

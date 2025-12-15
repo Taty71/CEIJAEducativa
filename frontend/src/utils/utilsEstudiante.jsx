@@ -34,6 +34,14 @@ export function construirEstudianteCompleto(origen, tipo = 'normal') {
             ''
         ),
         idInscripcion: origen.inscripcion?.idInscripcion || origen.idInscripcion || null,
+        // Agregar mapeo de División e IDs
+        division: origen.inscripcion?.division || origen.division || null,
+        idDivision: origen.inscripcion?.idDivision || origen.idDivision || null,
+        // IDs críticos para formularios
+        modalidadId: origen.inscripcion?.modalidadId || origen.inscripcion?.modalidad_id || origen.modalidadId || origen.modalidad_id || null,
+        planAnioId: origen.inscripcion?.planAnioId || origen.inscripcion?.planAnio_id || origen.planAnioId || origen.planAnio_id || null,
+        modulosId: origen.inscripcion?.modulosId || origen.inscripcion?.modulos_id || origen.modulosId || origen.modulos_id || null,
+        estadoInscripcionId: origen.inscripcion?.estadoInscripcionId || origen.inscripcion?.estadoInscripcion_id || origen.estadoInscripcionId || origen.estadoInscripcion_id || null,
         documentacion: origen.documentacion || []
     };
     if (tipo === 'modificarLista') {

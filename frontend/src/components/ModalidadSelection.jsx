@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { useEffect, useRef, memo } from 'react';
 import PlanAnioSelector from './PlanAnioSelector';
 
-const ModalidadSelection = memo(({ modalidad, modalidadId, handleChange, setFieldValue, values, showMateriasList }) => {
+const ModalidadSelection = memo(({ modalidad, modalidadId, handleChange, setFieldValue, values, showMateriasList, division, isAdmin, estadoInscripcion }) => {
     const prevValuesRef = useRef();
 
     // Solo hacer log cuando cambien valores importantes
@@ -17,16 +17,16 @@ const ModalidadSelection = memo(({ modalidad, modalidadId, handleChange, setFiel
             };
 
             const prevValues = prevValuesRef.current;
-            
+
             // Solo hacer log si es el primer render o si cambió algo importante
-            if (!prevValues || 
+            if (!prevValues ||
                 prevValues.modalidad !== modalidad ||
                 prevValues.planAnio !== values.planAnio ||
                 prevValues.modalidadId !== modalidadId ||
                 prevValues.showMateriasList !== showMateriasList) {
-                
+
                 console.log(`[ModalidadSelection] Modalidad: ${modalidad}, planAnio: ${values.planAnio}, modalidadId: ${modalidadId}, showMateriasList: ${showMateriasList}`);
-                
+
                 prevValuesRef.current = currentImportantValues;
             }
         }
@@ -64,6 +64,9 @@ const ModalidadSelection = memo(({ modalidad, modalidadId, handleChange, setFiel
                         setFieldValue={setFieldValue}
                         showMateriasList={showMateriasList}
                         handleChange={handleChange}
+                        division={division}
+                        isAdmin={isAdmin}
+                        estadoInscripcion={estadoInscripcion}
                     />
                 </div>
             </div>
@@ -81,6 +84,9 @@ ModalidadSelection.propTypes = {
     setFieldValue: PropTypes.func.isRequired,
     values: PropTypes.object.isRequired,
     showMateriasList: PropTypes.bool.isRequired,
+    division: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+    isAdmin: PropTypes.bool,
+    estadoInscripcion: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
 };
 
 export default ModalidadSelection;

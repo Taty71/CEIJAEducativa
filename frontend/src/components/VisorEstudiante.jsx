@@ -4,7 +4,7 @@ import '../estilos/botones.css';
 import TarjetaAcademica from './VisorEstudiante/TarjetaAcademica';
 import TarjetaDomicilio from './VisorEstudiante/TarjetaDomicilio';
 import TarjetaPersonales from './VisorEstudiante/TarjetaPersonales';
-import AlertaMens from './AlertaMens';
+// import AlertaMens from './AlertaMens'; // Removed
 import FormatError from '../utils/MensajeError';
 import serviceInscripcion from '../services/serviceInscripcion';
 import PropTypes from 'prop-types';
@@ -16,6 +16,8 @@ import VolverButton from './VolverButton.jsx';
 import CloseButton from './CloseButton.jsx';
 import { formatearFecha } from '../utils/fecha.jsx';
 import { useEffect } from 'react';
+import { useGlobalAlerts } from '../hooks/useGlobalAlerts';
+import { formularioInscripcionSchema } from '../validaciones/ValidacionSchemaYup'; // Import schema // Added global alerts hook
 
 
 
@@ -58,14 +60,16 @@ const VisorEstudiante = ({ estudiante, onClose, onModificar, onVolver, isConsult
             modulos: estudiante.modulo || insc.modulo || estudiante.modulos || '',
             modulosId: Number(estudiante.modulosId) || Number(insc.modulosId) || Number(estudiante.idModulo) || '',
             estadoInscripcion: estudiante.estadoInscripcion || insc.estado || estudiante.estado || '',
-            estadoInscripcionId: estudiante.estadoInscripcionId ? Number(estudiante.estadoInscripcionId) : 
-                                 insc.estadoInscripcionId ? Number(insc.estadoInscripcionId) : 
-                                 estudiante.idEstadoInscripcion ? Number(estudiante.idEstadoInscripcion) : 1,
+            estadoInscripcionId: estudiante.estadoInscripcionId ? Number(estudiante.estadoInscripcionId) :
+                insc.estadoInscripcionId ? Number(insc.estadoInscripcionId) :
+                    estudiante.idEstadoInscripcion ? Number(estudiante.idEstadoInscripcion) : 1,
+            idDivision: estudiante.idDivision || insc.idDivision || null,
             fechaInscripcion: estudiante.fechaInscripcion || insc.fechaInscripcion || estudiante.fecha || '',
             // Documentación
             documentacion: Array.isArray(estudiante.documentacion) ? estudiante.documentacion : (Array.isArray(insc.documentacion) ? insc.documentacion : []),
             email: estudiante.email || '',
             telefono: estudiante.telefono || '',
+            sexo: estudiante.sexo || estudiante.genero || '',
         };
     });
 
@@ -79,19 +83,21 @@ const VisorEstudiante = ({ estudiante, onClose, onModificar, onVolver, isConsult
     });
     // Estado para saber si hubo cambios globales
     const [formChanged, setFormChanged] = useState(false);
-    const [alerta, setAlerta] = useState({ text: '', variant: '' });
-    // const [editMode, setEditMode] = useState({
-    
 
-// Actualizar planAnioId automáticamente cuando cambian planAnio o modalidadId
-useEffect(() => {
-    if (!formData.planAnio || !formData.modalidadId || planes.length === 0) return;
-    const plan = planes.find(p => p.plan === formData.planAnio);
-    if (plan && plan.id && formData.planAnioId !== plan.id) {
-        setFormData(prev => ({ ...prev, planAnioId: plan.id }));
-    }
-}, [formData.planAnio, formData.modalidadId, formData.planAnioId, planes]);
-    
+    // Global alerts
+    const { showSuccess, showError, showWarning } = useGlobalAlerts();
+    // const [editMode, setEditMode] = useState({
+
+
+    // Actualizar planAnioId automáticamente cuando cambian planAnio o modalidadId
+    useEffect(() => {
+        if (!formData.planAnio || !formData.modalidadId || planes.length === 0) return;
+        const plan = planes.find(p => p.plan === formData.planAnio);
+        if (plan && plan.id && formData.planAnioId !== plan.id) {
+            setFormData(prev => ({ ...prev, planAnioId: plan.id }));
+        }
+    }, [formData.planAnio, formData.modalidadId, formData.planAnioId, planes]);
+
     // Usar custom hook para módulos y estados de inscripción
     const [modulos, estadosInscripcion] = useModulosYEstados(
         editMode.academica,
@@ -110,7 +116,7 @@ useEffect(() => {
                 estudianteApellido: estudiante?.apellido
             });
         }
-        
+
         // Si el campo es uno de los selects numéricos, forzar a número salvo string vacío
         if (["planAnioId", "modulosId", "estadoInscripcionId"].includes(field)) {
             setFormData(prev => {
@@ -127,7 +133,7 @@ useEffect(() => {
         }
     };
 
-   
+
     // ...existing code...
 
     // Eliminar handleGuardar por sección
@@ -136,7 +142,7 @@ useEffect(() => {
     const handleActualizarSoloEstado = async () => {
         console.log('🎯 Actualizando solo estado de inscripción');
         if (!formData.estadoInscripcionId || formData.estadoInscripcionId === '') {
-            setAlerta({ text: 'El estado de inscripción es obligatorio.', variant: 'error' });
+            showError('El estado de inscripción es obligatorio.');
             return;
         }
 
@@ -148,25 +154,56 @@ useEffect(() => {
             );
 
             if (resultado.success) {
-                setAlerta({ text: `Estado actualizado correctamente`, variant: 'success' });
+                showSuccess('Estado actualizado correctamente');
                 // Actualizar el estado local sin recargar toda la página
                 setFormChanged(false);
             } else {
-                setAlerta({ text: resultado.error || 'Error al actualizar el estado', variant: 'error' });
+                showError(resultado.error || 'Error al actualizar el estado');
             }
         } catch (error) {
             console.error('Error al actualizar estado:', error);
-            setAlerta({ text: 'Error al actualizar el estado de inscripción', variant: 'error' });
+            showError('Error al actualizar el estado de inscripción');
         }
     };
 
     // Nuevo: Guardar todos los cambios juntos
-    const handleGuardarTodo = () => {
+    const handleGuardarTodo = async () => {
         // Validar cambios
         if (!formChanged) {
-            setAlerta({ text: 'No hay cambios para guardar.', variant: 'warning' });
+            showWarning('No hay cambios para guardar.');
             return;
         }
+
+        try {
+            // 1. Preparar objeto para validación (mapear nombres de Visor a nombres de Schema)
+            const datosParaValidar = {
+                ...formData,
+                idEstadoInscripcion: formData.estadoInscripcionId, // Schema usa idEstadoInscripcion
+                planAnio: formData.planAnioId, // Validamos el ID ya que es lo que seleccionamos
+                // modulos: formData.modulosId // Schema usa modulos
+                // Nota: Schema espera 'planAnio' como valor, a veces ID.
+                // Ajustamos para que coincida con lo que el schema valida (usualmente IDs en formularios select)
+            };
+
+            // Asegurar campos obligatorios para el schema
+            datosParaValidar.planAnio = Number(formData.planAnioId);
+            datosParaValidar.modulos = formData.modulosId ? Number(formData.modulosId) : undefined;
+            datosParaValidar.idEstadoInscripcion = Number(formData.estadoInscripcionId);
+
+            // Validar contra el schema
+            await formularioInscripcionSchema.validate(datosParaValidar, { abortEarly: false });
+
+        } catch (error) {
+            if (error.name === 'ValidationError') {
+                // Mostrar el primer error de validación
+                showError(error.errors[0]);
+                return; // Detener guardado
+            }
+            console.error('Error de validación:', error);
+            showError('Error al validar los datos.');
+            return;
+        }
+
         // Validar planAnioId antes de enviar
         // Construir datos SOLO con los campos que espera el backend de modificación
         const datos = {
@@ -175,6 +212,7 @@ useEffect(() => {
             planAnioId: formData.planAnioId && !isNaN(formData.planAnioId) ? Number(formData.planAnioId) : (estudiante.planAnioId ? Number(estudiante.planAnioId) : 1),
             modulosId: formData.modulosId && !isNaN(formData.modulosId) ? Number(formData.modulosId) : (estudiante.modulosId ? Number(estudiante.modulosId) : ''),
             estadoInscripcionId: formData.estadoInscripcionId && !isNaN(formData.estadoInscripcionId) ? Number(formData.estadoInscripcionId) : (estudiante.estadoInscripcionId ? Number(estudiante.estadoInscripcionId) : 1),
+            idDivision: formData.idDivision ? Number(formData.idDivision) : null,
         };
         // Eliminar campos que NO espera el backend de modificación
         delete datos.planAnio;
@@ -187,8 +225,9 @@ useEffect(() => {
                 nombreArchivo: doc.nombreArchivo || doc.descripcionDocumentacion?.replace(/\s+/g, '')
             }));
         }
-        
+
         console.log('📤 [ENVIANDO DATOS] Estudiante:', estudiante.nombre, estudiante.apellido, 'DNI:', estudiante.dni);
+        console.log('📤 [DEBUG PAYLOAD] idDivision a enviar:', datos.idDivision, 'Original form:', formData.idDivision);
         console.log('📤 [ENVIANDO DATOS] Estado inscripción:', {
             formData: formData.estadoInscripcionId,
             estudiante: estudiante.estadoInscripcionId,
@@ -196,11 +235,17 @@ useEffect(() => {
         });
         if (onModificar) {
             try {
-                onModificar('todo', datos); // 'todo' indica que se envía todo
+                const respuesta = await onModificar('todo', datos); // 'todo' indica que se envía todo
                 setFormChanged(false);
-                setAlerta({ text: 'Cambios guardados correctamente.', variant: 'success' });
+                showSuccess('Cambios guardados correctamente.');
+
+                // ✅ Actualizar foto si viene en la respuesta
+                if (respuesta && respuesta.foto) {
+                    console.log('📸 [FRONTEND] Actualizando foto en vista:', respuesta.foto);
+                    setFormData(prev => ({ ...prev, foto: respuesta.foto }));
+                }
             } catch (error) {
-                setAlerta({ text: `Error al guardar cambios: ${FormatError(error)}`, variant: 'error' });
+                showError(`Error al guardar cambios: ${FormatError(error)}`);
                 console.error('🚨 Error al guardar todo:', error);
             }
         }
@@ -213,7 +258,7 @@ useEffect(() => {
             provincia: estudiante.provincia || estudiante.provincia || '',
             modalidadId: Number(estudiante.modalidadId) ||
                 (estudiante.modalidad === 'Presencial' ? 1 :
-                 estudiante.modalidad === 'Semipresencial' ? 2 : ''),
+                    estudiante.modalidad === 'Semipresencial' ? 2 : ''),
             planAnioId: estudiante.planAnioId ? Number(estudiante.planAnioId) : '',
             modulosId: estudiante.modulosId ? Number(estudiante.modulosId) : '',
             estadoInscripcionId: estudiante.estadoInscripcionId ? Number(estudiante.estadoInscripcionId) : '',
@@ -228,10 +273,10 @@ useEffect(() => {
     };
 
 
-  
+
 
     return (
-        <div className={`visor-estudiante-container ${isConsulta ? 'modo-consulta' : 'modo-gestion'}`}> 
+        <div className={`visor-estudiante-container ${isConsulta ? 'modo-consulta' : 'modo-gestion'}`}>
             <div className="modal-header-buttons-uniforme modal-header-buttons-small">
                 {onVolver && (
                     <VolverButton onClick={onVolver} className="boton-principal boton-small" />
@@ -244,92 +289,85 @@ useEffect(() => {
                 <h2 className="modal-title-uniforme">
                     {isEliminacion ? 'Eliminar Estudiante' :
                         isConsulta ? 'Consulta de Estudiante' :
-                        'Detalles del Estudiante'}
+                            'Detalles del Estudiante'}
                 </h2>
             </div>
             <div className="visor-contenido layout-tarjetas-2x2">
-                        <div className="tarjetas-grid-2x2">
-                            <TarjetaPersonales
-                                estudiante={estudiante}
-                                formData={formData}
-                                editMode={editMode}
-                                isConsulta={isConsulta}
-                                isEliminacion={isEliminacion}
-                                handleInputChange={handleInputChange}
-                                setEditMode={setEditMode}
-                                formatearFecha={formatearFecha}
-                            />
-                            <TarjetaDomicilio
-                                formData={formData}
-                                editMode={editMode}
-                                setEditMode={setEditMode}
-                                handleInputChange={handleInputChange}
-                                isConsulta={isConsulta || isEliminacion}
-                            />
-                            <TarjetaAcademica
-                                estudiante={{...estudiante, ...formData}}
-                                formData={formData}
-                                editMode={editMode}
-                                setEditMode={setEditMode}
-                                handleInputChange={handleInputChange}
-                                isConsulta={isConsulta || isEliminacion}
-                                modulos={modulos}
-                                estadosInscripcion={estadosInscripcion}
-                                formatearFecha={formatearFecha}
-                                modalidad={formData.modalidad}
-                                modalidadId={formData.modalidadId}
-                                modulosId={formData.modulosId}
-                                planAnioId={formData.planAnioId}
-                                planes={planes}
-                            />
-                            {/* ✅ Aquí la versión actualizada de TarjetaDocumentacion */}
-                            <TarjetaDocumentacion
-                                estudiante={formData}
-                                editMode={editMode.documentacion}
-                                setEditMode={estado => setEditMode(prev => ({ ...prev, documentacion: estado }))}
-                                isConsulta={isConsulta || isEliminacion}
-                                onGuardar={({ detalleDocumentacion, archivos }) => {
-                                    setFormData(prev => ({ ...prev, documentacion: detalleDocumentacion, archivos }));
-                                    setFormChanged(true);
-                                }}
-                            />
-                        </div>
-                        {/* Botones para guardar cambios */}
-                        {!isConsulta && !isEliminacion && (
-                            <div style={{ textAlign: 'center', marginTop: '2rem' }}>
-                                {/* Botón específico para estado de inscripción si solo cambió eso */}
-                                {formChanged && 
-                                 formData.estadoInscripcionId !== estudiante.estadoInscripcionId && 
-                                 Object.keys(formData).filter(key => formData[key] !== estudiante[key]).length === 1 && (
-                                    <button 
-                                        className="boton-tarjeta-pill" 
-                                        style={{ backgroundColor: '#28a745', color: 'white', marginRight: '10px' }}
-                                        onClick={handleActualizarSoloEstado}
-                                    >
-                                        Actualizar Estado
-                                    </button>
-                                )}
-                                
-                                <button className="boton-tarjeta-pill boton-guardar-pill" onClick={handleGuardarTodo} disabled={!formChanged}>
-                                    Guardar todos los cambios
-                                </button>
-                                <button className="boton-tarjeta-pill boton-cancelar-pill" onClick={handleCancelarTodo}>
-                                    Cancelar
-                                </button>
-                            </div>
-                        )}
-                    </div>
-
-                    {/* Alertas */}
-                    {alerta.text && (
-                        <AlertaMens 
-                            text={alerta.text} 
-                            variant={alerta.variant}
-                            onClose={() => setAlerta({ text: '', variant: '' })}
-                        />
-                    )}
+                <div className="tarjetas-grid-2x2">
+                    <TarjetaPersonales
+                        estudiante={estudiante}
+                        formData={formData}
+                        editMode={editMode}
+                        isConsulta={isConsulta}
+                        isEliminacion={isEliminacion}
+                        handleInputChange={handleInputChange}
+                        setEditMode={setEditMode}
+                        formatearFecha={formatearFecha}
+                    />
+                    <TarjetaDomicilio
+                        formData={formData}
+                        editMode={editMode}
+                        setEditMode={setEditMode}
+                        handleInputChange={handleInputChange}
+                        isConsulta={isConsulta || isEliminacion}
+                    />
+                    <TarjetaAcademica
+                        estudiante={{ ...estudiante, ...formData }}
+                        formData={formData}
+                        editMode={editMode}
+                        setEditMode={setEditMode}
+                        handleInputChange={handleInputChange}
+                        isConsulta={isConsulta || isEliminacion}
+                        modulos={modulos}
+                        estadosInscripcion={estadosInscripcion}
+                        formatearFecha={formatearFecha}
+                        modalidad={formData.modalidad}
+                        modalidadId={formData.modalidadId}
+                        modulosId={formData.modulosId}
+                        planAnioId={formData.planAnioId}
+                        planes={planes}
+                    />
+                    {/* ✅ Aquí la versión actualizada de TarjetaDocumentacion */}
+                    <TarjetaDocumentacion
+                        estudiante={formData}
+                        editMode={editMode.documentacion}
+                        setEditMode={estado => setEditMode(prev => ({ ...prev, documentacion: estado }))}
+                        isConsulta={isConsulta || isEliminacion}
+                        onGuardar={({ detalleDocumentacion, archivos }) => {
+                            setFormData(prev => ({ ...prev, documentacion: detalleDocumentacion, archivos }));
+                            setFormChanged(true);
+                        }}
+                    />
                 </div>
-            );
+                {/* Botones para guardar cambios */}
+                {!isConsulta && !isEliminacion && (
+                    <div style={{ textAlign: 'center', marginTop: '2rem' }}>
+                        {/* Botón específico para estado de inscripción si solo cambió eso */}
+                        {formChanged &&
+                            formData.estadoInscripcionId !== estudiante.estadoInscripcionId &&
+                            Object.keys(formData).filter(key => formData[key] !== estudiante[key]).length === 1 && (
+                                <button
+                                    className="boton-tarjeta-pill"
+                                    style={{ backgroundColor: '#28a745', color: 'white', marginRight: '10px' }}
+                                    onClick={handleActualizarSoloEstado}
+                                >
+                                    Actualizar Estado
+                                </button>
+                            )}
+
+                        <button className="boton-tarjeta-pill boton-guardar-pill" onClick={handleGuardarTodo} disabled={!formChanged}>
+                            Guardar todos los cambios
+                        </button>
+                        <button className="boton-tarjeta-pill boton-cancelar-pill" onClick={handleCancelarTodo}>
+                            Cancelar
+                        </button>
+                    </div>
+                )}
+            </div>
+
+
+        </div>
+    );
 };
 
 VisorEstudiante.propTypes = {

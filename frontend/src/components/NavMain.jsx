@@ -14,6 +14,10 @@ const NavMain = () => {
 
     const { user, setUser } = context;
 
+    const handleLogoClick = () => {
+        window.location.href = '/';
+    };
+
     return (
         <>
             <nav className="nav-main">
@@ -22,7 +26,14 @@ const NavMain = () => {
                         <h1 className="sistema-titulo"> CEIJA 5 </h1>
                         <p className="sistema-subtitulo"> SISTEMA DE GESTIÓN EDUCATIVA</p>
                     </div>
-                    <img src={LogoCE} alt="Logo CEIJA 5" className="nav-logo" />
+                    <img
+                        src={LogoCE}
+                        alt="Logo CEIJA 5"
+                        className="nav-logo"
+                        onClick={handleLogoClick}
+                        style={{ cursor: 'pointer' }}
+                        title="Ir a inicio"
+                    />
                 </div>
                 <div className="nav-links">
                     <NavLink to="/" className="nav-link">Inicio</NavLink>

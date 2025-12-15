@@ -23,13 +23,16 @@ router.patch('/desactivar/:dni', async (req, res) => {
       return res.status(404).json({ success: false, message: 'Estudiante no encontrado.' });
     }
 
-    // Desactivar el estudiante (eliminación lógica)
-    await conn.query('UPDATE estudiantes SET activo = 0 WHERE dni = ?', [dni]);
-    
+    // Obtener motivo del body
+    const { motivo } = req.body;
+
+    // Desactivar el estudiante (eliminación lógica) y guardar motivo
+    await conn.query('UPDATE estudiantes SET activo = 0, motivo_baja = ? WHERE dni = ?', [motivo || null, dni]);
+
     await conn.commit();
-    return res.json({ 
-      success: true, 
-      message: 'Estudiante desactivado exitosamente' 
+    return res.json({
+      success: true,
+      message: 'Estudiante desactivado exitosamente'
     });
   } catch (err) {
     await conn.rollback();

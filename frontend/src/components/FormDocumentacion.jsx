@@ -9,13 +9,13 @@ const FormDocumentacion = ({ previews, handleFileChange, onClose, onProceedToReg
         return !["archivo_solicitudPase", "archivo_analiticoParcial", "archivo_certificadoNivelPrimario"].some(
             (doc) => previews?.[doc]?.url
         );
-        }, [previews]);
+    }, [previews]);
 
     // Verificar si hay algún documento adjuntado
     const tieneDocumentosAdjuntados = useMemo(() => {
         const documentos = [
-            "foto", "archivo_dni", "archivo_cuil", "archivo_fichaMedica", 
-            "archivo_partidaNacimiento", "archivo_solicitudPase", 
+            "foto", "archivo_dni", "archivo_cuil", "archivo_fichaMedica",
+            "archivo_partidaNacimiento", "archivo_solicitudPase",
             "archivo_analiticoParcial", "archivo_certificadoNivelPrimario"
         ];
         return documentos.some(doc => previews?.[doc]?.url);
@@ -36,7 +36,7 @@ const FormDocumentacion = ({ previews, handleFileChange, onClose, onProceedToReg
         <div className="modal-overlay">
             <div className="modal-container" style={{ position: 'relative', maxWidth: 900, width: '98vw', minHeight: 400 }}>
                 {/* Botón dinámico: Cerrar (X) u OK (✓) */}
-                <button 
+                <button
                     type="button"
                     onClick={handleButtonClick}
                     className="form-documentacion-close"
@@ -106,13 +106,20 @@ const FormDocumentacion = ({ previews, handleFileChange, onClose, onProceedToReg
                                 {/* Nombre del documento */}
                                 <span>{label}</span>
                                 {/* Adjuntar archivo */}
+                                {/* Adjuntar archivo */}
                                 <div className="input-container-doc">
+                                    {previews[name]?.url && (
+                                        <small style={{ display: 'block', marginBottom: '4px', color: '#666', fontStyle: 'italic' }}>
+                                            Cambiar archivo:
+                                        </small>
+                                    )}
                                     <input
                                         type="file"
                                         name={name}
                                         className="small-select"
                                         onChange={(e) => handleFileChange(e, name)}
                                         accept="image/*,application/pdf"
+                                        title={previews[name]?.url ? "Seleccionar un nuevo archivo para validar" : "Seleccionar archivo"}
                                     />
                                 </div>
                                 {/* Vista previa */}
@@ -184,8 +191,8 @@ FormDocumentacion.propTypes = {
             type: PropTypes.string,
         }),
         archivo_analiticoParcial: PropTypes.shape({
-        url: PropTypes.string,
-        type: PropTypes.string,
+            url: PropTypes.string,
+            type: PropTypes.string,
         }),
         archivo_certificadoNivelPrimario: PropTypes.shape({
             url: PropTypes.string,

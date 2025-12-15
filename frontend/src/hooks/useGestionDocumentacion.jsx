@@ -1,45 +1,45 @@
 import { useState, useEffect } from 'react';
 import { DocumentacionNameToId } from '../utils/DocumentacionMap';
-import { useAlerts } from './useAlerts';
+import { useGlobalAlerts } from './useGlobalAlerts';
 
 const maxFileSize = 600 * 1024; // 600 KB
 
 export default function useGestionDocumentacion() {
     const [files, setFiles] = useState({});
     const [previews, setPreviews] = useState({});
-    const { showError } = useAlerts();
+    const { showError, showSuccess } = useGlobalAlerts();
 
     // Cargar archivos existentes desde sessionStorage al montar el componente
     useEffect(() => {
-        const datosRegistroPendiente = sessionStorage.getItem('datosRegistroPendiente') ? 
+        const datosRegistroPendiente = sessionStorage.getItem('datosRegistroPendiente') ?
             JSON.parse(sessionStorage.getItem('datosRegistroPendiente')) : null;
-        const datosRegistroWeb = sessionStorage.getItem('datosRegistroWeb') ? 
+        const datosRegistroWeb = sessionStorage.getItem('datosRegistroWeb') ?
             JSON.parse(sessionStorage.getItem('datosRegistroWeb')) : null;
-        
+
         // Manejar archivos de registro pendiente
         if (datosRegistroPendiente && datosRegistroPendiente.archivosExistentes) {
             const archivosExistentes = datosRegistroPendiente.archivosExistentes;
-            
+
             console.log('📁 Archivos existentes encontrados:', archivosExistentes);
-            
+
             // Convertir archivos existentes a formato de previews
             const previewsExistentes = {};
-            
+
             Object.entries(archivosExistentes).forEach(([tipoDocumento, rutaArchivo]) => {
                 if (rutaArchivo) {
                     // Limpiar la ruta del archivo para construir la URL correcta
                     const rutaLimpia = rutaArchivo.replace(/\\/g, '/');
                     const nombreArchivo = rutaLimpia.split('/').pop();
-                    
+
                     // Construir URL completa del archivo (servidor en puerto 5000)
                     const urlArchivo = `http://localhost:5000${rutaArchivo}`;
-                    
+
                     // Determinar el tipo de archivo basado en la extensión
                     const extension = nombreArchivo.split('.').pop().toLowerCase();
-                    const tipoArchivo = extension === 'pdf' ? 'application/pdf' : 
-                                      ['jpg', 'jpeg', 'png', 'gif'].includes(extension) ? `image/${extension}` : 
-                                      'application/octet-stream';
-                    
+                    const tipoArchivo = extension === 'pdf' ? 'application/pdf' :
+                        ['jpg', 'jpeg', 'png', 'gif'].includes(extension) ? `image/${extension}` :
+                            'application/octet-stream';
+
                     previewsExistentes[tipoDocumento] = {
                         url: urlArchivo,
                         type: tipoArchivo,
@@ -49,44 +49,44 @@ export default function useGestionDocumentacion() {
                         rutaOriginal: rutaArchivo,
                         nombreArchivo: nombreArchivo
                     };
-                    
+
                     console.log(`📁 Archivo existente procesado: ${tipoDocumento} -> ${urlArchivo}`);
                 }
             });
-            
+
             console.log('📋 Previews existentes de registro pendiente procesados:', previewsExistentes);
-            
+
             // Agregar los archivos existentes a los previews
             setPreviews(prevPreviews => ({
                 ...prevPreviews,
                 ...previewsExistentes
             }));
         }
-        
+
         // Manejar archivos de registro web
         if (datosRegistroWeb && datosRegistroWeb.archivos) {
             const archivosWeb = datosRegistroWeb.archivos;
-            
+
             console.log('🌐 Archivos de registro web encontrados:', archivosWeb);
-            
+
             // Convertir archivos de registro web a formato de previews
             const previewsWeb = {};
-            
+
             Object.entries(archivosWeb).forEach(([tipoDocumento, rutaArchivo]) => {
                 if (rutaArchivo) {
                     // Los archivos web ya vienen con la ruta correcta desde archivosDocWeb
                     const rutaLimpia = rutaArchivo.replace(/\\/g, '/');
                     const nombreArchivo = rutaLimpia.split('/').pop();
-                    
+
                     // Construir URL completa del archivo (servidor en puerto 5000)
                     const urlArchivo = `http://localhost:5000${rutaArchivo}`;
-                    
+
                     // Determinar el tipo de archivo basado en la extensión
                     const extension = nombreArchivo.split('.').pop().toLowerCase();
-                    const tipoArchivo = extension === 'pdf' ? 'application/pdf' : 
-                                      ['jpg', 'jpeg', 'png', 'gif'].includes(extension) ? `image/${extension}` : 
-                                      'application/octet-stream';
-                    
+                    const tipoArchivo = extension === 'pdf' ? 'application/pdf' :
+                        ['jpg', 'jpeg', 'png', 'gif'].includes(extension) ? `image/${extension}` :
+                            'application/octet-stream';
+
                     previewsWeb[tipoDocumento] = {
                         url: urlArchivo,
                         type: tipoArchivo,
@@ -96,13 +96,13 @@ export default function useGestionDocumentacion() {
                         rutaOriginal: rutaArchivo,
                         nombreArchivo: nombreArchivo
                     };
-                    
+
                     console.log(`🌐 Archivo web existente procesado: ${tipoDocumento} -> ${urlArchivo}`);
                 }
             });
-            
+
             console.log('📋 Previews existentes de registro web procesados:', previewsWeb);
-            
+
             // Agregar los archivos existentes a los previews
             setPreviews(prevPreviews => ({
                 ...prevPreviews,
@@ -112,39 +112,59 @@ export default function useGestionDocumentacion() {
     }, []);  // Solo ejecutar al montar    // Manejar cambios en los archivos
     const handleFileChange = (e, field, setFieldValue) => {
         const file = e.target.files[0];
-        
+
+        const maxFileSize = 5 * 1024 * 1024; // 5 MB
+        const allowedFileTypes = ['image/jpeg', 'image/png', 'application/pdf'];
+
         if (file) {
             if (file.size > maxFileSize) {
-                showError('El archivo es demasiado grande. Máximo permitido: 600 KB.');
+                showError('El archivo es demasiado grande. Máximo permitido: 5 MB.');
                 return;
             }
 
-            if (!(field in DocumentacionNameToId)) {
-                console.warn(`El campo "${field}" no coincide con ninguna clave en DocumentacionNameToId.`);
-            }
-
-            // Verificar si hay un archivo existente
-            const archivoExistente = previews[field]?.existente;
-            if (archivoExistente) {
-                console.log(`🔄 Reemplazando archivo existente para ${field}`);
-            }
-
-            const url = URL.createObjectURL(file);
-            setPreviews((prev) => ({ 
-                ...prev, 
-                [field]: { 
-                    url, 
-                    type: file.type, 
-                    file,
-                    existente: false, // Marcar como nuevo archivo (no existente)
-                    uploaded: false   // Aún no subido al servidor
-                } 
-            }));
-            setFiles((prev) => ({ ...prev, [field]: file }));
-            if (setFieldValue) {
-                setFieldValue(field, file);
+            if (field === 'foto') {
+                // Es una Foto: solo JPG/PNG
+                const allowedPhotoTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+                if (!allowedPhotoTypes.includes(file.type)) {
+                    showError('Se permiten formato jpg, png en el caso foto');
+                    return;
+                }
+            } else {
+                // Es un Documento: PDF o JPG/PNG
+                const allowedDocTypes = ['application/pdf', 'image/jpeg', 'image/png', 'image/jpg'];
+                if (!allowedDocTypes.includes(file.type)) {
+                    showError('Se permiten formato pdf, jpg en documentos');
+                    return;
+                }
             }
         }
+
+        if (!(field in DocumentacionNameToId)) {
+            console.warn(`El campo "${field}" no coincide con ninguna clave en DocumentacionNameToId.`);
+        }
+
+        // Verificar si hay un archivo existente
+        const archivoExistente = previews[field]?.existente;
+        if (archivoExistente) {
+            console.log(`🔄 Reemplazando archivo existente para ${field}`);
+        }
+
+        const url = URL.createObjectURL(file);
+        setPreviews((prev) => ({
+            ...prev,
+            [field]: {
+                url,
+                type: file.type,
+                file,
+                existente: false, // Marcar como nuevo archivo (no existente)
+                uploaded: false   // Aún no subido al servidor
+            }
+        }));
+        setFiles((prev) => ({ ...prev, [field]: file }));
+        if (setFieldValue) {
+            setFieldValue(field, file);
+        }
+        showSuccess('Archivo subido correctamente');
     };
 
     // Construir detalle de documentación

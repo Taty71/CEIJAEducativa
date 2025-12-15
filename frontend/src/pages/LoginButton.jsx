@@ -10,20 +10,20 @@ import Captcha from '../components/Captcha';
 import { useForm } from "react-hook-form";
 import Input from '../components/Input';
 import serviceUsuario from '../services/serviceUsuario';
-import { yupResolver } from '@hookform/resolvers/yup'; 
+import { yupResolver } from '@hookform/resolvers/yup';
 import { loginValidationSchema } from '../validaciones/ValidacionSchemaYup';
 
 const LoginButton = ({ onClose, onRegisterClick }) => {
     const { register, handleSubmit, formState: { errors } } = useForm({ resolver: yupResolver(loginValidationSchema) });
     const [loading, setLoading] = useState(false);
     const [captchaValid, setCaptchaValid] = useState(false);
-    const { 
-        alerts, 
-        modal, 
-        showSuccess, 
+    const {
+        alerts,
+        modal,
+        showSuccess,
         showError,
         removeAlert,
-        closeModal 
+        closeModal
     } = useAlerts();
     const { setUser } = useUserContext();
     const navigate = useNavigate();
@@ -57,16 +57,16 @@ const LoginButton = ({ onClose, onRegisterClick }) => {
                 if (response?.token) {
                     const { nombre, rol, email } = response.user;
                     console.log(`Nombre: ${nombre}, Rol: ${rol}, Email: ${email}`);
-                
+
                     localStorage.setItem('token', response.token);
                     console.log('Token guardado:', response.token);
-                    
+
                     setUser({ nombre, rol, email });
 
                     mostrarAlerta(`Bienvenido, ${nombre}. Rol: ${rol}`, 'success');
                     console.log("Estado del usuario en el contexto:", { nombre, rol, email });
                     console.log('Redirigiendo al dashboard');
-                    
+
                     setTimeout(() => {
                         navigate('/dashboard');
                     }, 3000);
@@ -83,7 +83,7 @@ const LoginButton = ({ onClose, onRegisterClick }) => {
 
     return (
         <div className="modal-overlay" onClick={onClose}>
-            <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-content modal-login" onClick={(e) => e.stopPropagation()}>
                 <div className="login-box">
                     <AlertaMens
                         mode="floating"
@@ -96,15 +96,15 @@ const LoginButton = ({ onClose, onRegisterClick }) => {
                     <form onSubmit={handleSubmit(onSubmit)}>
                         <Input label="Email" placeholder="Email" registro={{ ...register("email") }} error={errors.email?.message} />
                         <Input label="Contraseña" placeholder="Password" type="password" registro={{ ...register("password") }} error={errors.password?.message} />
-                        
+
                         <Captcha onValidate={setCaptchaValid} />
-                        
+
                         <div className="button-container" style={{ justifyContent: 'flex-end' }}>
                             <BotonCargando loading={loading} type="submit">
                                 Iniciar Sesión
                             </BotonCargando>
                         </div>
-                        <p className="register-text">¿No tienes cuenta? 
+                        <p className="register-text">¿No tienes cuenta?
                             <a href="#" onClick={(e) => { e.preventDefault(); onRegisterClick(); }} className="register-link">Regístrate</a>
                         </p>
                     </form>

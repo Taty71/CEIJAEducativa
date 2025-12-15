@@ -16,6 +16,7 @@
   justify-content: center;
   margin-bottom: 0.7em;
 }
+
 .btn-descarga {
   background: var(--color-bg-main);
   color: var(--color-dark);
@@ -29,18 +30,21 @@
   transition: background 160ms ease, transform 160ms ease, box-shadow 160ms ease;
   box-shadow: 0 6px 18px rgba(45, 65, 119, 0.06);
 }
+
 .btn-descarga:disabled {
   background: #f3f3f3;
   color: #9aa0a6;
   cursor: not-allowed;
   box-shadow: none;
 }
+
 .btn-descarga:hover:not(:disabled),
 .btn-descarga:focus:not(:disabled) {
   background: var(--color-btn-main);
   color: #fff;
   transform: translateY(-1px);
 }
+
 /* Estilos para Modal de Registros Pendientes */
 .modal-registros-pendientes .modal-overlay {
   position: fixed;
@@ -95,15 +99,19 @@
 
 /* Contenido principal */
 .modal-registros-pendientes .modal-content {
-  padding: 0 !important; /* Sin padding para que el fondo gris abarque todo el ancho */
+  padding: 0 !important;
+  /* Sin padding para que el fondo gris abarque todo el ancho */
   flex: 1 !important;
-  overflow-y: auto !important; /* ✅ usá este en su lugar */
+  overflow-y: auto !important;
+  /* ✅ usá este en su lugar */
   display: flex !important;
   flex-direction: column !important;
   width: 100% !important;
-  max-width: none !important; /* Sobrescribir el max-width: 400px genérico */
+  max-width: none !important;
+  /* Sobrescribir el max-width: 400px genérico */
   box-sizing: border-box !important;
-  min-height: 0 !important; /* Permitir que se encoja */
+  min-height: 0 !important;
+  /* Permitir que se encoja */
 }
 
 /* Lista de registros */
@@ -111,7 +119,8 @@
   flex: 1 !important;
   overflow-y: auto !important;
   overflow-x: hidden !important;
-  background-color: #f7f8fb !important; /* fondo claro, profesional */
+  background-color: #f7f8fb !important;
+  /* fondo claro, profesional */
   padding: 25px !important;
   margin: 0 !important;
   width: 100% !important;
@@ -249,10 +258,7 @@
 }
 
 /* Forzar layout vertical estricto */
-.modal-registros-pendientes
-  .registro-item
-  + .modal-registros-pendientes
-  .registro-item {
+.modal-registros-pendientes .registro-item+.modal-registros-pendientes .registro-item {
   margin-top: 80px;
 }
 
@@ -428,15 +434,15 @@
 
 /* Específicos: aplicar estilos iguales a los de Registros Pendientes para botones concretos */
 .modal-registros-pendientes .registro-acciones .btn-eliminar {
-  background: #6c757d !important; /* mismo gris del btn-eliminar en RegistrosPendientes.css */
+  background: #6c757d !important;
+  /* mismo gris del btn-eliminar en RegistrosPendientes.css */
   color: #ffffff !important;
   border-radius: 6px !important;
   box-shadow: 0 6px 18px rgba(45, 65, 119, 0.06) !important;
   font-weight: 700 !important;
 }
-.modal-registros-pendientes
-  .registro-acciones
-  .btn-eliminar:hover:not(:disabled) {
+
+.modal-registros-pendientes .registro-acciones .btn-eliminar:hover:not(:disabled) {
   background: #5a6268 !important;
   transform: translateY(-2px) !important;
   box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2) !important;
@@ -448,12 +454,9 @@
   border-radius: 6px !important;
   box-shadow: 0 6px 18px rgba(45, 65, 119, 0.06) !important;
 }
-.modal-registros-pendientes
-  .registro-acciones
-  .btn-procesar:hover:not(:disabled),
-.modal-registros-pendientes
-  .registro-acciones
-  .btn-rechazar:hover:not(:disabled) {
+
+.modal-registros-pendientes .registro-acciones .btn-procesar:hover:not(:disabled),
+.modal-registros-pendientes .registro-acciones .btn-rechazar:hover:not(:disabled) {
   transform: translateY(-2px) !important;
   box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15) !important;
 }
@@ -568,11 +571,15 @@
 .modal-registros-pendientes .seccion-emails h4 {
   margin: 0 0 6px 0;
   color: #2d4177;
-  font-size: 0.9rem; /* Aumentado de 0.85rem a 0.9rem */
+  font-size: 0.9rem;
+  /* Aumentado de 0.85rem a 0.9rem */
   font-weight: 600;
-  white-space: normal; /* Permitir saltos de línea si es necesario */
-  overflow: visible; /* Asegurar que no se corte */
-  text-overflow: clip; /* No cortar con elipsis */
+  white-space: normal;
+  /* Permitir saltos de línea si es necesario */
+  overflow: visible;
+  /* Asegurar que no se corte */
+  text-overflow: clip;
+  /* No cortar con elipsis */
 }
 
 .modal-registros-pendientes .seccion-emails {
@@ -736,12 +743,16 @@
 .modal-registros-pendientes .botones-descarga::before {
   content: "📊 Reportes y Descargas";
   display: block;
-  font-size: 0.85rem; /* Aumentado de 0.75rem a 0.85rem */
-  color: var(--color-btn-main); /* Color más visible, igual al de títulos */
+  font-size: 0.85rem;
+  /* Aumentado de 0.75rem a 0.85rem */
+  color: var(--color-btn-main);
+  /* Color más visible, igual al de títulos */
   text-align: center;
-  margin-bottom: 8px; /* Aumentado de 5px a 8px */
+  margin-bottom: 8px;
+  /* Aumentado de 5px a 8px */
   font-weight: 600;
-  width: 100%; /* Asegurar ancho completo */
+  width: 100%;
+  /* Asegurar ancho completo */
 }
 
 /* Colores específicos para botones */
@@ -756,7 +767,8 @@
 .modal-registros-pendientes .registro-vigente {
   background-color: #f8fafc;
   border-left-width: 4px;
-  max-width: 100% !important; /* Asegurar que no exceda el contenedor */
+  max-width: 100% !important;
+  /* Asegurar que no exceda el contenedor */
   box-sizing: border-box !important;
 }
 
@@ -765,6 +777,7 @@
   from {
     opacity: 0;
   }
+
   to {
     opacity: 1;
   }
@@ -775,6 +788,7 @@
     transform: translateY(-20px) scale(0.95);
     opacity: 0;
   }
+
   to {
     transform: translateY(0) scale(1);
     opacity: 1;
@@ -790,7 +804,8 @@
   }
 
   .modal-registros-pendientes .lista-registros {
-    padding: 20px 25px !important; /* Mantener buen padding en tablet */
+    padding: 20px 25px !important;
+    /* Mantener buen padding en tablet */
   }
 }
 
@@ -832,7 +847,8 @@
   }
 
   .modal-registros-pendientes .lista-registros {
-    padding: 15px 10px !important; /* Reducir padding en móvil pero mantener legibilidad */
+    padding: 15px 10px !important;
+    /* Reducir padding en móvil pero mantener legibilidad */
   }
 
   .modal-registros-pendientes .modal-footer {
@@ -876,11 +892,13 @@
   }
 
   .modal-registros-pendientes .modal-content {
-    padding: 0 !important; /* Mantener sin padding para móviles también */
+    padding: 0 !important;
+    /* Mantener sin padding para móviles también */
   }
 
   .modal-registros-pendientes .lista-registros {
-    padding: 10px 8px !important; /* Padding mínimo pero funcional para móviles pequeños */
+    padding: 10px 8px !important;
+    /* Padding mínimo pero funcional para móviles pequeños */
   }
 
   .modal-registros-pendientes .registro-item {
@@ -913,4 +931,51 @@
     margin-top: 5px;
     font-size: 0.7rem;
   }
+}
+
+/* Barra de acciones al pie del modal */
+.modal-actions-bar {
+  width: 100%;
+  padding: 15px 25px;
+  background-color: #f8f9fa;
+  border-top: 2px solid #e1e8ed;
+  display: flex;
+  justify-content: flex-end;
+  /* Alineado a la derecha como es estándar */
+  align-items: center;
+  box-sizing: border-box;
+}
+
+/* Botón profesional para abrir el panel */
+.btn-acciones-profesional {
+  background: linear-gradient(135deg, var(--color-btn-main) 0%, #1e2b58 100%);
+  color: white;
+  font-size: 1rem;
+  font-weight: 600;
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  box-shadow: 0 4px 12px rgba(45, 65, 119, 0.25);
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.btn-acciones-profesional:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(45, 65, 119, 0.35);
+  background: linear-gradient(135deg, #3d5691 0%, #2d4177 100%);
+}
+
+.btn-acciones-profesional:active {
+  transform: translateY(1px);
+  box-shadow: 0 2px 8px rgba(45, 65, 119, 0.2);
+}
+
+.btn-acciones-profesional .icon {
+  font-size: 1.2rem;
 }

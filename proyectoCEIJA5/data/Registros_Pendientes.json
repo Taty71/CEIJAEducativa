@@ -136,7 +136,7 @@
       "motivoPendiente": "⚠️ Documentación incompleta (4/6) para  - Registro quedará PENDIENTE. Faltan: 🏥 Ficha Médica CUS, 📊 Analítico Parcial (o alternativamente: 📝 Solicitud de Pase)",
       "alarmaReiniciada": true,
       "autorizacionExtension": true,
-      "fechaReinicio": "2025-12-03T16:17:29.189Z",
+      "fechaReinicio": "2025-12-13T11:32:58.476Z",
       "motivoExtension": "Extensión solicitada",
       "diasExtension": 7
     },
@@ -147,10 +147,10 @@
       "archivo_partidaNacimiento": "/archivosPendientes/Milagros_Gesper_36258852_archivo_partidaNacimiento.pdf"
     },
     "observaciones": "Registro pendiente creado el 8/10/2025 a las 09:16:41",
-    "fechaActualizacion": "2025-12-03T16:17:29.199Z",
-    "fechaVencimiento": "2025-12-10T16:17:29.176Z",
+    "fechaActualizacion": "2025-12-13T11:32:58.488Z",
+    "fechaVencimiento": "2025-12-20T11:32:58.456Z",
     "alarmaReiniciada": true,
-    "fechaReinicio": "2025-12-03T16:17:29.176Z",
+    "fechaReinicio": "2025-12-13T11:32:58.456Z",
     "motivoExtension": "Extensión solicitada",
     "diasExtension": 7,
     "historialExtensiones": [
@@ -171,6 +171,12 @@
         "dias": 7,
         "motivo": "Extensión solicitada",
         "usuario": "admin"
+      },
+      {
+        "fecha": "2025-12-13T11:32:58.456Z",
+        "dias": 7,
+        "motivo": "Extensión solicitada",
+        "usuario": "admin"
       }
     ]
   },
@@ -180,7 +186,7 @@
     "fechaRegistro": "8/10/2025",
     "horaRegistro": "09:32:21",
     "tipo": "REGISTRO_PENDIENTE",
-    "estado": "PROCESADO",
+    "estado": "PENDIENTE",
     "datos": {
       "nombre": "Fabiana",
       "apellido": "Santos",
@@ -323,16 +329,21 @@
         "4"
       ],
       "administrador": "admin",
-      "motivoPendiente": "⚠️ Documentación incompleta (1/6) para Semipresencial - Registro quedará PENDIENTE. Faltan: 📄 DNI, 📄 CUIL, 🏥 Ficha Médica CUS, 📜 Partida de Nacimiento, 📊 Analítico Parcial (o alternativamente: 📝 Solicitud de Pase)"
+      "motivoPendiente": "⚠️ Documentación incompleta (1/6) para Semipresencial - Registro quedará PENDIENTE. Faltan: 📄 DNI, 📄 CUIL, 🏥 Ficha Médica CUS, 📜 Partida de Nacimiento, 📊 Analítico Parcial (o alternativamente: 📝 Solicitud de Pase)",
+      "alarmaReiniciada": true,
+      "autorizacionExtension": true,
+      "fechaReinicio": "2025-12-13T11:12:37.221Z",
+      "motivoExtension": "Extensión solicitada",
+      "diasExtension": 7
     },
     "archivos": {
       "foto": "/archivosPendientes/Maria_Mendez_45123963_foto.png"
     },
     "observaciones": "Registro pendiente creado el 8/10/2025 a las 11:43:51",
-    "fechaActualizacion": "2025-11-02T02:16:58.205Z",
-    "fechaVencimiento": "2025-11-09T02:16:58.205Z",
+    "fechaActualizacion": "2025-12-13T11:12:37.233Z",
+    "fechaVencimiento": "2025-12-20T11:12:37.204Z",
     "alarmaReiniciada": true,
-    "fechaReinicio": "2025-11-02T02:16:58.205Z",
+    "fechaReinicio": "2025-12-13T11:12:37.204Z",
     "motivoExtension": "Extensión solicitada",
     "diasExtension": 7,
     "historialExtensiones": [
@@ -356,6 +367,12 @@
       },
       {
         "fecha": "2025-11-02T02:16:58.205Z",
+        "dias": 7,
+        "motivo": "Extensión solicitada",
+        "usuario": "admin"
+      },
+      {
+        "fecha": "2025-12-13T11:12:37.204Z",
         "dias": 7,
         "motivo": "Extensión solicitada",
         "usuario": "admin"
@@ -625,5 +642,115 @@
     "estudianteEnBD": true,
     "inscripcionesBD": 1,
     "documentosBD": 4
+  },
+  {
+    "dni": "46125896",
+    "timestamp": "2025-12-10T03:17:32.554Z",
+    "fechaRegistro": "10/12/2025",
+    "horaRegistro": "00:17:32",
+    "tipo": "REGISTRO_PENDIENTE",
+    "estado": "PROCESADO",
+    "datos": {
+      "nombre": "Dolores",
+      "apellido": "Nieto",
+      "tipoDocumento": "DNI",
+      "dni": "46125896",
+      "paisEmision": "",
+      "cuil": "27-46125896-9",
+      "fechaNacimiento": "2004-12-23",
+      "calle": "Las Heras",
+      "numero": "563",
+      "barrio": "10",
+      "localidad": "108",
+      "provincia": "5",
+      "email": "crisbmaia50@gmail.com",
+      "telefono": "0351-7895561",
+      "modalidad": "Presencial",
+      "modalidadId": "1",
+      "planAnio": "2",
+      "idModulo": "",
+      "idEstadoInscripcion": "1",
+      "sexo": "Femenino",
+      "idDivision": "11",
+      "archivos": "[object Object]",
+      "previews": "[object Object]",
+      "estado": "PENDIENTE",
+      "detalleDocumentacion": "{\"completo\":false,\"tipo\":\"DOCUMENTACION_INCOMPLETA\",\"mensaje\":\"⚠️ Documentación incompleta (3/6) para Presencial - Registro quedará PENDIENTE. Faltan: 📄 CUIL, 📜 Partida de Nacimiento, 📊 Analítico Parcial (o alternativamente: 📝 Solicitud de Pase)\",\"cantidadSubidos\":3,\"totalDocumentos\":6,\"documentosRequeridos\":[\"foto\",\"archivo_dni\",\"archivo_cuil\",\"archivo_fichaMedica\",\"archivo_partidaNacimiento\",\"archivo_analiticoParcial\"],\"documentosSubidos\":[\"foto\",\"archivo_dni\",\"archivo_fichaMedica\"],\"documentosFaltantes\":[\"archivo_cuil\",\"archivo_partidaNacimiento\",\"archivo_analiticoParcial\"],\"nombresDocumentosFaltantes\":[\"📄 CUIL\",\"📜 Partida de Nacimiento\",\"📊 Analítico Parcial (o alternativamente: 📝 Solicitud de Pase)\"],\"modalidad\":\"Presencial\",\"planAnio\":\"2\",\"documentosAlternativos\":{\"grupo\":\"analitico_o_pase\",\"preferido\":\"archivo_analiticoParcial\",\"alternativa\":\"archivo_solicitudPase\",\"descripcion\":\"Analítico Parcial (definitivo) O Solicitud de Pase (temporal - luego deberá presentar analítico)\"}}",
+      "motivoPendiente": "⚠️ Documentación incompleta (3/6) para Presencial - Registro quedará PENDIENTE. Faltan: 📄 CUIL, 📜 Partida de Nacimiento, 📊 Analítico Parcial (o alternativamente: 📝 Solicitud de Pase)",
+      "tipoRegistro": "SIN_DOCUMENTACION"
+    },
+    "archivos": {
+      "archivo_cuil": "/archivosDocumento/Dolores_Nieto_46125896_archivo_cuil.pdf",
+      "archivo_dni": "/archivosDocumento/Dolores_Nieto_46125896_archivo_dni.pdf",
+      "archivo_fichaMedica": "/archivosDocumento/Dolores_Nieto_46125896_archivo_fichaMedica.pdf",
+      "archivo_partidaNacimiento": "/archivosDocumento/Dolores_Nieto_46125896_archivo_partidaNacimiento.pdf",
+      "archivo_solicitudPase": "/archivosDocumento/Dolores_Nieto_46125896_archivo_solicitudPase.pdf",
+      "foto": "/archivosDocumento/Dolores_Nieto_46125896_foto.png"
+    },
+    "observaciones": "Registro pendiente creado el 10/12/2025 a las 00:17:32",
+    "modalidadId": "1",
+    "planAnioId": "2",
+    "fechaActualizacion": "2025-12-10T03:20:20.340Z",
+    "fechaProcesado": "2025-12-10T03:20:21.734Z",
+    "idEstudiante": 178,
+    "estudianteEnBD": true,
+    "inscripcionesBD": 1,
+    "documentosBD": 0
+  },
+  {
+    "dni": "48152125",
+    "timestamp": "2025-12-12T02:13:21.751Z",
+    "fechaRegistro": "11/12/2025",
+    "horaRegistro": "23:13:21",
+    "tipo": "REGISTRO_PENDIENTE",
+    "estado": "PROCESADO",
+    "datos": {
+      "nombre": "Rodrigo",
+      "apellido": "Mercado",
+      "tipoDocumento": "DNI",
+      "dni": "48152125",
+      "paisEmision": "",
+      "cuil": "27-48152125-9",
+      "fechaNacimiento": "2005-10-02",
+      "calle": "Avellaneda",
+      "numero": "1024",
+      "barrio": "25",
+      "localidad": "108",
+      "provincia": "5",
+      "email": "crisbmaia50@gmail.com",
+      "telefono": "0351-8945213",
+      "modalidad": "Semipresencial",
+      "modalidadId": "2",
+      "planAnio": "5",
+      "idModulo": [
+        "4",
+        ""
+      ],
+      "idEstadoInscripcion": "1",
+      "sexo": "Femenino",
+      "archivos": "[object Object]",
+      "previews": "[object Object]",
+      "estado": "PENDIENTE",
+      "detalleDocumentacion": "{\"completo\":false,\"tipo\":\"DOCUMENTACION_INCOMPLETA\",\"mensaje\":\"⚠️ Documentación incompleta (1/6) para Semipresencial - Registro quedará PENDIENTE. Faltan: 📄 DNI, 📄 CUIL, 🏥 Ficha Médica CUS, 📜 Partida de Nacimiento, 📊 Analítico Parcial (o alternativamente: 📝 Solicitud de Pase)\",\"cantidadSubidos\":1,\"totalDocumentos\":6,\"documentosRequeridos\":[\"foto\",\"archivo_dni\",\"archivo_cuil\",\"archivo_fichaMedica\",\"archivo_partidaNacimiento\",\"archivo_analiticoParcial\"],\"documentosSubidos\":[\"foto\"],\"documentosFaltantes\":[\"archivo_dni\",\"archivo_cuil\",\"archivo_fichaMedica\",\"archivo_partidaNacimiento\",\"archivo_analiticoParcial\"],\"nombresDocumentosFaltantes\":[\"📄 DNI\",\"📄 CUIL\",\"🏥 Ficha Médica CUS\",\"📜 Partida de Nacimiento\",\"📊 Analítico Parcial (o alternativamente: 📝 Solicitud de Pase)\"],\"modalidad\":\"Semipresencial\",\"planAnio\":\"5\",\"documentosAlternativos\":{\"grupo\":\"analitico_o_pase\",\"preferido\":\"archivo_analiticoParcial\",\"alternativa\":\"archivo_solicitudPase\",\"descripcion\":\"Analítico Parcial (definitivo) O Solicitud de Pase (temporal - luego deberá presentar analítico)\"}}",
+      "motivoPendiente": "⚠️ Documentación incompleta (1/6) para Semipresencial - Registro quedará PENDIENTE. Faltan: 📄 DNI, 📄 CUIL, 🏥 Ficha Médica CUS, 📜 Partida de Nacimiento, 📊 Analítico Parcial (o alternativamente: 📝 Solicitud de Pase)",
+      "tipoRegistro": "SIN_DOCUMENTACION"
+    },
+    "archivos": {
+      "archivo_cuil": "/archivosDocumento/Rodrigo_Mercado_48152125_archivo_cuil.pdf",
+      "archivo_dni": "/archivosDocumento/Rodrigo_Mercado_48152125_archivo_dni.pdf",
+      "archivo_fichaMedica": "/archivosDocumento/Rodrigo_Mercado_48152125_archivo_fichaMedica.pdf",
+      "archivo_partidaNacimiento": "/archivosDocumento/Rodrigo_Mercado_48152125_archivo_partidaNacimiento.pdf",
+      "archivo_solicitudPase": "/archivosDocumento/Rodrigo_Mercado_48152125_archivo_solicitudPase.pdf",
+      "foto": "/archivosDocumento/Rodrigo_Mercado_48152125_foto.png"
+    },
+    "observaciones": "Registro pendiente creado el 11/12/2025 a las 23:13:21",
+    "modalidadId": "2",
+    "planAnioId": "5",
+    "fechaActualizacion": "2025-12-12T02:16:16.894Z",
+    "fechaProcesado": "2025-12-12T02:16:17.960Z",
+    "idEstudiante": 181,
+    "estudianteEnBD": true,
+    "inscripcionesBD": 1,
+    "documentosBD": 0
   }
 ]

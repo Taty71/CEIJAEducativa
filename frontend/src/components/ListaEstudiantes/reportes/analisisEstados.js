@@ -12,13 +12,21 @@ export const generarAnalisisEstados = (estudiantes, showAlerta) => {
     const { verificarEspacio, agregarPiePagina } = crearControlPaginas(doc);
     let yPos = crearEncabezadoInstitucional(doc, 'DETERMINACIÓN PORCENTUAL DE INSCRIPCIONES');
 
+    // Título del reporte (Centrado, Tamaño 13, 2 líneas de separación del encabezado)
+    yPos += 10;
+    doc.setFontSize(13);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(45, 65, 119);
+    doc.text(normalizarTexto('DETERMINACIÓN PORCENTUAL DE INSCRIPCIONES'), doc.internal.pageSize.width / 2, yPos, { align: 'center' });
+    yPos += 8;
+
     // ===== RESUMEN GENERAL =====
     yPos = verificarEspacio(doc, yPos, 40); // Espacio para el resumen general
-    doc.setFontSize(14);
+    doc.setFontSize(12);
     doc.setFont('helvetica', 'bold');
     doc.setTextColor(45, 65, 119);
     doc.text(normalizarTexto('RESUMEN GENERAL'), 14, yPos);
-    yPos += 10;
+    yPos += 8;
 
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(11);
@@ -32,11 +40,11 @@ export const generarAnalisisEstados = (estudiantes, showAlerta) => {
 
     // ===== MÉTRICAS CLAVE =====
     yPos = verificarEspacio(doc, yPos, 60); // Espacio para las métricas clave
-    doc.setFontSize(14);
+    doc.setFontSize(12);
     doc.setFont('helvetica', 'bold');
     doc.setTextColor(45, 65, 119);
     doc.text(normalizarTexto('METRICAS CLAVE'), 14, yPos);
-    yPos += 10;
+    yPos += 8;
 
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(11);
@@ -59,11 +67,11 @@ export const generarAnalisisEstados = (estudiantes, showAlerta) => {
     // ===== DISTRIBUCIÓN DETALLADA POR ESTADO =====
     yPos = verificarEspacio(doc, yPos, 80); // Espacio para la distribución detallada
 
-    doc.setFontSize(14);
+    doc.setFontSize(12);
     doc.setFont('helvetica', 'bold');
     doc.setTextColor(45, 65, 119);
     doc.text(normalizarTexto('DISTRIBUCION POR ESTADO'), 14, yPos);
-    yPos += 15;
+    yPos += 10;
 
     // Crear tabla con los datos de distribución
     const tableData = analisis.distribucion.map(estado => [
@@ -86,7 +94,7 @@ export const generarAnalisisEstados = (estudiantes, showAlerta) => {
         fontStyle: 'bold'
       },
       bodyStyles: {
-        fontSize: 10,
+        fontSize: 11,
         font: 'helvetica'
       },
       columnStyles: {
@@ -108,11 +116,11 @@ export const generarAnalisisEstados = (estudiantes, showAlerta) => {
         yPos = 20;
       }
 
-      doc.setFontSize(14);
+      doc.setFontSize(12);
       doc.setFont('helvetica', 'bold');
       doc.setTextColor(45, 65, 119);
       doc.text(normalizarTexto('DESGLOSE POR MODALIDAD'), 14, yPos);
-      yPos += 15;
+      yPos += 10;
 
       // Crear tabla con desglose por modalidad
       const modalidadData = Object.entries(analisis.distribucionPorModalidad).map(([modalidad, datos]) => [
@@ -134,12 +142,12 @@ export const generarAnalisisEstados = (estudiantes, showAlerta) => {
         headStyles: {
           fillColor: [45, 65, 119],
           textColor: 255,
-          fontSize: 10,
+          fontSize: 11,
           font: 'helvetica',
           fontStyle: 'bold'
         },
         bodyStyles: {
-          fontSize: 9,
+          fontSize: 11,
           font: 'helvetica'
         },
         columnStyles: {
@@ -166,13 +174,13 @@ export const generarAnalisisEstados = (estudiantes, showAlerta) => {
         yPos = 20;
       }
 
-      doc.setFontSize(14);
+      doc.setFontSize(12);
       doc.setFont('helvetica', 'bold');
       doc.setTextColor(45, 65, 119);
       doc.text(normalizarTexto('ALERTAS Y RECOMENDACIONES'), 14, yPos);
-      yPos += 10;
+      yPos += 8;
 
-      doc.setFontSize(10);
+      doc.setFontSize(11);
       doc.setFont('helvetica', 'normal');
       doc.setTextColor(0, 0, 0);
 
@@ -180,7 +188,7 @@ export const generarAnalisisEstados = (estudiantes, showAlerta) => {
         const textoAlerta = normalizarTexto(`• ${alerta.mensaje}`);
         const lineasTexto = doc.splitTextToSize(textoAlerta, 160);
         doc.text(lineasTexto, 20, yPos);
-        yPos += lineasTexto.length * 5 + 3;
+        yPos += lineasTexto.length * 6 + 3;
       });
     }
 

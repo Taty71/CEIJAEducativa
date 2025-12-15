@@ -1,0 +1,249 @@
+CEIJA5 LA CALERA CBA
+Educacion Integral de Jóvenes y Adultos
+REPORTE ADMINISTRATIVO - REGISTROS PENDIENTES DE DOCUMENTACIÓN
+Fecha de generación: 10/12/2025, 12:21:14
+Total de registros: 12
+================================================================================
+
+1. Paula Arce
+   DNI: 45214142
+   Email: crisbmaia50@gmail.com
+   Modalidad: Semipresencial
+   Estado: VENCIDO
+   Registrado: 7/10/2025, 10:20:20
+   
+   📊 DOCUMENTACIÓN:
+   Completado: 2/5 (40%)
+   ✅ Documentos presentados:
+      • Foto
+      • archivo_partidaNacimiento
+   ❌ Documentos faltantes:
+      • archivo_dni
+      • archivo_cuil
+      • archivo_fichaMedica
+      • archivo_analiticoParcial
+
+────────────────────────────────────────────────────────────
+
+2. Patricia  Machado
+   DNI: 45125874
+   Email: crisbmaia50@gmail.com
+   Modalidad: Presencial
+   Estado: VENCIDO
+   Registrado: 8/10/2025, 01:27:32
+   
+   📊 DOCUMENTACIÓN:
+   Completado: 6/6 (100%)
+   ✅ Documentos presentados:
+      • Foto
+      • archivo_dni
+      • archivo_cuil
+      • archivo_fichaMedica
+      • archivo_partidaNacimiento
+      • archivo_solicitudPase
+   ✅ Documentación completa
+
+────────────────────────────────────────────────────────────
+
+3. Milagros Gesper
+   DNI: 36258852
+   Email: crisbmaia50@gmail.com
+   Modalidad: Semipresencial
+   Estado: 1 día restante
+   Registrado: 8/10/2025, 09:16:41
+   
+   📊 DOCUMENTACIÓN:
+   Completado: 4/5 (80%)
+   ✅ Documentos presentados:
+      • Foto
+      • archivo_dni
+      • archivo_cuil
+      • archivo_partidaNacimiento
+   ❌ Documentos faltantes:
+      • archivo_fichaMedica
+      • archivo_analiticoParcial
+
+────────────────────────────────────────────────────────────
+
+4. Fabiana Santos
+   DNI: 45872415
+   Email: crisbmaia50@gmail.com
+   Modalidad: Semipresencial
+   Estado: VENCIDO
+   Registrado: 8/10/2025, 09:32:21
+   
+   📊 DOCUMENTACIÓN:
+   Completado: 2/5 (40%)
+   ✅ Documentos presentados:
+      • Foto
+      • archivo_dni
+   ❌ Documentos faltantes:
+      • archivo_cuil
+      • archivo_fichaMedica
+      • archivo_partidaNacimiento
+      • archivo_analiticoParcial
+
+────────────────────────────────────────────────────────────
+
+5. Julio Canva
+   DNI: 45125889
+   Email: crisbmaia50@gmail.com
+   Modalidad: Semipresencial
+   Estado: VENCIDO
+   Registrado: 8/10/2025, 10:09:20
+   
+   📊 DOCUMENTACIÓN:
+   Completado: 6/6 (100%)
+   ✅ Documentos presentados:
+      • archivo_cuil
+      • archivo_dni
+      • archivo_fichaMedica
+      • archivo_partidaNacimiento
+      • archivo_solicitudPase
+      • Foto
+   ✅ Documentación completa
+
+────────────────────────────────────────────────────────────
+
+6. Maria Mendez
+   DNI: 45123963
+   Email: crisbmaia50@gmail.com
+   Modalidad: Semipresencial
+   Estado: VENCIDO
+   Registrado: 8/10/2025, 11:43:51
+   
+   📊 DOCUMENTACIÓN:
+   Completado: 1/5 (20%)
+   ✅ Documentos presentados:
+      • Foto
+   ❌ Documentos faltantes:
+      • archivo_dni
+      • archivo_cuil
+      • archivo_fichaMedica
+      • archivo_partidaNacimiento
+      • archivo_analiticoParcial
+
+────────────────────────────────────────────────────────────
+
+7. María Pia Vazquez
+   DNI: 46123325
+   Email: crisbmaia50@gmail.com
+   Modalidad: Semipresencial
+   Estado: VENCIDO
+   Registrado: 1/11/2025, 10:27:23
+   
+   📊 DOCUMENTACIÓN:
+   Completado: 6/6 (100%)
+   ✅ Documentos presentados:
+      • Foto
+      • archivo_dni
+      • archivo_cuil
+      • archivo_fichaMedica
+      • archivo_partidaNacimiento
+      • archivo_solicitudPase
+   ✅ Documentación completa
+
+────────────────────────────────────────────────────────────
+
+8. Fernanda Tapia
+   DNI: 45105576
+   Email: crisbmaia50@gmail.com
+   Modalidad: Semipresencial
+   Estado: VENCIDO
+   Registrado: 6/11/2025, 10:11:32
+   
+   📊 DOCUMENTACIÓN:
+   Completado: 4/5 (80%)
+   ✅ Documentos presentados:
+      • Foto
+      • archivo_dni
+      • archivo_cuil
+      • archivo_partidaNacimiento
+   ❌ Documentos faltantes:
+      • archivo_fichaMedica
+      • archivo_analiticoParcial
+
+────────────────────────────────────────────────────────────
+
+9. Carlos Mercado
+   DNI: 39458569
+   Email: crisbmaia50@gmail.com
+   Modalidad: Semipresencial
+   Estado: VENCIDO
+   Registrado: 20/11/2025, 02:06:46
+   
+   📊 DOCUMENTACIÓN:
+   Completado: 6/6 (100%)
+   ✅ Documentos presentados:
+      • Foto
+      • archivo_partidaNacimiento
+      • archivo_dni
+      • archivo_cuil
+      • archivo_fichaMedica
+      • archivo_certificadoNivelPrimario
+   ✅ Documentación completa
+
+────────────────────────────────────────────────────────────
+
+10. Isabela Nuñez
+   DNI: 32232232
+   Email: crisbmaia50@gmail.com
+   Modalidad: Presencial
+   Estado: VENCIDO
+   Registrado: 21/11/2025, 04:18:42
+   
+   📊 DOCUMENTACIÓN:
+   Completado: 6/7 (86%)
+   ✅ Documentos presentados:
+      • Foto
+      • archivo_cuil
+      • archivo_fichaMedica
+      • archivo_partidaNacimiento
+      • archivo_solicitudPase
+      • archivo_analiticoParcial
+   ❌ Documentos faltantes:
+      • archivo_dni
+
+────────────────────────────────────────────────────────────
+
+11. Patricia Miccio
+   DNI: 48125874
+   Email: crisbmaia50@gmail.com
+   Modalidad: Semipresencial
+   Estado: 1 día restante
+   Registrado: 3/12/2025, 01:14:03
+   
+   📊 DOCUMENTACIÓN:
+   Completado: 7/7 (100%)
+   ✅ Documentos presentados:
+      • Foto
+      • archivo_dni
+      • archivo_solicitudPase
+      • archivo_cuil
+      • archivo_fichaMedica
+      • archivo_partidaNacimiento
+      • archivo_analiticoParcial
+   ✅ Documentación completa
+
+────────────────────────────────────────────────────────────
+
+12. Dolores Nieto
+   DNI: 46125896
+   Email: crisbmaia50@gmail.com
+   Modalidad: Presencial
+   Estado: 7 días restantes
+   Registrado: 10/12/2025, 12:17:32
+   
+   📊 DOCUMENTACIÓN:
+   Completado: 6/6 (100%)
+   ✅ Documentos presentados:
+      • archivo_cuil
+      • archivo_dni
+      • archivo_fichaMedica
+      • archivo_partidaNacimiento
+      • archivo_solicitudPase
+      • Foto
+   ✅ Documentación completa
+
+────────────────────────────────────────────────────────────
+

@@ -24,13 +24,21 @@ export const generarAnalisisPeriodos = async (estudiantes, showAlerta, modalidad
     const { verificarEspacio, agregarPiePagina } = crearControlPaginas(doc);
     let yPos = crearEncabezadoInstitucional(doc, `CANTIDADES INSCRIPTOS POR PERIODOS EN EL AÑO EN CURSO`);
 
+    // Título del reporte (Centrado, Tamaño 13, 2 líneas de separación del encabezado)
+    yPos += 10;
+    doc.setFontSize(13);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(45, 65, 119);
+    doc.text(normalizarTexto('CANTIDADES INSCRIPTOS POR PERIODOS EN EL AÑO EN CURSO'), doc.internal.pageSize.width / 2, yPos, { align: 'center' });
+    yPos += 10;
+
     // ===== INFORMACIÓN GENERAL =====
     yPos = verificarEspacio(doc, yPos, 40); // Espacio para la sección de información general
-    doc.setFontSize(14);
+    doc.setFontSize(12);
     doc.setFont('helvetica', 'bold');
     doc.setTextColor(45, 65, 119);
     doc.text(normalizarTexto('INFORMACION GENERAL'), 14, yPos);
-    yPos += 10;
+    yPos += 8;
 
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(11);
@@ -61,11 +69,22 @@ export const generarAnalisisPeriodos = async (estudiantes, showAlerta, modalidad
     // Manejar diferentes estructuras según la modalidad
     let distribucionData = [];
 
+    // Helper para limpiar texto basura (Ø=Ý% etc)
+    const limpiarTextoPeriodo = (texto) => {
+      if (!texto) return 'Sin período';
+      // Si detectamos caracteres extraños comunes del error de codificación, los limpiamos
+      // Mantenemos alfanuméricos, espacios, paréntesis, guiones, puntos, barras, dos puntos
+      let limpio = texto.replace(/[^\w\sÁÉÍÓÚñáéíóúÑ().:/-]/g, '');
+      // Caso específico de basura al inicio (simbolos raros seguidos de letras)
+      limpio = limpio.replace(/^[^\w]+/, '');
+      return normalizarTexto(limpio.trim());
+    };
+
     if (analisis.modalidad === 'PRESENCIAL') {
       // Modalidad PRESENCIAL - mostrar todos los períodos mensuales
       if (analisis.distribucion && analisis.distribucion.length > 0) {
         distribucionData = analisis.distribucion.map(periodo => [
-          normalizarTexto(periodo.periodo || 'Sin período'),
+          limpiarTextoPeriodo(periodo.periodo),
           (periodo.inscripciones || periodo.cantidad || 0).toString(),
           `${(parseFloat(periodo.porcentaje) || 0).toFixed(1)}%`,
           periodo.esPreinscripcion ? 'Web' : 'Regular'
@@ -75,7 +94,7 @@ export const generarAnalisisPeriodos = async (estudiantes, showAlerta, modalidad
       // Modalidad SEMIPRESENCIAL - Usar distribución trimestral completa
       if (analisis.distribucionTrimestre && analisis.distribucionTrimestre.length > 0) {
         distribucionData = analisis.distribucionTrimestre.map(periodo => [
-          normalizarTexto(periodo.periodo || 'Sin período'),
+          limpiarTextoPeriodo(periodo.periodo),
           (periodo.inscripciones || periodo.cantidad || 0).toString(),
           `${(parseFloat(periodo.porcentaje) || 0).toFixed(1)}%`,
           periodo.esPreinscripcion ? 'Web' : 'Regular'
@@ -90,7 +109,7 @@ export const generarAnalisisPeriodos = async (estudiantes, showAlerta, modalidad
         analisis.analisisPresencial.distribucion.forEach(p => {
           if (p.esPreinscripcion) {
             preinscripciones.push([
-              normalizarTexto(p.periodo || 'Sin periodo'),
+              limpiarTextoPeriodo(p.periodo),
               (p.inscripciones || p.cantidad || 0).toString(),
               `${(parseFloat(p.porcentaje) || 0).toFixed(1)}%`,
               'Preinscripcion Web (Presencial)'
@@ -102,7 +121,7 @@ export const generarAnalisisPeriodos = async (estudiantes, showAlerta, modalidad
         analisis.analisisSemipresencial.distribucionTrimestre.forEach(p => {
           if (p.esPreinscripcion) {
             preinscripciones.push([
-              normalizarTexto(p.periodo || 'Sin periodo'),
+              limpiarTextoPeriodo(p.periodo),
               (p.inscripciones || p.cantidad || 0).toString(),
               `${(parseFloat(p.porcentaje) || 0).toFixed(1)}%`,
               'Preinscripcion Web (Semipresencial)'
@@ -116,7 +135,7 @@ export const generarAnalisisPeriodos = async (estudiantes, showAlerta, modalidad
         analisis.analisisSemipresencial.distribucionTrimestre.forEach(p => {
           if (!p.esPreinscripcion) {
             distribucionData.push([
-              `SEMIPRESENCIAL: ${normalizarTexto(p.periodo)}`,
+              `SEMIPRESENCIAL: ${limpiarTextoPeriodo(p.periodo)}`,
               (p.inscripciones || p.cantidad || 0).toString(),
               `${(parseFloat(p.porcentaje) || 0).toFixed(1)}%`,
               'Regular'
@@ -130,7 +149,7 @@ export const generarAnalisisPeriodos = async (estudiantes, showAlerta, modalidad
         analisis.analisisPresencial.distribucion.forEach(p => {
           if (!p.esPreinscripcion) {
             distribucionData.push([
-              `PRESENCIAL: ${normalizarTexto(p.periodo)}`,
+              `PRESENCIAL: ${limpiarTextoPeriodo(p.periodo)}`,
               (p.inscripciones || p.cantidad || 0).toString(),
               `${(parseFloat(p.porcentaje) || 0).toFixed(1)}%`,
               'Regular'
@@ -146,11 +165,11 @@ export const generarAnalisisPeriodos = async (estudiantes, showAlerta, modalidad
     if (distribucionData.length > 0) {
       yPos = verificarEspacio(doc, yPos, 60);
 
-      doc.setFontSize(14);
+      doc.setFontSize(12);
       doc.setFont('helvetica', 'bold');
       doc.setTextColor(45, 65, 119);
       doc.text(normalizarTexto('DISTRIBUCION POR PERIODOS'), 14, yPos);
-      yPos += 15;
+      yPos += 10;
 
       autoTable(doc, {
         head: [['Período', 'Inscripciones', 'Porcentaje', 'Tipo']],
@@ -165,7 +184,7 @@ export const generarAnalisisPeriodos = async (estudiantes, showAlerta, modalidad
           fontStyle: 'bold'
         },
         bodyStyles: {
-          fontSize: 10,
+          fontSize: 11,
           font: 'helvetica'
         },
         columnStyles: {
@@ -191,11 +210,11 @@ export const generarAnalisisPeriodos = async (estudiantes, showAlerta, modalidad
     if (analisis.resumen && (analisis.resumen.preinscripcionesHistoricas > 0 || analisis.resumen.preinscripcionesActuales > 0)) {
       yPos = verificarEspacio(doc, yPos, 60);
 
-      doc.setFontSize(14);
+      doc.setFontSize(12);
       doc.setFont('helvetica', 'bold');
       doc.setTextColor(45, 65, 119);
       doc.text(normalizarTexto('ESTADISTICAS DE PREINSCRIPCIONES WEB'), 14, yPos);
-      yPos += 10;
+      yPos += 8;
 
       doc.setFont('helvetica', 'normal');
       doc.setFontSize(11);
@@ -214,11 +233,11 @@ export const generarAnalisisPeriodos = async (estudiantes, showAlerta, modalidad
 
     // ===== ESTADÍSTICAS TEMPORALES =====
     if (analisis.estadisticas) {
-      doc.setFontSize(14);
+      doc.setFontSize(12);
       doc.setFont('helvetica', 'bold');
       doc.setTextColor(45, 65, 119);
       doc.text(normalizarTexto('ESTADISTICAS TEMPORALES'), 14, yPos);
-      yPos += 10;
+      yPos += 8;
 
       doc.setFont('helvetica', 'normal');
       doc.setFontSize(11);
@@ -247,13 +266,13 @@ export const generarAnalisisPeriodos = async (estudiantes, showAlerta, modalidad
     if (recomendaciones.length > 0) {
       yPos = verificarEspacio(doc, yPos, 60);
 
-      doc.setFontSize(14);
+      doc.setFontSize(12);
       doc.setFont('helvetica', 'bold');
       doc.setTextColor(45, 65, 119);
       doc.text(normalizarTexto('RECOMENDACIONES'), 14, yPos);
-      yPos += 10;
+      yPos += 8;
 
-      doc.setFontSize(10);
+      doc.setFontSize(11);
       doc.setFont('helvetica', 'normal');
       doc.setTextColor(0, 0, 0);
 
@@ -261,7 +280,7 @@ export const generarAnalisisPeriodos = async (estudiantes, showAlerta, modalidad
         const texto = normalizarTexto(`${index + 1}. ${recomendacion}`);
         const lineasTexto = doc.splitTextToSize(texto, 160);
         doc.text(lineasTexto, 20, yPos);
-        yPos += lineasTexto.length * 5 + 3;
+        yPos += lineasTexto.length * 6 + 3;
       });
     }
 

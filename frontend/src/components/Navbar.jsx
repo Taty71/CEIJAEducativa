@@ -10,6 +10,14 @@ const Navbar = ({ onModalopen }) => {
         setIsOpen(!isOpen);
     };
 
+    const scrollToSection = (sectionId) => {
+        const element = document.getElementById(sectionId);
+        if (element) {
+            element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+        toggleMenu();
+    };
+
     return (
         <div className="navbar">
             <button className="hamburger" onClick={toggleMenu}>
@@ -19,11 +27,15 @@ const Navbar = ({ onModalopen }) => {
                 <div className="menu">
                     <button onClick={toggleMenu}>✖</button>
                     <ul>
-                        <li className="opcMenu"><a href="#nuestra-escuela">Nuestra Escuela</a></li>
+                        <li className="opcMenu">
+                            <button onClick={() => scrollToSection('nuestra-escuela')}>Nuestra Escuela</button>
+                        </li>
                         <li className="opcMenu">
                             <button onClick={() => { onModalopen('modalidad'); toggleMenu(); }}>Modalidad</button>
                         </li>
-                        <li className="opcMenu"><a href="#contacto">Contáctanos</a></li>
+                        <li className="opcMenu">
+                            <button onClick={() => scrollToSection('contacto')}>Contáctanos</button>
+                        </li>
                     </ul>
                 </div>
             )}

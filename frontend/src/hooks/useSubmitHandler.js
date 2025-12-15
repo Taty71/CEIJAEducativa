@@ -1,5 +1,5 @@
-import { 
-    obtenerEstadoDocumentacion, 
+import {
+    obtenerEstadoDocumentacion,
     verificarRegistroPendiente,
     eliminarRegistroPendiente,
     guardarRegistroSinDocumentacion
@@ -19,18 +19,18 @@ import { AlertContext } from '../context/alertContextDefinition';
  */
 export const useSubmitHandler = (files, previews, resetArchivos, buildDetalleDocumentacion) => {
     const { showSuccess, showError, showWarning } = useContext(AlertContext);
-    
+
     const validateRequiredFields = (values) => {
         const camposObligatorios = [
-            'nombre', 'apellido', 'dni', 'cuil', 'fechaNacimiento', 
-            'calle', 'numero', 'barrio', 'localidad', 'provincia', 
+            'nombre', 'apellido', 'dni', 'cuil', 'fechaNacimiento',
+            'calle', 'numero', 'barrio', 'localidad', 'provincia',
             'email', 'telefono'
         ];
         return camposObligatorios.filter((campo) => !values[campo]);
     };
 
     const buildFormData = (values, files, detalleDocumentacion, isAdmin) => {
-    const formDataToSend = new FormData();
+        const formDataToSend = new FormData();
 
         // Debug logging para usuarios web antes de construir FormData
         if (!isAdmin) {
@@ -43,8 +43,8 @@ export const useSubmitHandler = (files, previews, resetArchivos, buildDetalleDoc
         Object.entries(values).forEach(([key, value]) => {
             // Excluir campos de archivos para evitar conflictos
             const archivosFields = [
-                'archivo_dni', 'archivo_cuil', 'archivo_partidaNacimiento', 
-                'archivo_fichaMedica', 'archivo_solicitudPase', 'archivo_analiticoParcial', 
+                'archivo_dni', 'archivo_cuil', 'archivo_partidaNacimiento',
+                'archivo_fichaMedica', 'archivo_solicitudPase', 'archivo_analiticoParcial',
                 'archivo_certificadoNivelPrimario', 'foto'
             ];
             if (!archivosFields.includes(key)) {
@@ -66,6 +66,13 @@ export const useSubmitHandler = (files, previews, resetArchivos, buildDetalleDoc
                     // Si sigue sin ser número, no agregar
                     if (!valorFinal || isNaN(valorFinal)) return;
                 }
+
+                // Manejo específico para idDivision
+                if (key === 'idDivision') {
+                    // Solo agregar si tiene valor real
+                    if (!value) return;
+                }
+
                 formDataToSend.append(campo, valorFinal);
                 // Debug logging para usuarios web
                 if (!isAdmin && valorFinal) {
@@ -92,7 +99,7 @@ export const useSubmitHandler = (files, previews, resetArchivos, buildDetalleDoc
         });
 
         formDataToSend.append('detalleDocumentacion', JSON.stringify(detalleDocumentacion));
-        
+
         // Debug logging final para usuarios web
         if (!isAdmin) {
             console.log('🌐 [DEBUG] FormData construido, enviando al servicio...');
@@ -141,7 +148,7 @@ export const useSubmitHandler = (files, previews, resetArchivos, buildDetalleDoc
             values.modulos || ''
         );
         const hayDocumentosCompletos = estadoDocumentacion.completo;
-        
+
         if (accion === "Registrar" && (!hayDocumentosCompletos || errorBD) && isAdmin) {
             // Caso especial: registro de admin sin documentación o incompleto → enviar a Registros_Pendientes.json
             // Validar que modalidad, modalidadId y planAnio no estén vacíos
@@ -179,7 +186,7 @@ export const useSubmitHandler = (files, previews, resetArchivos, buildDetalleDoc
                 console.log('📋 [DEBUG] Llamando serviceRegInscripcion.createRegistroPendiente...');
                 const responsePendiente = await serviceRegInscripcion.createRegistroPendiente(formDataPendiente);
                 console.log('✅ [DEBUG] Respuesta del backend:', responsePendiente);
-                const mensajeAlerta = errorBD 
+                const mensajeAlerta = errorBD
                     ? `📋 Error en BD - Registro guardado como pendiente: ${response.errorOriginal}`
                     : `📋 Registro guardado como pendiente: ${estadoDocumentacion.mensaje}`;
                 showWarning(mensajeAlerta);
@@ -212,7 +219,7 @@ export const useSubmitHandler = (files, previews, resetArchivos, buildDetalleDoc
                     modalidad,
                     mensaje: response?.message || 'Registro incompleto'
                 }, estadoDocumentacion);
-                
+
                 showWarning(estadoDocumentacion.mensaje);
             } catch (error) {
                 console.error('Error al guardar registro local:', error);
@@ -221,11 +228,11 @@ export const useSubmitHandler = (files, previews, resetArchivos, buildDetalleDoc
         } else {
             // Caso normal: con documentación completa O usuario web (independiente de documentación)
             let mensajeExito = response.message;
-            
+
             // Si es usuario web, personalizar mensaje de éxito
             if (isWebUser) {
                 mensajeExito = '✅ ¡Registro realizado con éxito! Recuerda finalizar la inscripción de manera presencial para iniciar tus estudios.';
-                
+
                 // Para usuarios web, también guardar localmente si no tienen documentos completos
                 if (!hayDocumentosCompletos) {
                     try {
@@ -240,11 +247,11 @@ export const useSubmitHandler = (files, previews, resetArchivos, buildDetalleDoc
                     }
                 }
             }
-            
+
             // Si se completó un registro pendiente, eliminar de localStorage y del backend
             if (esRegistroPendienteCompletado) {
                 eliminarRegistroPendiente(values.dni);
-                
+
                 // También notificar al backend para eliminar del archivo JSON
                 try {
                     await serviceRegInscripcion.marcarRegistroCompletado(values.dni);
@@ -253,11 +260,11 @@ export const useSubmitHandler = (files, previews, resetArchivos, buildDetalleDoc
                     console.error('Error al eliminar registro pendiente del backend:', error);
                     // No detener el flujo, el registro ya se completó exitosamente
                 }
-                
+
                 mensajeExito += ' ✅ Registro pendiente completado exitosamente.';
                 console.log(`🎉 Registro pendiente completado para DNI ${values.dni}`);
             }
-            
+
             // Si se completó un registro web, actualizar su estado
             if (completarWebParam) {
                 try {
@@ -269,12 +276,12 @@ export const useSubmitHandler = (files, previews, resetArchivos, buildDetalleDoc
                     // No detener el flujo, solo log del error
                 }
             }
-            
+
             console.log('🎉 [DEBUG] Mostrando mensaje de éxito:', mensajeExito);
             console.log('🎉 [DEBUG] isWebUser:', isWebUser);
             showSuccess(mensajeExito);
         }
-        
+
         // Resetear formulario solo si el registro fue exitoso
         if (accion === "Registrar") {
             // Resetear archivos y previews
@@ -369,9 +376,9 @@ export const useSubmitHandler = (files, previews, resetArchivos, buildDetalleDoc
             // ✅ AGREGAR SOLO ESTO: Retornar éxito para mostrar encuesta a usuarios web
             if (isWebUser && !isAdmin && accion === 'Registrar' && !errorBD) {
                 console.log('🎉 [DEBUG] Registro web exitoso - Retornando success para encuesta');
-                return { 
-                    success: true, 
-                    message: '✅ ¡Registro realizado con éxito!' 
+                return {
+                    success: true,
+                    message: '✅ ¡Registro realizado con éxito!'
                 };
             }
 
@@ -436,7 +443,7 @@ export const useSubmitHandler = (files, previews, resetArchivos, buildDetalleDoc
                 // Documentación completa: procesar en BD
                 console.log('✅ Documentación completa - Procesando registro web en BD');
                 const resultado = await serviceRegistrosWeb.procesarRegistroWeb(idRegistroWeb, datosCompletos, documentos);
-                
+
                 // Verificar si el estudiante ya existe
                 if (resultado.yaExiste) {
                     console.log('ℹ️ Estudiante ya registrado - Mostrando modal de actualización');
@@ -446,12 +453,12 @@ export const useSubmitHandler = (files, previews, resetArchivos, buildDetalleDoc
                         inscripciones: resultado.inscripciones,
                         archivosNuevos: resultado.archivosNuevosRegistroWeb
                     }));
-                    
+
                     // Redirigir al dashboard con flag para mostrar modal
                     window.location.href = '/dashboard?tab=registros-web&mostrarActualizacion=true';
                     return;
                 }
-                
+
                 showSuccess('Registro web procesado y guardado en la base de datos exitosamente');
                 console.log('✅ Registro procesado en BD:', resultado);
             } else {

@@ -15,11 +15,14 @@ router.get('/inscripciones/:idEstudiante', async (req, res) => {
                 modalidades.modalidad AS modalidad,
                 anio_plan.descripcionAnioPlan AS plan,
                 modulos.modulo AS modulo,
+                divisiones.division AS division,
+                inscripciones.idDivision,
                 estado_inscripciones.descripcionEstado AS estado
             FROM inscripciones
             INNER JOIN modalidades ON inscripciones.idModalidad = modalidades.id
             INNER JOIN anio_plan ON inscripciones.idAnioPlan = anio_plan.id
             INNER JOIN modulos ON inscripciones.idModulos = modulos.id
+            LEFT JOIN divisiones ON inscripciones.idDivision = divisiones.id
             INNER JOIN estado_inscripciones ON inscripciones.idEstadoInscripcion = estado_inscripciones.id
             WHERE inscripciones.idEstudiante = ?
         `;
@@ -48,7 +51,7 @@ router.get('/:dni', async (req, res) => {
     try {
         const { dni } = req.params;
         const modalidadId = req.query.modalidadId ? Number(req.query.modalidadId) : null; // <-- recibe modalidadId
-        
+
         // Validar que modalidadId sea un número válido si se proporciona
         if (req.query.modalidadId && (isNaN(modalidadId) || modalidadId <= 0)) {
             return res.status(400).json({ success: false, message: 'modalidadId debe ser un número válido mayor que 0.' });
@@ -88,11 +91,14 @@ router.get('/:dni', async (req, res) => {
                 modalidades.modalidad AS modalidad,
                 anio_plan.descripcionAnioPlan AS plan,
                 modulos.modulo AS modulo,
+                divisiones.division AS division,
+                inscripciones.idDivision,
                 estado_inscripciones.descripcionEstado AS estado
             FROM inscripciones
             LEFT JOIN modalidades ON inscripciones.idModalidad = modalidades.id
             LEFT JOIN anio_plan ON inscripciones.idAnioPlan = anio_plan.id
             LEFT JOIN modulos ON inscripciones.idModulos = modulos.id
+            LEFT JOIN divisiones ON inscripciones.idDivision = divisiones.id
             LEFT JOIN estado_inscripciones ON inscripciones.idEstadoInscripcion = estado_inscripciones.id
             WHERE inscripciones.idEstudiante = ?
         `;
@@ -124,7 +130,7 @@ router.get('/:dni', async (req, res) => {
 
             // Traer la documentación entregada
             console.log(`[DOCS DEBUG] Buscando documentación para idInscripcion: ${inscripcion.idInscripcion}, estudiante: ${estudiante.nombre} ${estudiante.apellido}, DNI: ${estudiante.dni}`);
-            
+
             const [documentacionResult] = await db.query(`
                 SELECT
                     d.idDocumentaciones,
@@ -149,7 +155,7 @@ router.get('/:dni', async (req, res) => {
                         console.log(`[DOCS MISMATCH] ⚠️  Archivo no coincide - Estudiante: ${estudiante.nombre} ${estudiante.apellido} (${estudiante.dni}), Archivo: ${archivoNombre}`);
                     }
                 }
-                
+
                 entregadosMap[doc.idDocumentaciones] = {
                     ...doc,
                     archivoDocumentacion: doc.archivoDocumentacion
@@ -218,8 +224,9 @@ router.get('/', async (req, res) => {
             SELECT 
                 e.id, e.nombre, e.apellido, e.dni, e.cuil, e.fechaNacimiento, e.activo, e.email, e.foto,
                 d.calle, d.numero, b.nombre AS barrio, l.nombre AS localidad, p.nombre AS provincia,
-                i.idModalidad, i.fechaInscripcion, 
+                i.idModalidad, i.fechaInscripcion, i.idDivision,
                 m.modalidad, 
+                div.division,
                 a.descripcionAnioPlan AS cursoPlan,
                 ei.id AS idEstadoInscripcion,
                 ei.descripcionEstado AS estadoInscripcion
@@ -231,6 +238,7 @@ router.get('/', async (req, res) => {
             ${joinInscripciones}
             LEFT JOIN modalidades m ON i.idModalidad = m.id
             LEFT JOIN anio_plan a ON i.idAnioPlan = a.id
+            LEFT JOIN divisiones div ON i.idDivision = div.id
             LEFT JOIN estado_inscripciones ei ON i.idEstadoInscripcion = ei.id
             ${whereClause}
             ORDER BY i.fechaInscripcion DESC, e.id ASC
@@ -250,6 +258,7 @@ router.get('/', async (req, res) => {
                 modalidad: estudiante.modalidad || 'Sin modalidad',
                 cursoPlan: estudiante.cursoPlan || 'Sin curso/plan',
                 estadoInscripcion: estudiante.estadoInscripcion || 'Sin estado',
+                division: estudiante.division || null,
             })) : [],
             total: total[0]?.total || 0,
             page: parseInt(page),

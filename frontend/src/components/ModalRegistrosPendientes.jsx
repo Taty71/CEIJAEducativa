@@ -7,15 +7,17 @@ import { useAlerts } from '../hooks/useAlerts';
 import jsPDF from 'jspdf';
 import { exportarExcel } from './ListaEstudiantes/reportes/utils';
 import AlertaMens from './AlertaMens';
-import HeaderModal from './registrosPendientes/HeaderModal';
+import CloseButton from './CloseButton';
 import ListaRegistrosPendientes from './registrosPendientes/ListaRegistrosPendientes';
 // Secciones removidas: no se usan en este componente directo
 import ModalEditarRegistro from './registrosPendientes/ModalEditarRegistro';
 import ModalFooter from './registrosPendientes/ModalFooter';
+import ModalAccionesPendientes from './registrosPendientes/ModalAccionesPendientes';
 
 import '../estilos/modalM.css';
 import '../estilos/botones.css';
 import '../estilos/ModalRegistrosPendientes.css';
+import '../estilos/RegistrosPendientes.css'; // Importar estilos de Gestor para unificación
 
 const ModalRegistrosPendientes = ({ onClose }) => {
     const { showSuccess, showError, showWarning, showInfo, alerts, removeAlert, modal, closeModal, clearAlerts } = useAlerts();
@@ -29,6 +31,7 @@ const ModalRegistrosPendientes = ({ onClose }) => {
     const [_limpiandoDuplicados, setLimpiandoDuplicados] = useState(false);
     const [registroEditando, setRegistroEditando] = useState(null);
     const [mostrarModalEdicion, setMostrarModalEdicion] = useState(false);
+    const [mostrarAcciones, setMostrarAcciones] = useState(false);
     // Estado eliminado: estudiantesRegistrados (no es necesario, usamos estudianteEnBD del registro enriquecido)
 
     // Funciones para gestión de duplicados adaptadas para datos actuales
@@ -503,7 +506,9 @@ const ModalRegistrosPendientes = ({ onClose }) => {
             const resultado = await registrosPendientesService.enviarNotificacion(registro.dni, opcionesEnvio);
 
             if (resultado && resultado.success) {
-                setMensajeEmail(`✅ Email enviado exitosamente a ${nombreCompleto} (${email})`);
+                const msg = `✅ Email enviado exitosamente a ${nombreCompleto} (${email})`;
+                setMensajeEmail(msg);
+                showSuccess(msg);
                 setTimeout(() => setMensajeEmail(''), 3000);
             } else {
                 setMensajeEmail(`❌ Error: ${resultado?.message || 'Error desconocido'}`);
@@ -535,7 +540,9 @@ const ModalRegistrosPendientes = ({ onClose }) => {
             const resultado = await response.json();
 
             if (resultado.success) {
-                setMensajeEmail(`✅ Emails masivos completados: ${resultado.enviados} enviados${resultado.fallidos > 0 ? `, ${resultado.fallidos} fallidos` : ''}`);
+                const msg = `✅ Emails masivos completados: ${resultado.enviados} enviados${resultado.fallidos > 0 ? `, ${resultado.fallidos} fallidos` : ''}`;
+                setMensajeEmail(msg);
+                showSuccess(msg);
                 setTimeout(() => setMensajeEmail(''), 4000);
             } else {
                 setMensajeEmail(`❌ Error en envío masivo: ${resultado.message}`);
@@ -567,7 +574,9 @@ const ModalRegistrosPendientes = ({ onClose }) => {
             const resultado = await response.json();
 
             if (resultado.success) {
-                setMensajeEmail(`⚡ Emails urgentes completados: ${resultado.enviados} enviados${resultado.fallidos > 0 ? `, ${resultado.fallidos} fallidos` : ''}`);
+                const msg = `⚡ Emails urgentes completados: ${resultado.enviados} enviados${resultado.fallidos > 0 ? `, ${resultado.fallidos} fallidos` : ''}`;
+                setMensajeEmail(msg);
+                showSuccess(msg);
                 setTimeout(() => setMensajeEmail(''), 4000);
             } else {
                 setMensajeEmail(`❌ Error en envío urgente: ${resultado.message}`);
@@ -1164,65 +1173,81 @@ const ModalRegistrosPendientes = ({ onClose }) => {
     const _limpiarEstadoDuplicados = () => setEstadoDuplicados(null);
 
     return (
-        <div className="modal-registros-pendientes">
-            <div className="modal-overlay">
-                <div className="modal-container registros-pendientes">
+        <div className="gestor-registros-web modal-registros-pendientes"> {/* modal-registros-pendientes mantenido para compatibilidad de estilos internos */}
+            {/* Alertas Flotantes */}
+            <AlertaMens alerts={alerts} onCloseAlert={removeAlert} modal={modal} onCloseModal={closeModal} mode="floating" />
 
-                    {/* Header del modal */}
-                    <HeaderModal
-                        cantidadTotal={registros.length}
-                        fechaActualizacion={fechaActualizacion}
-                        onCerrar={onClose}
-                    />
-                    {/* ALERTAS FLOTANTES GLOBALES */}
-                    <AlertaMens
-                        mode="floating"
-                        alerts={alerts}
-                        onCloseAlert={removeAlert}
-                        modal={modal}
-                        onCloseModal={closeModal}
-                    />
-                    {/* Contenido principal */}
-                    <div className="modal-content">
-                        {/* Lista de registros */}
-                        <ListaRegistrosPendientes
-                            registros={registros}
-                            cargandoRegistros={cargandoRegistros}
-                            mapeoDocumentos={{
-                                'cuil': 'CUIL',
-                                'dni': 'DNI',
-                                'fichaMedica': 'Ficha Médica',
-                                'certificadoNivelPrimario': 'Certificado Nivel Primario',
-                                'partidaNacimiento': 'Partida de Nacimiento',
-                                'foto': 'Foto',
-                                'certificadoNivelSecundario': 'Certificado Nivel Secundario',
-                                'constanciaAlumnoRegular': 'Constancia Alumno Regular'
-                            }}
-                            enviandoEmail={enviandoEmail}
-                            onCompletar={completarRegistro}
-                            onEliminar={procesarEliminacion}
-                            onEnviarEmail={enviarEmailIndividual}
-                            obtenerInfoVencimiento={obtenerInfoVencimiento}
-                            onReiniciarAlarma={reiniciarAlarma}
-                            getTipoIcon={getTipoIcon}
-                            formatearTipo={formatearTipo}
-                        />
+            <div className="gestor-modal-container">
+
+                {/* Header estilo Gestor */}
+                <div className="gestor-header">
+                    <h2>📋 Registros Pendientes</h2>
+                    <CloseButton onClose={onClose} className="cerrar-button" />
+                </div>
+
+                {/* Contenido principal */}
+                <div className="gestor-content">
+
+                    {/* Stats / Info Header (Reemplaza la info que estaba en HeaderModal) */}
+                    <div style={{ marginBottom: '15px', padding: '0 5px', color: '#666', fontSize: '0.9rem', display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #eee', paddingBottom: '10px' }}>
+                        <div>
+                            Total: <strong>{registros.length}</strong> registros
+                            {fechaActualizacion && <span style={{ marginLeft: '15px' }}>📅 Actualizado: {fechaActualizacion}</span>}
+                        </div>
                     </div>
 
-                    {/* Footer (componente unificado y responsive) */}
-                    <ModalFooter
-                        onUrgentes={enviarEmailsUrgentes}
-                        onTodos={enviarEmailsMasivos}
-                        onReporteTxt={generarReporteAdministrativo}
-                        onReporteExcel={generarReporteExcel}
-                        onReportePdf={generarReportePDF}
-                        onExtensionInscripcion={handleExtensionInscripcion}
-                        onTest7Dias={probarSistema7Dias}
-                        onVerificarDuplicados={verificarEstadoDuplicadosManual}
-                        onLimpiarDuplicados={limpiarDuplicadosManual}
+                    {/* Lista de registros */}
+                    <ListaRegistrosPendientes
+                        registros={registros}
+                        cargandoRegistros={cargandoRegistros}
+                        mapeoDocumentos={{
+                            'cuil': 'CUIL',
+                            'dni': 'DNI',
+                            'fichaMedica': 'Ficha Médica',
+                            'certificadoNivelPrimario': 'Certificado Nivel Primario',
+                            'partidaNacimiento': 'Partida de Nacimiento',
+                            'foto': 'Foto',
+                            'certificadoNivelSecundario': 'Certificado Nivel Secundario',
+                            'constanciaAlumnoRegular': 'Constancia Alumno Regular'
+                        }}
+                        enviandoEmail={enviandoEmail}
+                        onCompletar={completarRegistro}
+                        onEliminar={procesarEliminacion}
+                        onEnviarEmail={enviarEmailIndividual}
+                        obtenerInfoVencimiento={obtenerInfoVencimiento}
+                        onReiniciarAlarma={reiniciarAlarma}
+                        getTipoIcon={getTipoIcon}
+                        formatearTipo={formatearTipo}
                     />
                 </div>
-            </div>
+
+                {/* Footer con Botón de Acciones */}
+                <div className="modal-actions-bar" style={{ padding: '15px 25px', borderTop: '1px solid #eee', background: '#fff', borderRadius: '0 0 12px 12px' }}>
+                    <button
+                        className="btn-acciones-profesional"
+                        onClick={() => setMostrarAcciones(true)}
+                    >
+                        <span className="icon">⚙️</span>
+                        Panel de Gestión y Reportes
+                    </button>
+                </div>
+            </div> {/* fin gestor-modal-container */}
+
+            {/* Modal de Acciones (Notificaciones, Reportes, Verificación) */}
+            {mostrarAcciones && (
+                <ModalAccionesPendientes
+                    onClose={() => setMostrarAcciones(false)}
+                    onUrgentes={enviarEmailsUrgentes}
+                    onTodos={enviarEmailsMasivos}
+                    onReporteTxt={generarReporteAdministrativo}
+                    onReporteExcel={generarReporteExcel}
+                    onReportePdf={generarReportePDF}
+                    onExtensionInscripcion={handleExtensionInscripcion}
+                    onTest7Dias={probarSistema7Dias}
+                    onVerificarDuplicados={verificarEstadoDuplicadosManual}
+                    onLimpiarDuplicados={limpiarDuplicadosManual}
+                />
+            )}
 
             {/* Modal de edición de registro */}
             {mostrarModalEdicion && registroEditando && (

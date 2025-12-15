@@ -17,12 +17,12 @@ const FormularioModificar = ({
     resetForm,
     previews,
     handleFileChange,
-    alert,
     isAdmin,
     accion,
     documentacion,
     setPreviews,
-    initialValues, // <-- Add this prop
+    initialValues,
+    onGuardarCambiosDocumentacion,
 }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -41,7 +41,7 @@ const FormularioModificar = ({
             <div className="form-header">
                 <h2 className="form-title">Modificar Estudiante</h2>
             </div>
-            
+
             <div className="formd">
                 <DatosPersonales values={values} handleChange={handleChange} />
                 <Domicilio values={values} handleChange={handleChange} />
@@ -62,6 +62,8 @@ const FormularioModificar = ({
                         modalidadId={Number(values.modalidadId) || 0}
                         setFieldValue={setFieldValue}
                         values={values}
+                        division={values.idDivision}
+                        isAdmin={isAdmin}
                         showMateriasList={values.planAnio !== '' && values.modalidad !== ''}
                         handleChange={handleChange}
                     />
@@ -97,16 +99,17 @@ const FormularioModificar = ({
                     )}
                 </div>
             </div>
-         
+
             {isModalOpen && (
-                     <ModalDocumentacion
-                        onClose={closeModal}
-                        documentacion={documentacion}
-                      />
-             )}
+                <ModalDocumentacion
+                    onClose={closeModal}
+                    documentacion={documentacion}
+                    onGuardarCambios={onGuardarCambiosDocumentacion}
+                />
+            )}
 
 
-            {alert.text && <AlertaMens text={alert.text} variant={alert.variant} />}
+
             {previews && Object.keys(previews).length > 0 && (
                 <div>
                     {Object.entries(previews).map(([key, value]) => (
@@ -148,6 +151,7 @@ FormularioModificar.propTypes = {
         modalidad: PropTypes.string,
         modalidadId: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
         planAnio: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+        idDivision: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
         idEstadoInscripcion: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
         fechaInscripcion: PropTypes.string, // Añadido para validación de props
     }).isRequired,
@@ -157,10 +161,6 @@ FormularioModificar.propTypes = {
     resetForm: PropTypes.func.isRequired,
     previews: PropTypes.object.isRequired,
     handleFileChange: PropTypes.func.isRequired,
-    alert: PropTypes.shape({
-        text: PropTypes.string,
-        variant: PropTypes.string,
-    }).isRequired,
     isAdmin: PropTypes.bool.isRequired,
     accion: PropTypes.string,
     documentacion: PropTypes.arrayOf(
@@ -172,7 +172,8 @@ FormularioModificar.propTypes = {
             archivoDocumentacion: PropTypes.string,
         })
     ).isRequired,
-    setPreviews: PropTypes.func.isRequired, // Asegúrate de que esta prop se pase correctamente
+    setPreviews: PropTypes.func.isRequired,
+    onGuardarCambiosDocumentacion: PropTypes.func,
 };
 
 export default FormularioModificar;

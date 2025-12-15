@@ -19,25 +19,29 @@
   border-radius: 16px;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
   max-width: 500px;
-  width: 90%;
-  max-height: 90vh;
+  width: 55%;
+  max-height: 60vh;
   overflow-y: auto;
   position: relative;
   animation: modalFadeIn 0.3s ease;
 }
 
-.modal-content-large {
-  max-width: 900px;
+/* Modal de Login específico - más estrecho */
+
+
+/*.modal-content-large {
+  max-width: 550px;
   width: 90%;
   max-height: 85vh;
   overflow-y: auto;
 }
-
+*/
 @keyframes modalFadeIn {
   from {
     opacity: 0;
     transform: translateY(-20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -136,6 +140,31 @@
   font-family: "Roboto Slab", serif;
   font-size: 0.95rem;
   color: var(--color-texto-principal);
+  padding: 12px 16px;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  width: 100%;
+  background-color: #ffffff;
+  box-sizing: border-box;
+  transition: all 0.3s ease;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+  background-position: right 12px center;
+  background-repeat: no-repeat;
+  background-size: 16px;
+  padding-right: 40px;
+  appearance: none;
+  cursor: pointer;
+}
+
+.form-select:hover {
+  border-color: #cbd5e0;
+}
+
+.form-select:focus {
+  border-color: #3182ce;
+  box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.1);
+  outline: none;
+  background-color: #f7fafc;
 }
 
 /* Sección del captcha */

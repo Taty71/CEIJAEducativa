@@ -14,6 +14,14 @@ export const generarDashboardEjecutivo = (estudiantes, showAlerta) => {
     // Crear encabezado
     let yPos = crearEncabezadoInstitucional(doc, 'INFORME DE GESTION - INSCRIPCION ESTUDIANTES');
 
+    // Título del reporte (Centrado, Tamaño 13, 2 líneas de separación del encabezado)
+    yPos += 10;
+    doc.setFontSize(13);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(45, 65, 119);
+    doc.text(normalizarTexto('INFORME DE GESTION - INSCRIPCION ESTUDIANTES'), doc.internal.pageSize.width / 2, yPos, { align: 'center' });
+    yPos += 8;
+
     // ===== RESUMEN EJECUTIVO EDUCATIVO =====
     doc.setFontSize(12); // Reducido de 16 a 14 para que quepa
     doc.setFont('helvetica', 'bold');
@@ -43,7 +51,7 @@ export const generarDashboardEjecutivo = (estudiantes, showAlerta) => {
     doc.setTextColor(0, 0, 0);
     doc.text(`• Estudiantes Activos: ${kpisDecisiones.estadoGeneral.tasaEstudiantesActivos.valor}% (${kpisDecisiones.estadoGeneral.tasaEstudiantesActivos.interpretacion})`, 25, yPos);
     yPos += 6;
-    doc.setFontSize(10);
+    doc.setFontSize(11);
     doc.setTextColor(100, 100, 100);
     doc.text(`   Indica qué porcentaje de estudiantes continua activamente sus estudios`, 27, yPos);
     doc.setFontSize(11); // Volver a 11
@@ -52,7 +60,7 @@ export const generarDashboardEjecutivo = (estudiantes, showAlerta) => {
 
     doc.text(`• Estudiantes Inactivos: ${kpisDecisiones.estadoGeneral.tasaEstudiantesInactivos.valor}%`, 25, yPos);
     yPos += 6;
-    doc.setFontSize(10);
+    doc.setFontSize(11);
     doc.setTextColor(100, 100, 100);
     doc.text(`   Estudiantes que necesitan reactivacion o seguimiento especial`, 27, yPos);
     doc.setFontSize(11);
@@ -72,7 +80,7 @@ export const generarDashboardEjecutivo = (estudiantes, showAlerta) => {
 
     doc.text(`• Inscripciones Pendientes: ${pendienteValor}% - ${kpisDecisiones.procesoInscripcion.tasaInscripcionesPendientes.interpretacion}`, 25, yPos);
     doc.setTextColor(100, 100, 100);
-    doc.setFontSize(10);
+    doc.setFontSize(11);
     yPos += 6;
     doc.text(`   Estudiantes que iniciaron pero no completaron su inscripcion`, 27, yPos);
     doc.setFontSize(11);
@@ -81,7 +89,7 @@ export const generarDashboardEjecutivo = (estudiantes, showAlerta) => {
 
     doc.text(`• Inscripciones Completas: ${kpisDecisiones.procesoInscripcion.tasaInscripcionesCompletas.valor}%`, 25, yPos);
     yPos += 6;
-    doc.setFontSize(10);
+    doc.setFontSize(11);
     doc.setTextColor(100, 100, 100);
     doc.text(`   Estudiantes con documentacion completa y matricula finalizada`, 27, yPos);
     doc.setFontSize(11);
@@ -117,7 +125,7 @@ export const generarDashboardEjecutivo = (estudiantes, showAlerta) => {
       tableWidth: 160,
       theme: 'grid',
       headStyles: { fillColor: [45, 65, 119], textColor: 255, fontSize: 11, fontStyle: 'bold' },
-      bodyStyles: { textColor: 0, fontSize: 10 },
+      bodyStyles: { textColor: 0, fontSize: 11 },
       styles: { cellPadding: 2 }
     });
 
@@ -142,7 +150,7 @@ export const generarDashboardEjecutivo = (estudiantes, showAlerta) => {
       tableWidth: 160,
       theme: 'grid',
       headStyles: { fillColor: [45, 65, 119], textColor: 255, fontSize: 11, fontStyle: 'bold' },
-      bodyStyles: { textColor: 0, fontSize: 10 },
+      bodyStyles: { textColor: 0, fontSize: 11 },
       styles: { cellPadding: 2 }
     });
 
@@ -162,7 +170,7 @@ export const generarDashboardEjecutivo = (estudiantes, showAlerta) => {
     doc.setFont('helvetica', 'normal');
     doc.text(`Valor General del ICA: ${kpisDecisiones.indiceCalidadEducativa.valor}%`, 25, yPos);
     yPos += 6;
-    doc.setFontSize(10);
+    doc.setFontSize(11);
     doc.setTextColor(100, 100, 100);
     doc.text(`Interpretación: ${kpisDecisiones.indiceCalidadEducativa.interpretacion}`, 25, yPos);
     yPos += 8;
@@ -180,7 +188,7 @@ export const generarDashboardEjecutivo = (estudiantes, showAlerta) => {
       tableWidth: 160,
       theme: 'grid',
       headStyles: { fillColor: [45, 65, 119], textColor: 255, fontSize: 11, fontStyle: 'bold' },
-      bodyStyles: { textColor: 0, fontSize: 10 },
+      bodyStyles: { textColor: 0, fontSize: 11 },
       styles: { cellPadding: 2 },
       columnStyles: { 3: { cellWidth: 70 } }
     });
@@ -223,7 +231,7 @@ export const generarDashboardEjecutivo = (estudiantes, showAlerta) => {
 
       alertasValidas.forEach(alerta => {
         const tipo = alerta.tipo || 'Sistema';
-        doc.setFontSize(10);
+        doc.setFontSize(11);
         doc.setTextColor(0, 0, 0);
         doc.text(`• [${tipo}] ${alerta.mensaje}`, 25, yPos);
         yPos += 5;
@@ -253,7 +261,7 @@ export const generarDashboardEjecutivo = (estudiantes, showAlerta) => {
       recomendaciones.forEach(rec => {
         yPos = verificarEspacio(doc, yPos, 30);
 
-        doc.setFontSize(10);
+        doc.setFontSize(11);
         doc.setFont('helvetica', 'bold');
         doc.setTextColor(0, 0, 0);
         doc.text(`${rec.area}:`, 25, yPos);
@@ -263,7 +271,7 @@ export const generarDashboardEjecutivo = (estudiantes, showAlerta) => {
         const textoRecomendacion = normalizarTexto(rec.recomendacion);
         const lineasTexto = doc.splitTextToSize(textoRecomendacion, 160);
         doc.text(lineasTexto, 25, yPos);
-        yPos += lineasTexto.length * 5 + 5;
+        yPos += lineasTexto.length * 6 + 5;
       });
     }
 

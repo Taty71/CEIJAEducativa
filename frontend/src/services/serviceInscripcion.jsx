@@ -96,10 +96,10 @@ const getPaginatedAllEstudiantes = async (page, limit, filtroActivo = 'todos', m
 const getDocumentosFaltantes = async (dni) => {
     try {
         console.log('📋 Consultando documentos faltantes para DNI:', dni);
-        
+
         const response = await axiosInstance.get(`/documentos-faltantes/${dni}`);
         console.log('📄 Respuesta documentos faltantes:', response.data);
-        
+
         if (response.data.success) {
             return response.data.documentosFaltantes || [];
         } else {
@@ -163,7 +163,7 @@ const updateEstd = async (data, dni, config = {}) => {
     } catch (error) {
         const message = FormatError(error);
         console.error('🚨 [LOG] Error al actualizar estudiante:', message);
-        throw new Error(message); 
+        throw new Error(message);
     }
 };
 
@@ -180,9 +180,9 @@ const deleteEstd = async (dni) => {
 };
 
 // Desactivar estudiante (eliminación lógica)
-const deactivateEstd = async (dni) => {
+const deactivateEstd = async (dni, motivo) => {
     try {
-        const response = await axiosInstance.patch(`/eliminar-estudiante/desactivar/${dni}`);
+        const response = await axiosInstance.patch(`/eliminar-estudiante/desactivar/${dni}`, { motivo });
         return response.data;
     } catch (error) {
         const message = FormatError(error);

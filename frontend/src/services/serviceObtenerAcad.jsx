@@ -11,7 +11,7 @@ const getModulos = async (idPlan) => {
         return response.data;
     } catch (error) {
         console.error('Error al obtener los módulos:', error);
-         return { error: FormatError(error) };
+        return { error: FormatError(error) };
     }
 };
 
@@ -33,11 +33,9 @@ const getMateriasPorArea = async (idAreaEstudio) => {
         return response.data;
     } catch (error) {
         console.error('Error al obtener materias:', error);
-         return { error: FormatError(error) };
+        return { error: FormatError(error) };
     }
 };
-//Obtener estados de inscripción
-// service.jsx
 const getEstadosInscripcion = async () => {
     try {
         const response = await axiosInstance.get('/estados-inscripcion');
@@ -48,10 +46,22 @@ const getEstadosInscripcion = async () => {
     }
 };
 
+// Obtener divisiones por año/plan
+const getDivisiones = async (idAnioPlan) => {
+    try {
+        const response = await axiosInstance.get(`/divisiones/anio/${idAnioPlan}`);
+        return response.data;
+    } catch (error) {
+        console.error('Error al obtener divisiones:', error);
+        return { error: FormatError(error) };
+    }
+};
+
 // Exportar los servicios
-export default {     
+export default {
     getModulos,
     getAreasEstudio,
     getMateriasPorArea,
     getEstadosInscripcion,
+    getDivisiones,
 };

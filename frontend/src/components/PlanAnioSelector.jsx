@@ -6,10 +6,12 @@ import Input from './Input';
 import service from '../services/serviceObtenerAcad'; // Asegúrate de que la ruta es correcta
 import AreaEstudioSelector from './AreaEstudioSelector';
 
-const PlanAnioSelector = ({ modalidad, handleChange, value, modalidadId, setFieldValue }) => {
+const PlanAnioSelector = ({ modalidad, handleChange, value, modalidadId, setFieldValue, division, isAdmin, estadoInscripcion }) => {
     const [alerta, setAlerta] = useState(false);
     const [idModulo, setIdModulo] = useState('');
     const [modulos, setModulos] = useState([]); // Aquí almacenamos los módulos
+    const [divisiones, setDivisiones] = useState([]); // Estada para divisiones
+    const [loadingDivisiones, setLoadingDivisiones] = useState(false);
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
     const [moduloInicialEstablecido, setModuloInicialEstablecido] = useState(false);
@@ -22,7 +24,7 @@ const PlanAnioSelector = ({ modalidad, handleChange, value, modalidadId, setFiel
             handleChange(event);
         }
         setAlerta(newValue === "");
-        
+
         // Solo resetear módulo si NO estamos en modo de registro pendiente
         const datosRegistroPendiente = sessionStorage.getItem('datosRegistroPendiente');
         if (!datosRegistroPendiente) {
@@ -34,18 +36,19 @@ const PlanAnioSelector = ({ modalidad, handleChange, value, modalidadId, setFiel
         }
     };
 
-   const handleModuloChange = (event) => {
-    setIdModulo(event.target.value);
-    setFieldValue('modulos', event.target.value);
-    // Actualiza el campo "modulos" en Formik
-    if (typeof setFieldValue === 'function') {
+    const handleModuloChange = (event) => {
+        setIdModulo(event.target.value);
         setFieldValue('modulos', event.target.value);
-    }
-};
+        // Actualiza el campo "modulos" en Formik
+        if (typeof setFieldValue === 'function') {
+            setFieldValue('modulos', event.target.value);
+        }
+    };
 
     // Efecto para obtener los módulos cuando la modalidad cambia
     useEffect(() => {
-        if (modalidad !== "Semipresencial" && modalidadId !== 2) return;
+        const isSemipresencial = modalidad && String(modalidad).trim().toUpperCase() === 'SEMIPRESENCIAL';
+        if (!isSemipresencial && modalidadId !== 2) return;
         // Si value es un objeto (Formik), extraer el id numérico
         let planId = value;
         if (value && typeof value === 'object') {
@@ -73,27 +76,65 @@ const PlanAnioSelector = ({ modalidad, handleChange, value, modalidadId, setFiel
         };
         fetchModulos();
     }, [modalidadId, modalidad, value]);
-    
+
+    // Efecto para obtener divisiones si es Presencial
+    useEffect(() => {
+        const isPresencial = modalidad && String(modalidad).trim().toUpperCase() === 'PRESENCIAL';
+        if (!isPresencial) {
+            setDivisiones([]);
+            return;
+        }
+
+        let planId = value;
+        if (value && typeof value === 'object') {
+            planId = value.planAnio || value.planAnioId || '';
+        }
+
+        if (!planId) {
+            setDivisiones([]);
+            return;
+        }
+
+        const fetchDivisiones = async () => {
+            setLoadingDivisiones(true);
+            try {
+                const response = await service.getDivisiones(planId);
+                // Si la respuesta es un array, asignarla. Si tiene error, ignorar o loguear.
+                if (response && Array.isArray(response)) {
+                    setDivisiones(response);
+                } else {
+                    console.error("Respuesta inválida de divisiones:", response);
+                    setDivisiones([]);
+                }
+            } catch (err) {
+                console.error("Error cargando divisiones:", err);
+            } finally {
+                setLoadingDivisiones(false);
+            }
+        };
+        fetchDivisiones();
+    }, [modalidad, value]);
+
     // Efecto para establecer módulo inicial desde registro pendiente
     useEffect(() => {
         // Solo ejecutar si no se ha establecido ya el módulo inicial y tenemos módulos cargados
         if (moduloInicialEstablecido || modulos.length === 0) {
             return;
         }
-        
+
         // Buscar si hay un idModulo desde sessionStorage (registro pendiente)
         const datosRegistroPendiente = sessionStorage.getItem('datosRegistroPendiente');
-        
+
         if (datosRegistroPendiente) {
             try {
                 const datos = JSON.parse(datosRegistroPendiente);
                 console.log('📋 Datos desde sessionStorage para módulo:', datos);
-                
+
                 if (datos.idModulo && Array.isArray(datos.idModulo)) {
                     // idModulo viene como array ["1", ""], tomar el primer elemento válido
                     const moduloId = datos.idModulo.find(id => id && id !== '' && id !== null);
                     console.log('🎯 ModuloId encontrado:', moduloId, 'de array:', datos.idModulo);
-                    
+
                     if (moduloId) {
                         // Verificar que el módulo existe en la lista de módulos disponibles
                         const moduloExiste = modulos.find(mod => mod.id.toString() === moduloId.toString());
@@ -122,9 +163,13 @@ const PlanAnioSelector = ({ modalidad, handleChange, value, modalidadId, setFiel
         }
     }, [modulos, setFieldValue, idModulo, moduloInicialEstablecido]);
 
+    // Helper para verificar modalidad insensible a mayúsculas
+    const isPresencial = modalidad && String(modalidad).trim().toUpperCase() === 'PRESENCIAL';
+    const isSemipresencial = modalidad && String(modalidad).trim().toUpperCase() === 'SEMIPRESENCIAL';
+
     return (
         <div>
-            {modalidad === 'Presencial' && (
+            {isPresencial && (
                 <div className="form-group">
                     <Input
                         className="selectPlanAnio"
@@ -145,7 +190,31 @@ const PlanAnioSelector = ({ modalidad, handleChange, value, modalidadId, setFiel
                     />
                 </div>
             )}
-            {modalidad === 'Semipresencial' && (
+            {/* Selector de División para Presencial - Solo visible para Admin */}
+            {isPresencial && value && isAdmin && (
+                <div className="form-group">
+                    <label htmlFor="division"><strong>División:</strong></label>
+                    {loadingDivisiones ? (
+                        <p>Cargando divisiones...</p>
+                    ) : (
+                        <select
+                            className="selectPlanAnio"
+                            name="idDivision"
+                            id="division"
+                            value={division || ''}
+                            onChange={(e) => setFieldValue('idDivision', e.target.value)}
+                        >
+                            <option value="">Seleccionar División</option>
+                            {divisiones.map((div) => (
+                                <option key={div.id} value={div.id}>
+                                    {div.division}
+                                </option>
+                            ))}
+                        </select>
+                    )}
+                </div>
+            )}
+            {isSemipresencial && (
                 <div className="form-group">
                     <Input
                         className="selectPlanAnio"
@@ -174,32 +243,32 @@ const PlanAnioSelector = ({ modalidad, handleChange, value, modalidadId, setFiel
                     ) : error ? (
                         <p>{error}</p> // Muestra un mensaje de error si ocurre un problema
                     ) : (
-                        
-                <select
-                    className="selectPlanAnio"
-                    name="modulos"
-                    id="modulo"
-                    value={idModulo}
-                    onChange={e => {
-                        setFieldValue('modulos', e.target.value);
-                        setIdModulo(e.target.value);
-                    }}
-                >
-                    <option value="">Seleccionar Módulo</option>
-                    {modulos && Array.isArray(modulos) && modulos.length > 0 ? (
-                        modulos.map((modulo) => (
-                            <option key={modulo.id} value={modulo.id}>
-                                {modulo.modulo}
-                            </option>
-                        ))
-                    ) : (
-                        <option value="">No hay módulos disponibles</option>
-                    )}
-                </select>
+
+                        <select
+                            className="selectPlanAnio"
+                            name="modulos"
+                            id="modulo"
+                            value={idModulo}
+                            onChange={e => {
+                                setFieldValue('modulos', e.target.value);
+                                setIdModulo(e.target.value);
+                            }}
+                        >
+                            <option value="">Seleccionar Módulo</option>
+                            {modulos && Array.isArray(modulos) && modulos.length > 0 ? (
+                                modulos.map((modulo) => (
+                                    <option key={modulo.id} value={modulo.id}>
+                                        {modulo.modulo}
+                                    </option>
+                                ))
+                            ) : (
+                                <option value="">No hay módulos disponibles</option>
+                            )}
+                        </select>
 
                     )}
                 </div>
-                
+
             )}
             {idModulo && (() => {
                 // No mostrar AreaEstudioSelector si estamos completando un registro pendiente
@@ -208,14 +277,14 @@ const PlanAnioSelector = ({ modalidad, handleChange, value, modalidadId, setFiel
                     console.log('🚫 Ocultando AreaEstudioSelector porque es registro pendiente');
                     return null;
                 }
-                
+
                 console.log('✅ Mostrando AreaEstudioSelector para nuevo registro');
                 return (
                     <AreaEstudioSelector
                         idModulo={idModulo}
                         modalidadId={modalidadId}
                         handleAreaEstudioChange={handleModuloChange}
-                        value={value.planAnio} 
+                        value={value.planAnio}
                     />
                 );
             })()}
@@ -233,6 +302,8 @@ PlanAnioSelector.propTypes = {
     ]).isRequired,
     modalidadId: PropTypes.number.isRequired,
     setFieldValue: PropTypes.func.isRequired,
+    isAdmin: PropTypes.bool,
+    estadoInscripcion: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
 };
 
 export default PlanAnioSelector;

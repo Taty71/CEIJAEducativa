@@ -17,9 +17,9 @@ const VistaVisor = ({ estudiante, onClose, onVolver, isConsulta, isEliminacion, 
                 const formData = new FormData();
                 // Solo los campos válidos para modificación
                 const camposValidos = [
-                    'nombre', 'apellido', 'dni', 'cuil', 'email', 'telefono', 'fechaNacimiento', 'tipoDocumento', 'paisEmision',
+                    'nombre', 'apellido', 'dni', 'cuil', 'email', 'telefono', 'fechaNacimiento', 'tipoDocumento', 'paisEmision', 'sexo',
                     'provincia', 'localidad', 'barrio', 'calle', 'numero',
-                    'modalidadId', 'planAnioId', 'modulosId', 'estadoInscripcionId', 'fechaInscripcion'
+                    'modalidadId', 'planAnioId', 'modulosId', 'estadoInscripcionId', 'fechaInscripcion', 'idDivision'
                 ];
                 Object.entries(datos).forEach(([key, value]) => {
                     if (key === 'archivos' || key === 'detalleDocumentacion') return;
@@ -51,10 +51,12 @@ const VistaVisor = ({ estudiante, onClose, onVolver, isConsulta, isEliminacion, 
                 tipo: res?.success ? 'success' : 'error',
                 mensaje: res?.message || 'Estudiante actualizado correctamente.',
             });
+            return res; // ✅ Retornar respuesta
         } catch (err) {
             setAlerta({ tipo: 'error', mensaje: err.message || 'Error inesperado al guardar todo.' });
+            return { success: false, message: err.message };
         }
-};
+    };
 
 
     return (

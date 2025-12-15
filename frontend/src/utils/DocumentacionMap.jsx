@@ -12,11 +12,20 @@ export const DocumentacionNameToId = {
 };
 export const DocumentacionDescripcionToName = {
   dni: 'archivo_dni',
+  DNI: 'archivo_dni',
   cuil: 'archivo_cuil',
+  CUIL: 'archivo_cuil',
   partidaNacimiento: 'archivo_partidaNacimiento',
+  'Partida Nacimiento': 'archivo_partidaNacimiento',
   fichaMedica: 'archivo_fichaMedica',
+  'Ficha Médica': 'archivo_fichaMedica',
   solicitudPase: 'archivo_solicitudPase',
+  'Solicitud Pase': 'archivo_solicitudPase',
   analiticoParcial: 'archivo_analiticoParcial',
+  'Analítico Parcial': 'archivo_analiticoParcial',
   certificadoNivelPrimario: 'archivo_certificadoNivelPrimario',
+  'Certificado Nivel Primario': 'archivo_certificadoNivelPrimario',
   foto: 'foto',
+  Foto: 'foto',
+  FOTO: 'foto',
 };

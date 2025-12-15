@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import jsPDF from 'jspdf';
 import { useLocation } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import PropTypes from 'prop-types';
@@ -48,7 +49,7 @@ const GestorRegistrosWeb = ({ onClose, onRegistroSeleccionado, isAdmin = false }
     useEffect(() => {
         const inicializar = async () => {
             await cargarRegistrosWeb();
-            
+
             // Verificar si hay datos de estudiante existente en sessionStorage
             const params = new URLSearchParams(location.search);
             if (params.get('mostrarActualizacion') === 'true') {
@@ -70,19 +71,19 @@ const GestorRegistrosWeb = ({ onClose, onRegistroSeleccionado, isAdmin = false }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [location.key]);
 
-        // Escuchar actualizaciones provenientes del backend (cuando un registro web fue marcado PROCESADO)
+    // Escuchar actualizaciones provenientes del backend (cuando un registro web fue marcado PROCESADO)
     useEffect(() => {
         const handler = (e) => {
             try {
                 const updated = e.detail;
                 if (!updated) return;
-                
+
                 console.log('🔔 Evento registroWeb:actualizado recibido:', updated);
-                
+
                 setRegistros(prev => {
                     const idx = prev.findIndex(r => r.id === updated.id);
                     let newList;
-                    
+
                     if (idx !== -1) {
                         // Actualizar el registro existente
                         const procesado = ['PROCESADO_Y_Completa', 'PROCESADO_A_PENDIENTES', 'PROCESADO', 'Completa'].includes(updated.estado);
@@ -95,12 +96,12 @@ const GestorRegistrosWeb = ({ onClose, onRegistroSeleccionado, isAdmin = false }
                         newList = [...prev, { ...updated, procesado }];
                         console.log('➕ Nuevo registro agregado:', updated.datos?.dni);
                     }
-                    
+
                     // Recalcular contadores inmediatamente
                     const nuevosStats = calcularContadoresFromRegistros(newList);
                     console.log('📊 Contadores actualizados:', nuevosStats);
                     setStats(nuevosStats);
-                    
+
                     return newList;
                 });
             } catch (err) {
@@ -135,18 +136,18 @@ const GestorRegistrosWeb = ({ onClose, onRegistroSeleccionado, isAdmin = false }
         }
     };
 
-    
+
 
     // Calcula los contadores a partir del array de registros en memoria
     const calcularContadoresFromRegistros = (list = registros) => {
         const total = (list || []).length;
         // PENDIENTE: solo los que están en estado PENDIENTE (nunca procesados)
-        const pendientes = (list || []).filter(r => 
+        const pendientes = (list || []).filter(r =>
             r.estado === 'PENDIENTE' || r.estado === 'pendiente'
         ).length;
         // PROCESADOS: incluye PROCESADO_Y_Completa y PROCESADO_A_PENDIENTES
-        const procesados = (list || []).filter(r => 
-            r.estado === 'PROCESADO_Y_Completa' || 
+        const procesados = (list || []).filter(r =>
+            r.estado === 'PROCESADO_Y_Completa' ||
             r.estado === 'PROCESADO_A_PENDIENTES' ||
             r.estado === 'PROCESADO' ||
             r.estado === 'Completa' ||
@@ -154,23 +155,23 @@ const GestorRegistrosWeb = ({ onClose, onRegistroSeleccionado, isAdmin = false }
             r.estado === 'procesado_y_Completa' ||
             r.estado === 'procesado_a_pendientes'
         ).length;
-        const anulados = (list || []).filter(r => 
+        const anulados = (list || []).filter(r =>
             r.estado === 'ANULADO' || r.estado === 'anulado'
         ).length;
         return { total, pendientes, procesados, anulados };
     };
-    
+
     // Estado visual amigable para mostrar en la interfaz
     function getEstadoVisual(registro) {
         // Mapear los valores válidos de estado a los visuales
         const estado = (registro.estado || '').toUpperCase();
-        
+
         if (estado === 'PROCESADO_Y_Completa') return 'PROCESADO Y Completa';
         if (estado === 'PROCESADO_A_PENDIENTES') return 'PROCESADO A PENDIENTES';
         if (estado === 'Completa' || estado === 'PROCESADO') return 'PROCESADO';
         if (estado === 'ANULADO') return 'ANULADO';
         if (estado === 'PENDIENTE') return 'PENDIENTE';
-        
+
         // Cualquier otro valor, mostrar en mayúsculas
         return estado || 'DESCONOCIDO';
     }
@@ -182,7 +183,7 @@ const GestorRegistrosWeb = ({ onClose, onRegistroSeleccionado, isAdmin = false }
                 archivos: registro.archivos || {},
             };
             const datosWebEncoded = encodeURIComponent(JSON.stringify(registroCompleto));
-            const rutaDestino = isAdmin 
+            const rutaDestino = isAdmin
                 ? `/dashboard/formulario-inscripcion-adm?accion=Registrar&modalidad=${registro.datos.modalidad || ''}&completarWeb=${registro.id}&datosWeb=${datosWebEncoded}&origen=registros-web`
                 : `/preinscripcion-estd?accion=Registrar&modalidad=${registro.datos.modalidad || ''}&completarWeb=${registro.id}&datosWeb=${datosWebEncoded}&origen=registros-web`;
             navigate(rutaDestino);
@@ -265,7 +266,7 @@ const GestorRegistrosWeb = ({ onClose, onRegistroSeleccionado, isAdmin = false }
                 <div className="gestor-modal-container">
                     <div className="gestor-header">
                         <h2>🌐 Gestión de Registros Web</h2>
-                            <CloseButton onClose={onClose} className="cerrar-button" />
+                        <CloseButton onClose={onClose} className="cerrar-button" />
                     </div>
                     <div className="gestor-content">
                         <div className="loading-container">
@@ -284,278 +285,485 @@ const GestorRegistrosWeb = ({ onClose, onRegistroSeleccionado, isAdmin = false }
         return registroLocal ? { ...r, estado: registroLocal.estado } : r;
     });
 
-    // handleGestionarRegistro eliminado: no se utiliza en el componente
+    // Generar PDF de Registros Web
+    const generarReportePDFWeb = () => {
+        try {
+            // Usar los registros actualmente filtrados para el reporte
+            const registrosParaReporte = registrosFiltrados;
+
+            if (registrosParaReporte.length === 0) {
+                showWarning('No hay registros para generar el reporte.');
+                return;
+            }
+
+            const doc = new jsPDF();
+            const pageWidth = doc.internal.pageSize.width;
+            const margin = 20;
+            let yPosition = 20;
+
+            // Encabezado institucional (Estilo IDÉNTICO a ModalRegistrosPendientes)
+            doc.setTextColor(45, 65, 119);
+            doc.setFontSize(14);
+            doc.setFont('helvetica', 'bold');
+            doc.text('CEIJA5 LA CALERA CBA', pageWidth / 2, yPosition, { align: 'center' });
+            yPosition += 5;
+
+            doc.setFontSize(11);
+            doc.setFont('helvetica', 'bold');
+            doc.text('Educacion Integral de Jóvenes y Adultos', pageWidth / 2, yPosition, { align: 'center' });
+            yPosition += 2;
+
+            // Blue separator line
+            doc.setDrawColor(0, 0, 255);
+            doc.setLineWidth(0.5);
+            doc.line(margin, yPosition + 2, pageWidth - margin, yPosition + 2);
+            yPosition += 4;
+            yPosition += 8;
+
+            doc.setTextColor(45, 65, 119);
+            // Título del Reporte
+            doc.setFontSize(16);
+            doc.setFont('helvetica', 'bold');
+            doc.text('REPORTE DE REGISTROS WEB', pageWidth / 2, yPosition, { align: 'center' });
+            yPosition += 10;
+
+            doc.setFontSize(10);
+            doc.setFont('helvetica', 'normal');
+            doc.setTextColor(0, 0, 0);
+            doc.text(`Fecha: ${new Date().toLocaleString('es-AR')}`, pageWidth / 2, yPosition, { align: 'center' });
+            doc.text(`Total: ${registrosParaReporte.length} registros (${filtro})`, pageWidth / 2, yPosition + 5, { align: 'center' });
+            yPosition += 20;
+
+            // Pie de página y paginación
+            let pageNum = 1;
+            const addFooter = (pageNum) => {
+                doc.setFontSize(10);
+                doc.setFont('helvetica', 'normal');
+                const footerText = `Reporte CEIJA5 - Registros Web`;
+                const pageText = `Página ${pageNum}`;
+                const yFooter = doc.internal.pageSize.height - 10;
+                doc.text(footerText, margin, yFooter, { align: 'left' });
+                doc.text(pageText, pageWidth - margin, yFooter, { align: 'right' });
+            };
+
+            registrosParaReporte.forEach((registro, index) => {
+                // Verificar salto de página
+                if (yPosition > 250) {
+                    addFooter(pageNum);
+                    doc.addPage();
+                    pageNum++;
+                    yPosition = 20;
+
+                    // Repetir encabezado en cada página
+                    doc.setTextColor(45, 65, 119);
+                    doc.setFontSize(14);
+                    doc.setFont('helvetica', 'bold');
+                    doc.text('CEIJA5 LA CALERA CBA', pageWidth / 2, yPosition, { align: 'center' });
+                    yPosition += 5;
+
+                    doc.setFontSize(11);
+                    doc.setFont('helvetica', 'bold');
+                    doc.text('Educacion Integral de Jóvenes y Adultos', pageWidth / 2, yPosition, { align: 'center' });
+                    yPosition += 2;
+
+                    doc.setDrawColor(0, 0, 255);
+                    doc.setLineWidth(0.5);
+                    doc.line(margin, yPosition + 2, pageWidth - margin, yPosition + 2);
+                    yPosition += 4;
+                    yPosition += 8;
+
+                    doc.setTextColor(45, 65, 119);
+                    doc.setFontSize(16);
+                    doc.text('REPORTE DE REGISTROS WEB', pageWidth / 2, yPosition, { align: 'center' });
+                    yPosition += 20;
+                }
+
+                const nombreCompleto = `${registro.datos.apellido}, ${registro.datos.nombre}`;
+                const dni = registro.datos.dni || 'Sin DNI';
+                const email = registro.datos.email || 'Sin Email';
+                const telefono = registro.datos.telefono || 'Sin Teléfono';
+                const modalidad = registro.datos.modalidad || 'No especificada';
+                const fechaRegistro = formatearFecha(registro.timestamp);
+
+                // Calcular estado documentación para el reporte
+                const estadoDoc = calcularEstadoDocumentacionWeb(registro);
+
+                // Item Principal
+                doc.setFont('helvetica', 'bold');
+                doc.setFontSize(12);
+                doc.setTextColor(0, 0, 0);
+                doc.text(`${index + 1}. ${nombreCompleto}`, margin, yPosition);
+                yPosition += 6;
+
+                // Detalles
+                doc.setFont('helvetica', 'normal');
+                doc.setFontSize(9);
+                doc.text(`DNI: ${dni}   |   Fecha: ${fechaRegistro}   |   Tel: ${telefono}`, margin + 5, yPosition);
+                yPosition += 5;
+                doc.text(`Email: ${email}`, margin + 5, yPosition);
+                yPosition += 5;
+                doc.text(`Modalidad: ${modalidad}   |   Estado: ${getEstadoVisual(registro)}`, margin + 5, yPosition);
+                yPosition += 5;
+
+                // Sección Documentación
+                doc.setFont('helvetica', 'normal');
+                doc.setFontSize(8); // Igual que Adjuntos
+                let colorEstado = [0, 0, 0]; // Negro por defecto
+
+                // Limpiar mensaje para asegurar solo caracteres en castellano (whitelist strategy)
+                // Esto elimina radicalmente emojis y cualquier símbolo no standard
+                const cleanMensaje = estadoDoc.mensaje
+                    .replace(/[^a-zA-Z0-9áéíóúÁÉÍÓÚñÑüÜ\s\.,;:\(\)\-@\/]/g, '')
+                    .replace(/\s+/g, ' ')
+                    .trim();
+
+                if (estadoDoc.esCompleto) colorEstado = [0, 128, 0]; // Verde
+                else if (estadoDoc.mensaje.includes('Faltan')) colorEstado = [45, 65, 119]; // Azul solicitado
+
+                doc.setTextColor(...colorEstado);
+                const textoDoc = `Documentación: ${cleanMensaje}`;
+                doc.text(textoDoc, margin + 5, yPosition, { maxWidth: pageWidth - margin * 2 - 5 });
+
+                // Calcular líneas ocupadas para ajustar posición Y
+                const linesDoc = doc.splitTextToSize(textoDoc, pageWidth - margin * 2 - 5);
+                yPosition += (linesDoc.length * 4) + 2;
+
+                doc.setTextColor(0, 0, 0); // Reset color
+
+                // Listar archivos adjuntos si existen
+                if (registro.archivos && Object.keys(registro.archivos).length > 0) {
+                    doc.setFont('helvetica', 'normal');
+                    doc.setFontSize(8);
+                    const archivosTexto = Object.keys(registro.archivos).map(tipo => {
+                        const mapNombres = {
+                            'foto': 'Foto', 'archivo_dni': 'DNI', 'archivo_cuil': 'CUIL',
+                            'archivo_fichaMedica': 'Ficha Médica', 'archivo_partidaNacimiento': 'Partida Nac.',
+                            'archivo_solicitudPase': 'Solicitud Pase', 'archivo_analiticoParcial': 'Analítico Parc.',
+                            'archivo_certificadoNivelPrimario': 'Cert. Primario'
+                        };
+                        return mapNombres[tipo] || tipo;
+                    }).join(', ');
+
+                    doc.text(`Adjuntos: ${archivosTexto}`, margin + 5, yPosition, { maxWidth: pageWidth - margin * 2 - 5 });
+                    // Calcular altura aproximada si el texto es largo (simple estimación)
+                    const lines = doc.splitTextToSize(`Adjuntos: ${archivosTexto}`, pageWidth - margin * 2 - 5);
+                    yPosition += (lines.length * 4);
+                } else {
+                    yPosition += 2;
+                }
+
+                // Separador de items
+                yPosition += 3;
+                doc.setDrawColor(200, 200, 200);
+                doc.setLineWidth(0.1);
+                doc.line(margin, yPosition, pageWidth - margin, yPosition);
+                yPosition += 8;
+            });
+
+            // Pie de página final
+            addFooter(pageNum);
+
+            // Descargar
+            doc.save(`reporte-registros-web-${new Date().toISOString().split('T')[0]}.pdf`);
+            showSuccess('📄 Reporte PDF generado exitosamente');
+
+        } catch (error) {
+            console.error('Error generando PDF web:', error);
+            showError('Error al generar el PDF: ' + error.message);
+        }
+    };
 
     return (
         <>
-        <AlertaMens alerts={alerts} onCloseAlert={removeAlert} modal={modal} onCloseModal={closeModal} mode="floating" />
-        <div className="gestor-registros-web">
-            <div className="gestor-modal-container">
-                <div className="gestor-header">
-                    <h2>🌐 Gestión de Registros Web</h2>
-                       <CloseButton onClose={onClose} className="cerrar-button" />
-                </div>
-
-                <div className="gestor-content">
-                    {/* Primera fila: Estadísticas en horizontal */}
-                    <div className="stats-container-horizontal">
-                        <div className="stat-card">
-                            <div className="stat-number">{contadoresVisuales.total}</div>
-                            <div className="stat-label">Total</div>
-                        </div>
-                        <div className="stat-card">
-                            <div className="stat-number">{contadoresVisuales.pendientes}</div>
-                            <div className="stat-label">Pendientes</div>
-                        </div>
-                        <div className="stat-card">
-                            <div className="stat-number">{contadoresVisuales.procesados}</div>
-                            <div className="stat-label">Procesados</div>
-                        </div>
-                        <div className="stat-card">
-                            <div className="stat-number">{contadoresVisuales.anulados}</div>
-                            <div className="stat-label">Anulados</div>
-                        </div>
+            <AlertaMens alerts={alerts} onCloseAlert={removeAlert} modal={modal} onCloseModal={closeModal} mode="floating" />
+            <div className="gestor-registros-web">
+                <div className="gestor-modal-container">
+                    <div className="gestor-header">
+                        <h2>🌐 Gestión de Registros Web</h2>
+                        <CloseButton onClose={onClose} className="cerrar-button" />
                     </div>
 
-                    {/* Segunda fila: Controles y filtros */}
-                    <div className="controles-container">
-                        <div className="filtros-container">
-                            <label htmlFor="filtro-estado">Filtrar por estado:</label>
-                            <select 
-                                id="filtro-estado"
-                                value={filtro} 
-                                onChange={(e) => setFiltro(e.target.value)}
-                            >
-                                <option value="TODOS">Todos los registros</option>
-                                <option value="PENDIENTE">Solo pendientes</option>
-                                <option value="PROCESADO">Solo procesados</option>
-                                <option value="ANULADO">Solo anulados</option>
-                            </select>
-                        </div>
-
-                        <button 
-                            className="refresh-button"
-                            onClick={() => {
-                                cargarRegistrosWeb();
-                            }}
-                        >
-                            🔄 Actualizar
-                        </button>
-                    </div>
-
-                    {/* Tercera fila: Lista de registros */}
-                    <div className="registros-container">
-                        {registrosVisuales.length === 0 ? (
-                            <div className="sin-registros">
-                                <h3>📭 No hay registros web {filtro === 'TODOS' ? '' : filtro.toLowerCase()}</h3>
-                                <p>Los registros aparecerán aquí cuando los usuarios completen el formulario web.</p>
+                    <div className="gestor-content">
+                        {/* Primera fila: Estadísticas en horizontal */}
+                        <div className="stats-container-horizontal">
+                            <div className="stat-card">
+                                <div className="stat-number">{contadoresVisuales.total}</div>
+                                <div className="stat-label">Total</div>
                             </div>
-                        ) : (
-                            <div className="registros-lista">
-                                {registrosVisuales.map((registro) => {
-                                    // Calcular estado real de documentación
-                                    const estadoDocReal = calcularEstadoDocumentacionWeb(registro);
-                                    return (
-                                        <div key={registro.id} className="registro-item">
-                                        <div className="registro-header">
-                                            <div className="registro-datos">
-                                                <h3 className="registro-nombre">
-                                                    {registro.datos.apellido}, {registro.datos.nombre}
-                                                </h3>
-                                                <div className="registro-info-principal">
-                                                    <strong>DNI: {registro.datos.dni}</strong>
-                                                </div>
-                                                <div className="registro-info">Email: {registro.datos.email}</div>
-                                                <div className="registro-info">Teléfono: {registro.datos.telefono}</div>
-                                                <div className="registro-info">Modalidad: {registro.datos.modalidad}</div>
-                                                <div className="registro-info">
-                                                    Domicilio: {registro.datos.calle} {registro.datos.numero}, {registro.datos.localidad}
-                                                </div>
-                                                {/* Mostrar documentos adjuntos */}
-                                                {registro.archivos && Object.keys(registro.archivos).length > 0 && (
-                                                    <div className="registro-documentos documentos-subidos">
-                                                        <strong>📎 Documentos adjuntos ({Object.keys(registro.archivos).length}):</strong>
-                                                        <ul>
-                                                            {Object.entries(registro.archivos).map(([tipo, ruta]) => {
-                                                                const nombreDocumento = {
-                                                                    'foto': '📷 Foto',
-                                                                    'archivo_dni': '📄 DNI',
-                                                                    'archivo_cuil': '📄 CUIL',
-                                                                    'archivo_fichaMedica': '🏥 Ficha Médica',
-                                                                    'archivo_partidaNacimiento': '📜 Partida de Nacimiento',
-                                                                    'archivo_solicitudPase': '📝 Solicitud de Pase',
-                                                                    'archivo_analiticoParcial': '📊 Analítico Parcial',
-                                                                    'archivo_certificadoNivelPrimario': '🎓 Certificado Primario'
-                                                                }[tipo] || `📎 ${tipo}`;
+                            <div className="stat-card">
+                                <div className="stat-number">{contadoresVisuales.pendientes}</div>
+                                <div className="stat-label">Pendientes</div>
+                            </div>
+                            <div className="stat-card">
+                                <div className="stat-number">{contadoresVisuales.procesados}</div>
+                                <div className="stat-label">Procesados</div>
+                            </div>
+                            <div className="stat-card">
+                                <div className="stat-number">{contadoresVisuales.anulados}</div>
+                                <div className="stat-label">Anulados</div>
+                            </div>
+                        </div>
 
-                                                                return (
-                                                                    <li key={tipo} style={{ marginBottom: '2px' }}>
-                                                                        <span className="doc-presentado">✅ {nombreDocumento}</span>
-                                                                        <small className="doc-nombre-archivo">({ruta.split('/').pop()})</small>
-                                                                    </li>
-                                                                );
-                                                            })}
-                                                        </ul>
-                                                        <div className="info-al-completar">
-                                                            💡 Al completar inscripción se mostrarán estos documentos para verificar
+                        {/* Segunda fila: Controles y filtros */}
+                        <div className="controles-container">
+                            <div className="filtros-container">
+                                <label htmlFor="filtro-estado">Filtrar por estado:</label>
+                                <select
+                                    id="filtro-estado"
+                                    value={filtro}
+                                    onChange={(e) => setFiltro(e.target.value)}
+                                >
+                                    <option value="TODOS">Todos los registros</option>
+                                    <option value="PENDIENTE">Solo pendientes</option>
+                                    <option value="PROCESADO">Solo procesados</option>
+                                    <option value="ANULADO">Solo anulados</option>
+                                </select>
+                            </div>
+
+                            <button
+                                className="refresh-button"
+                                onClick={() => {
+                                    cargarRegistrosWeb();
+                                }}
+                            >
+                                🔄 Actualizar
+                            </button>
+
+                            <button
+                                className="btn-export-pdf"
+                                onClick={generarReportePDFWeb}
+                                style={{
+                                    backgroundColor: '#dc3545',
+                                    color: 'white',
+                                    border: 'none',
+                                    padding: '8px 15px',
+                                    borderRadius: '4px',
+                                    marginLeft: '10px',
+                                    cursor: 'pointer',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '5px',
+                                    fontWeight: '500',
+                                    boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
+                                }}
+                            >
+                                📄 Exportar PDF
+                            </button>
+                        </div>
+
+                        {/* Tercera fila: Lista de registros */}
+                        <div className="registros-container">
+                            {registrosVisuales.length === 0 ? (
+                                <div className="sin-registros">
+                                    <h3>📭 No hay registros web {filtro === 'TODOS' ? '' : filtro.toLowerCase()}</h3>
+                                    <p>Los registros aparecerán aquí cuando los usuarios completen el formulario web.</p>
+                                </div>
+                            ) : (
+                                <div className="registros-lista">
+                                    {registrosVisuales.map((registro) => {
+                                        // Calcular estado real de documentación
+                                        const estadoDocReal = calcularEstadoDocumentacionWeb(registro);
+                                        return (
+                                            <div key={registro.id} className="registro-item">
+                                                <div className="registro-header">
+                                                    <div className="registro-datos">
+                                                        <h3 className="registro-nombre">
+                                                            {registro.datos.apellido}, {registro.datos.nombre}
+                                                        </h3>
+                                                        <div className="registro-info-principal">
+                                                            <strong>DNI: {registro.datos.dni}</strong>
+                                                        </div>
+                                                        <div className="registro-info">Email: {registro.datos.email}</div>
+                                                        <div className="registro-info">Teléfono: {registro.datos.telefono}</div>
+                                                        <div className="registro-info">Modalidad: {registro.datos.modalidad}</div>
+                                                        <div className="registro-info">
+                                                            Domicilio: {registro.datos.calle} {registro.datos.numero}, {registro.datos.localidad}
+                                                        </div>
+                                                        {/* Mostrar documentos adjuntos */}
+                                                        {registro.archivos && Object.keys(registro.archivos).length > 0 && (
+                                                            <div className="registro-documentos documentos-subidos">
+                                                                <strong>📎 Documentos adjuntos ({Object.keys(registro.archivos).length}):</strong>
+                                                                <ul>
+                                                                    {Object.entries(registro.archivos).map(([tipo, ruta]) => {
+                                                                        const nombreDocumento = {
+                                                                            'foto': '📷 Foto',
+                                                                            'archivo_dni': '📄 DNI',
+                                                                            'archivo_cuil': '📄 CUIL',
+                                                                            'archivo_fichaMedica': '🏥 Ficha Médica',
+                                                                            'archivo_partidaNacimiento': '📜 Partida de Nacimiento',
+                                                                            'archivo_solicitudPase': '📝 Solicitud de Pase',
+                                                                            'archivo_analiticoParcial': '📊 Analítico Parcial',
+                                                                            'archivo_certificadoNivelPrimario': '🎓 Certificado Primario'
+                                                                        }[tipo] || `📎 ${tipo}`;
+
+                                                                        return (
+                                                                            <li key={tipo} style={{ marginBottom: '2px' }}>
+                                                                                <span className="doc-presentado">✅ {nombreDocumento}</span>
+                                                                                <small className="doc-nombre-archivo">({ruta.split('/').pop()})</small>
+                                                                            </li>
+                                                                        );
+                                                                    })}
+                                                                </ul>
+                                                                <div className="info-al-completar">
+                                                                    💡 Al completar inscripción se mostrarán estos documentos para verificar
+                                                                </div>
+                                                            </div>
+                                                        )}
+                                                        {/* Mensaje si no hay documentos */}
+                                                        {(!registro.archivos || Object.keys(registro.archivos).length === 0) && (
+                                                            <div className="registro-documentos documentos-faltantes">
+                                                                <span className="sin-documentos">⚠️ Sin documentos adjuntos - Deberá completar toda la documentación</span>
+                                                            </div>
+                                                        )}
+                                                        <div className="registro-info">
+                                                            <small>Fecha: {formatearFecha(registro.timestamp)}</small>
+                                                        </div>
+                                                        {/* Mostrar estado real de documentación calculado en tiempo real */}
+                                                        <div className="registro-info">
+                                                            <strong>Estado de Documentación:</strong>
+                                                            <span style={{
+                                                                color: estadoDocReal.esCompleto ? '#4caf50' : '#ff9800',
+                                                                marginLeft: '5px'
+                                                            }}>
+                                                                {estadoDocReal.mensaje}
+                                                            </span>
                                                         </div>
                                                     </div>
-                                                )}
-                                                {/* Mensaje si no hay documentos */}
-                                                {(!registro.archivos || Object.keys(registro.archivos).length === 0) && (
-                                                    <div className="registro-documentos documentos-faltantes">
-                                                        <span className="sin-documentos">⚠️ Sin documentos adjuntos - Deberá completar toda la documentación</span>
+
+                                                    <div className="registro-acciones">
+                                                        <span
+                                                            className={`estado-badge estado-${getEstadoVisual(registro).toLowerCase().replace(/ /g, '-')}`}
+                                                        >
+                                                            {getEstadoVisual(registro)}
+                                                        </span>
+
+                                                        {/* TODOS los registros web deben permitir completar inscripción */}
+                                                        <button
+                                                            className="btn-procesar"
+                                                            onClick={() => {
+                                                                if (registro.estado === 'PROCESADO_A_PENDIENTES') {
+                                                                    showWarning('⚠️ Este registro ya fue procesado y movido a Registros Pendientes por falta de documentación.');
+                                                                    return;
+                                                                }
+                                                                if (registro.estado === 'PROCESADO_Y_Completa') {
+                                                                    showSuccess(`✅ Este estudiante ya está registrado en la base de datos.\n\nNombre: ${registro.datos.nombre} ${registro.datos.apellido}\nDNI: ${registro.datos.dni}`);
+                                                                    return;
+                                                                }
+                                                                manejarProcesarRegistro(registro);
+                                                            }}
+                                                            disabled={registro.estado === 'PROCESADO_A_PENDIENTES' || registro.estado === 'PROCESADO_Y_Completa'}
+                                                            title={
+                                                                registro.estado === 'PENDIENTE'
+                                                                    ? 'Completar inscripción del registro web'
+                                                                    : registro.estado === 'PROCESADO_Y_Completa'
+                                                                        ? 'Este estudiante ya está registrado en la base de datos'
+                                                                        : registro.estado === 'PROCESADO_A_PENDIENTES'
+                                                                            ? 'Registro verificado pero faltan documentos (movido a pendientes)'
+                                                                            : 'Gestionar registro web'
+                                                            }
+                                                            style={{
+                                                                opacity: (registro.estado === 'PROCESADO_A_PENDIENTES' || registro.estado === 'PROCESADO_Y_Completa') ? 0.6 : 1,
+                                                                cursor: (registro.estado === 'PROCESADO_A_PENDIENTES' || registro.estado === 'PROCESADO_Y_Completa') ? 'not-allowed' : 'pointer'
+                                                            }}
+                                                        >
+                                                            {registro.estado === 'PENDIENTE' ? (
+                                                                '✅ Completar Inscripción'
+                                                            ) : registro.estado === 'PROCESADO_Y_Completa' ? (
+                                                                '✅ Procesado y Completa'
+                                                            ) : registro.estado === 'PROCESADO_A_PENDIENTES' ? (
+                                                                // Mostrar texto claro cuando el admin verificó pero faltan documentos
+                                                                '⏳ Pendiente (faltan documentos)'
+                                                            ) : registro.estado === 'ANULADO' ? (
+                                                                '� Reactivar Registro'
+                                                            ) : (
+                                                                '📝 Gestionar Registro'
+                                                            )}
+                                                        </button>
+
+                                                        <button
+                                                            className="btn-eliminar"
+                                                            onClick={() => iniciarEliminar(registro)}
+                                                            title="Eliminar registro"
+                                                            disabled={eliminando}
+                                                        >
+                                                            {eliminando && registroAEliminar?.id === registro.id ? (
+                                                                <BotonCargando loading={true} size="small">
+                                                                    Eliminando...
+                                                                </BotonCargando>
+                                                            ) : (
+                                                                '🗑️ Eliminar'
+                                                            )}
+                                                        </button>
                                                     </div>
-                                                )}
-                                                <div className="registro-info">
-                                                    <small>Fecha: {formatearFecha(registro.timestamp)}</small>
-                                                </div>
-                                                {/* Mostrar estado real de documentación calculado en tiempo real */}
-                                                <div className="registro-info">
-                                                    <strong>Estado de Documentación:</strong> 
-                                                    <span style={{ 
-                                                        color: estadoDocReal.esCompleto ? '#4caf50' : '#ff9800',
-                                                        marginLeft: '5px'
-                                                    }}>
-                                                        {estadoDocReal.mensaje}
-                                                    </span>
                                                 </div>
                                             </div>
-
-                                            <div className="registro-acciones">
-                                                <span 
-                                                    className={`estado-badge estado-${getEstadoVisual(registro).toLowerCase().replace(/ /g, '-')}`}
-                                                >
-                                                    {getEstadoVisual(registro)}
-                                                </span>
-
-                                                {/* TODOS los registros web deben permitir completar inscripción */}
-                                                <button
-                                                    className="btn-procesar"
-                                                    onClick={() => {
-                                                        if (registro.estado === 'PROCESADO_A_PENDIENTES') {
-                                                            showWarning('⚠️ Este registro ya fue procesado y movido a Registros Pendientes por falta de documentación.');
-                                                            return;
-                                                        }
-                                                        if (registro.estado === 'PROCESADO_Y_Completa') {
-                                                            showSuccess(`✅ Este estudiante ya está registrado en la base de datos.\n\nNombre: ${registro.datos.nombre} ${registro.datos.apellido}\nDNI: ${registro.datos.dni}`);
-                                                            return;
-                                                        }
-                                                        manejarProcesarRegistro(registro);
-                                                    }}
-                                                    disabled={registro.estado === 'PROCESADO_A_PENDIENTES' || registro.estado === 'PROCESADO_Y_Completa'}
-                                                    title={
-                                                        registro.estado === 'PENDIENTE' 
-                                                        ? 'Completar inscripción del registro web'
-                                                        : registro.estado === 'PROCESADO_Y_Completa'
-                                                        ? 'Este estudiante ya está registrado en la base de datos'
-                                                        : registro.estado === 'PROCESADO_A_PENDIENTES'
-                                                        ? 'Registro verificado pero faltan documentos (movido a pendientes)'
-                                                        : 'Gestionar registro web'
-                                                    }
-                                                    style={{
-                                                        opacity: (registro.estado === 'PROCESADO_A_PENDIENTES' || registro.estado === 'PROCESADO_Y_Completa') ? 0.6 : 1,
-                                                        cursor: (registro.estado === 'PROCESADO_A_PENDIENTES' || registro.estado === 'PROCESADO_Y_Completa') ? 'not-allowed' : 'pointer'
-                                                    }}
-                                                >
-                                                    {registro.estado === 'PENDIENTE' ? (
-                                                        '✅ Completar Inscripción'
-                                                    ) : registro.estado === 'PROCESADO_Y_Completa' ? (
-                                                        '✅ Procesado y Completa'
-                                                    ) : registro.estado === 'PROCESADO_A_PENDIENTES' ? (
-                                                        // Mostrar texto claro cuando el admin verificó pero faltan documentos
-                                                        '⏳ Pendiente (faltan documentos)'
-                                                    ) : registro.estado === 'ANULADO' ? (
-                                                        '� Reactivar Registro'
-                                                    ) : (
-                                                        '📝 Gestionar Registro'
-                                                    )}
-                                                </button>
-                                                
-                                                <button
-                                                    className="btn-eliminar"
-                                                    onClick={() => iniciarEliminar(registro)}
-                                                    title="Eliminar registro"
-                                                    disabled={eliminando}
-                                                >
-                                                    {eliminando && registroAEliminar?.id === registro.id ? (
-                                                        <BotonCargando loading={true} size="small">
-                                                            Eliminando...
-                                                        </BotonCargando>
-                                                    ) : (
-                                                        '🗑️ Eliminar'
-                                                    )}
-                                                </button>
-                                            </div>
-                                        </div>
-                                        </div>
-                                    );
-                                })}
-                            </div>
-                        )}
-                    </div>
+                                        );
+                                    })}
+                                </div>
+                            )}
+                        </div>
 
 
 
-                    {/* Modal de confirmación para eliminar */}
-                    {mostrarConfirmacion && registroAEliminar && (
-                        <div className="modal-confirmacion-overlay">
-                            <div className="modal-confirmacion">
-                                <h3>Confirmar Eliminación</h3>
-                                <p>
-                                    ¿Está seguro de que desea eliminar el registro de{' '}
-                                    <strong>
-                                        {registroAEliminar.datos.apellido}, {registroAEliminar.datos.nombre}
-                                    </strong>?
-                                </p>
-                                <p className="dni-info">DNI: {registroAEliminar.datos.dni}</p>
-                                <div className="modal-botones">
-                                    <button 
-                                        className="btn-confirmar-eliminar"
-                                        onClick={confirmarEliminacion}
-                                        disabled={eliminando}
-                                    >
-                                        {eliminando ? (
-                                            <BotonCargando loading={true} size="small">
-                                                Eliminando...
-                                            </BotonCargando>
-                                        ) : (
-                                            'Aceptar'
-                                        )}
-                                    </button>
-                                    <button 
-                                        className="btn-cancelar-eliminar"
-                                        onClick={cancelarEliminacion}
-                                        disabled={eliminando}
-                                    >
-                                        Cancelar
-                                    </button>
+                        {/* Modal de confirmación para eliminar */}
+                        {mostrarConfirmacion && registroAEliminar && (
+                            <div className="modal-confirmacion-overlay">
+                                <div className="modal-confirmacion">
+                                    <h3>Confirmar Eliminación</h3>
+                                    <p>
+                                        ¿Está seguro de que desea eliminar el registro de{' '}
+                                        <strong>
+                                            {registroAEliminar.datos.apellido}, {registroAEliminar.datos.nombre}
+                                        </strong>?
+                                    </p>
+                                    <p className="dni-info">DNI: {registroAEliminar.datos.dni}</p>
+                                    <div className="modal-botones">
+                                        <button
+                                            className="btn-confirmar-eliminar"
+                                            onClick={confirmarEliminacion}
+                                            disabled={eliminando}
+                                        >
+                                            {eliminando ? (
+                                                <BotonCargando loading={true} size="small">
+                                                    Eliminando...
+                                                </BotonCargando>
+                                            ) : (
+                                                'Aceptar'
+                                            )}
+                                        </button>
+                                        <button
+                                            className="btn-cancelar-eliminar"
+                                            onClick={cancelarEliminacion}
+                                            disabled={eliminando}
+                                        >
+                                            Cancelar
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    )}
+                        )}
 
-                    {/* Modal de actualización de documentación */}
-                    {mostrarModalActualizacion && datosEstudianteExistente && (
-                        <ModalDocumentacionExistente
-                            estudiante={datosEstudianteExistente.estudiante}
-                            inscripciones={datosEstudianteExistente.inscripciones}
-                            archivosNuevos={datosEstudianteExistente.archivosNuevos}
-                            onClose={() => {
-                                setMostrarModalActualizacion(false);
-                                setDatosEstudianteExistente(null);
-                                // Recargar registros para reflejar cambios
-                                cargarRegistrosWeb();
-                            }}
-                            onActualizar={(resultado) => {
-                                console.log('✅ Documentación actualizada:', resultado);
-                                showSuccess(`Documentación actualizada: ${resultado.cantidadArchivos} archivo(s)`);
-                            }}
-                        />
-                    )}
+                        {/* Modal de actualización de documentación */}
+                        {mostrarModalActualizacion && datosEstudianteExistente && (
+                            <ModalDocumentacionExistente
+                                estudiante={datosEstudianteExistente.estudiante}
+                                inscripciones={datosEstudianteExistente.inscripciones}
+                                archivosNuevos={datosEstudianteExistente.archivosNuevos}
+                                onClose={() => {
+                                    setMostrarModalActualizacion(false);
+                                    setDatosEstudianteExistente(null);
+                                    // Recargar registros para reflejar cambios
+                                    cargarRegistrosWeb();
+                                }}
+                                onActualizar={(resultado) => {
+                                    console.log('✅ Documentación actualizada:', resultado);
+                                    showSuccess(`Documentación actualizada: ${resultado.cantidadArchivos} archivo(s)`);
+                                }}
+                            />
+                        )}
+                    </div>
                 </div>
             </div>
-        </div>
         </>
     );
 };

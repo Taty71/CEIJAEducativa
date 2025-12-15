@@ -11,13 +11,21 @@ export const generarAnalisisRendimiento = async (estudiantes, showAlerta, modali
     const { verificarEspacio, agregarPiePagina } = crearControlPaginas(doc);
     let yPos = crearEncabezadoInstitucional(doc, 'Distribución Cuantitativa de Estudiantes por Estado de Actividad');
 
+    // Título del reporte (Centrado, Tamaño 13, 2 líneas de separación del encabezado)
+    yPos += 10;
+    doc.setFontSize(13);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(45, 65, 119);
+    doc.text(normalizarTexto('DISTRIBUCIÓN CUANTITATIVA DE ESTUDIANTES POR ESTADO DE ACTIVIDAD'), doc.internal.pageSize.width / 2, yPos, { align: 'center' });
+    yPos += 8;
+
     // ===== INFORMACIÓN GENERAL =====
     yPos = verificarEspacio(doc, yPos, 40); // Espacio para la sección de información general
     doc.setFontSize(12);
     doc.setFont('helvetica', 'bold');
     doc.setTextColor(45, 65, 119);
     doc.text(normalizarTexto('INFORMACION GENERAL'), 14, yPos);
-    yPos += 10;
+    yPos += 8;
 
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(11);
@@ -35,7 +43,7 @@ export const generarAnalisisRendimiento = async (estudiantes, showAlerta, modali
     doc.setFont('helvetica', 'bold');
     doc.setTextColor(45, 65, 119);
     doc.text(normalizarTexto('RESUMEN DE ESTADOS'), 14, yPos);
-    yPos += 15;
+    yPos += 10;
 
     const resumenData = [
       ['Estudiantes activos', analisis.activos.toString(), `${analisis.porcentajeActivos}%`],
@@ -55,7 +63,7 @@ export const generarAnalisisRendimiento = async (estudiantes, showAlerta, modali
         fontStyle: 'bold'
       },
       bodyStyles: {
-        fontSize: 10,
+        fontSize: 11,
         font: 'helvetica'
       },
       columnStyles: {
@@ -75,7 +83,7 @@ export const generarAnalisisRendimiento = async (estudiantes, showAlerta, modali
     doc.setFont('helvetica', 'bold');
     doc.setTextColor(45, 65, 119);
     doc.text(normalizarTexto('DESGLOSE POR MODALIDAD'), 14, yPos);
-    yPos += 15;
+    yPos += 10;
 
     const modalidadData = Object.entries(analisis.desglosePorModalidad).map(([modalidad, datos]) => [
       modalidad || 'Sin modalidad',
@@ -94,12 +102,12 @@ export const generarAnalisisRendimiento = async (estudiantes, showAlerta, modali
       headStyles: {
         fillColor: [45, 65, 119],
         textColor: 255,
-        fontSize: 10,
+        fontSize: 11,
         font: 'helvetica',
         fontStyle: 'bold'
       },
       bodyStyles: {
-        fontSize: 9,
+        fontSize: 11,
         font: 'helvetica'
       },
       columnStyles: {
@@ -122,9 +130,9 @@ export const generarAnalisisRendimiento = async (estudiantes, showAlerta, modali
     doc.setFont('helvetica', 'bold');
     doc.setTextColor(45, 65, 119);
     doc.text(normalizarTexto('DEFINICIONES'), 14, yPos);
-    yPos += 10;
+    yPos += 8;
 
-    doc.setFontSize(10);
+    doc.setFontSize(11);
     doc.setFont('helvetica', 'normal');
     doc.setTextColor(0, 0, 0);
 
@@ -137,7 +145,7 @@ export const generarAnalisisRendimiento = async (estudiantes, showAlerta, modali
       const textoNota = normalizarTexto(`• ${nota}`);
       const lineasTexto = doc.splitTextToSize(textoNota, 160);
       doc.text(lineasTexto, 20, yPos);
-      yPos += lineasTexto.length * 5 + 3;
+      yPos += lineasTexto.length * 6 + 3;
     });
 
     // Agregar pie de página antes de guardar

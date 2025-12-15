@@ -348,3 +348,48 @@
     padding: 12px 14px;
   }
 }
+
+/* Reducir ancho de campos específicos - email, teléfono, fecha nacimiento */
+.form-datos .form-group:has(input[name="email"]),
+.form-datos .form-group:has(input[name="telefono"]),
+.form-datos .form-group:has(input[name="fechaNacimiento"]) {
+  max-width: 35%;
+}
+
+.form-datos .form-group:has(input[name="email"]) input,
+.form-datos .form-group:has(input[name="telefono"]) input,
+.form-datos .form-group:has(input[name="fechaNacimiento"]) input {
+  width: 100%;
+}
+
+/* Reducir ancho de campos de domicilio - calle, número, provincia, localidad, barrio */
+.form-domicilio .form-group:has(input[name="calle"]),
+.form-domicilio .form-group:has(input[name="numero"]),
+.form-domicilio .form-group:has(select[name="provincia"]),
+.form-domicilio .form-group:has(input[name="localidad"]),
+.form-domicilio .form-group:has(input[name="barrio"]) {
+  max-width: 35%;
+}
+
+.form-domicilio .form-group:has(input[name="calle"]) input,
+.form-domicilio .form-group:has(input[name="numero"]) input,
+.form-domicilio .form-group:has(select[name="provincia"]) select,
+.form-domicilio .form-group:has(input[name="localidad"]) input,
+.form-domicilio .form-group:has(input[name="barrio"]) input {
+  width: 100%;
+}
+
+/* En móvil, restaurar ancho completo */
+@media (max-width: 768px) {
+
+  .form-datos .form-group:has(input[name="email"]),
+  .form-datos .form-group:has(input[name="telefono"]),
+  .form-datos .form-group:has(input[name="fechaNacimiento"]),
+  .form-domicilio .form-group:has(input[name="calle"]),
+  .form-domicilio .form-group:has(input[name="numero"]),
+  .form-domicilio .form-group:has(select[name="provincia"]),
+  .form-domicilio .form-group:has(input[name="localidad"]),
+  .form-domicilio .form-group:has(input[name="barrio"]) {
+    max-width: 100%;
+  }
+}

@@ -6,6 +6,7 @@ body {
   font-weight: 400;
   font-style: normal;
 }
+
 .home {
   display: flex;
   flex-direction: column;
@@ -20,7 +21,8 @@ body {
 /* Estilo para el contenedor de la barra de navegación y el botón de inicio de sesión */
 .barNav {
   display: flex;
-  justify-content: flex-end; /* Alinea los elementos a la derecha */
+  justify-content: flex-end;
+  /* Alinea los elementos a la derecha */
   align-items: center;
   width: 100%;
   position: absolute;
@@ -28,6 +30,7 @@ body {
   right: 0;
   padding: 10px;
 }
+
 /* Menú Hamburguesa */
 .navbar {
   display: flex;
@@ -63,11 +66,9 @@ body {
   position: absolute;
   top: 50px;
   right: 10px;
-  background: linear-gradient(
-    135deg,
-    var(--color-fondo-tarjeta) 0%,
-    #ffffff 100%
-  );
+  background: linear-gradient(135deg,
+      var(--color-fondo-tarjeta) 0%,
+      #ffffff 100%);
   padding: 1.5rem;
   border-radius: 12px;
   box-shadow: 0 8px 24px rgba(45, 65, 119, 0.25);
@@ -98,15 +99,16 @@ body {
 
 .menu ul li a:hover {
   color: var(--color-header);
-  
+
 }
 
 .menu ul li {
-  width: 100%; /* Agrega esto */
+  width: 100%;
+  /* Agrega esto */
 }
 
 .menu ul li a,
-li > button {
+li>button {
   text-decoration: none;
   color: var(--color-acento);
   display: block;
@@ -114,22 +116,28 @@ li > button {
   border-radius: 6px;
   transition: all 0.2s ease;
   font-weight: 600;
-  cursor: pointer; /* Agrega esto */
-  background: none; /* Agrega esto */
-  border: none; /* Agrega esto */
-  width: 100%; /* Agrega esto */
-  text-align: left; /* Agrega esto */
-  font-size: 15px; /* Agrega esto */
+  cursor: pointer;
+  /* Agrega esto */
+  background: none;
+  /* Agrega esto */
+  border: none;
+  /* Agrega esto */
+  width: 100%;
+  /* Agrega esto */
+  text-align: left;
+  /* Agrega esto */
+  font-size: 15px;
+  /* Agrega esto */
 }
 
 .menu ul li a:hover,
-li > button:hover {
+li>button:hover {
   background: var(--color-acento);
   color: white;
   transform: translateX(5px);
 }
 
-.menu > button {
+.menu>button {
   background: transparent;
   border: none;
   color: var(--color-texto-secundario);
@@ -144,13 +152,13 @@ li > button:hover {
   right: 10px;
 }
 
-.menu > button:hover {
+.menu>button:hover {
   background: var(--color-acento);
   color: white;
   transform: rotate(90deg);
 }
 
-li > button {
+li>button {
   font-family: inherit;
   font-style: inherit;
   font-weight: 600;
@@ -166,14 +174,14 @@ li > button {
   transition: all 0.2s ease;
 }
 
-li > button:hover {
+li>button:hover {
   background: var(--color-acento);
   color: white;
   transform: translateX(5px);
 }
 
 /* Botón de inicio de sesión */
-.barNav > .login-button {
+.barNav>.login-button {
   background: var(--color-acento);
   color: white;
   border: 2px solid var(--color-acento-claro);
@@ -188,13 +196,13 @@ li > button:hover {
   white-space: nowrap;
 }
 
-.barNav > .login-button:hover {
+.barNav>.login-button:hover {
   background: var(--color-header);
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(45, 65, 119, 0.3);
 }
 
-.barNav > .login-button:active {
+.barNav>.login-button:active {
   transform: translateY(0);
 }
 
@@ -210,7 +218,8 @@ li > button:hover {
   width: 85vw;
   text-align: center;
   box-shadow: 0px 4px 10px #8f49491a;
-  min-height: 80vh; /* Ajusta la altura mínima para que la imagen se vea mejor */
+  min-height: 80vh;
+  /* Ajusta la altura mínima para que la imagen se vea mejor */
   background-color: #ffffff;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100%25'%3E%3Cdefs%3E%3ClinearGradient id='a' gradientUnits='userSpaceOnUse' x1='0' x2='0' y1='0' y2='100%25' gradientTransform='rotate(205,647,328)'%3E%3Cstop offset='0' stop-color='%23ffffff'/%3E%3Cstop offset='1' stop-color='%231753FF'/%3E%3C/linearGradient%3E%3Cpattern patternUnits='userSpaceOnUse' id='b' width='556' height='463.3' x='0' y='0' viewBox='0 0 1080 900'%3E%3Cg fill-opacity='0.23'%3E%3Cpolygon fill='%23444' points='90 150 0 300 180 300'/%3E%3Cpolygon points='90 150 180 0 0 0'/%3E%3Cpolygon fill='%23AAA' points='270 150 360 0 180 0'/%3E%3Cpolygon fill='%23DDD' points='450 150 360 300 540 300'/%3E%3Cpolygon fill='%23999' points='450 150 540 0 360 0'/%3E%3Cpolygon points='630 150 540 300 720 300'/%3E%3Cpolygon fill='%23DDD' points='630 150 720 0 540 0'/%3E%3Cpolygon fill='%23444' points='810 150 720 300 900 300'/%3E%3Cpolygon fill='%23FFF' points='810 150 900 0 720 0'/%3E%3Cpolygon fill='%23DDD' points='990 150 900 300 1080 300'/%3E%3Cpolygon fill='%23444' points='990 150 1080 0 900 0'/%3E%3Cpolygon fill='%23DDD' points='90 450 0 600 180 600'/%3E%3Cpolygon points='90 450 180 300 0 300'/%3E%3Cpolygon fill='%23666' points='270 450 180 600 360 600'/%3E%3Cpolygon fill='%23AAA' points='270 450 360 300 180 300'/%3E%3Cpolygon fill='%23DDD' points='450 450 360 600 540 600'/%3E%3Cpolygon fill='%23999' points='450 450 540 300 360 300'/%3E%3Cpolygon fill='%23999' points='630 450 540 600 720 600'/%3E%3Cpolygon fill='%23FFF' points='630 450 720 300 540 300'/%3E%3Cpolygon points='810 450 720 600 900 600'/%3E%3Cpolygon fill='%23DDD' points='810 450 900 300 720 300'/%3E%3Cpolygon fill='%23AAA' points='990 450 900 600 1080 600'/%3E%3Cpolygon fill='%23444' points='990 450 1080 300 900 300'/%3E%3Cpolygon fill='%23222' points='90 750 0 900 180 900'/%3E%3Cpolygon points='270 750 180 900 360 900'/%3E%3Cpolygon fill='%23DDD' points='270 750 360 600 180 600'/%3E%3Cpolygon points='450 750 540 600 360 600'/%3E%3Cpolygon points='630 750 540 900 720 900'/%3E%3Cpolygon fill='%23444' points='630 750 720 600 540 600'/%3E%3Cpolygon fill='%23AAA' points='810 750 720 900 900 900'/%3E%3Cpolygon fill='%23666' points='810 750 900 600 720 600'/%3E%3Cpolygon fill='%23999' points='990 750 900 900 1080 900'/%3E%3Cpolygon fill='%23999' points='180 0 90 150 270 150'/%3E%3Cpolygon fill='%23444' points='360 0 270 150 450 150'/%3E%3Cpolygon fill='%23FFF' points='540 0 450 150 630 150'/%3E%3Cpolygon points='900 0 810 150 990 150'/%3E%3Cpolygon fill='%23222' points='0 300 -90 450 90 450'/%3E%3Cpolygon fill='%23FFF' points='0 300 90 150 -90 150'/%3E%3Cpolygon fill='%23FFF' points='180 300 90 450 270 450'/%3E%3Cpolygon fill='%23666' points='180 300 270 150 90 150'/%3E%3Cpolygon fill='%23222' points='360 300 270 450 450 450'/%3E%3Cpolygon fill='%23FFF' points='360 300 450 150 270 150'/%3E%3Cpolygon fill='%23444' points='540 300 450 450 630 450'/%3E%3Cpolygon fill='%23222' points='540 300 630 150 450 150'/%3E%3Cpolygon fill='%23AAA' points='720 300 630 450 810 450'/%3E%3Cpolygon fill='%23666' points='720 300 810 150 630 150'/%3E%3Cpolygon fill='%23FFF' points='900 300 810 450 990 450'/%3E%3Cpolygon fill='%23999' points='900 300 990 150 810 150'/%3E%3Cpolygon points='0 600 -90 750 90 750'/%3E%3Cpolygon fill='%23666' points='0 600 90 450 -90 450'/%3E%3Cpolygon fill='%23AAA' points='180 600 90 750 270 750'/%3E%3Cpolygon fill='%23444' points='180 600 270 450 90 450'/%3E%3Cpolygon fill='%23444' points='360 600 270 750 450 750'/%3E%3Cpolygon fill='%23999' points='360 600 450 450 270 450'/%3E%3Cpolygon fill='%23666' points='540 600 630 450 450 450'/%3E%3Cpolygon fill='%23222' points='720 600 630 750 810 750'/%3E%3Cpolygon fill='%23FFF' points='900 600 810 750 990 750'/%3E%3Cpolygon fill='%23222' points='900 600 990 450 810 450'/%3E%3Cpolygon fill='%23DDD' points='0 900 90 750 -90 750'/%3E%3Cpolygon fill='%23444' points='180 900 270 750 90 750'/%3E%3Cpolygon fill='%23FFF' points='360 900 450 750 270 750'/%3E%3Cpolygon fill='%23AAA' points='540 900 630 750 450 750'/%3E%3Cpolygon fill='%23FFF' points='720 900 810 750 630 750'/%3E%3Cpolygon fill='%23222' points='900 900 990 750 810 750'/%3E%3Cpolygon fill='%23222' points='1080 300 990 450 1170 450'/%3E%3Cpolygon fill='%23FFF' points='1080 300 1170 150 990 150'/%3E%3Cpolygon points='1080 600 990 750 1170 750'/%3E%3Cpolygon fill='%23666' points='1080 600 1170 450 990 450'/%3E%3Cpolygon fill='%23DDD' points='1080 900 1170 750 990 750'/%3E%3C/g%3E%3C/pattern%3E%3C/defs%3E%3Crect x='0' y='0' fill='url(%23a)' width='100%25' height='100%25'/%3E%3Crect x='0' y='0' fill='url(%23b)' width='100%25' height='100%25'/%3E%3C/svg%3E");
   background-attachment: fixed;
@@ -234,7 +243,8 @@ li > button:hover {
 
 /* Contenedor general del carrusel */
 .carousel-container {
-  max-width: 800px; /* Ajusta el ancho máximo según prefieras */
+  max-width: 800px;
+  /* Ajusta el ancho máximo según prefieras */
   margin: 20px auto;
   border-radius: 10px;
   overflow: hidden;
@@ -271,7 +281,8 @@ li > button:hover {
 /* Indicadores personalizados */
 .carousel .control-dots .dot {
   background-color: #87ceeb;
-  width: 16px; /* Tamaño aumentado */
+  width: 16px;
+  /* Tamaño aumentado */
   height: 16px;
   border-radius: 50%;
   transition: background-color 0.3s ease;
@@ -282,24 +293,29 @@ li > button:hover {
   width: 16px;
   height: 16px;
 }
+
 .text-overlay {
-  margin-top: -80px; /* Ajusta este valor para acercar el texto al carrusel */
+  margin-top: -80px;
+  /* Ajusta este valor para acercar el texto al carrusel */
   text-align: center;
 }
 
 .text-overlay p {
   color: #252423;
-  margin: 2px 0; /* Reduce el margen vertical */
+  margin: 2px 0;
+  /* Reduce el margen vertical */
 }
 
-.text-overlay > .textE {
+.text-overlay>.textE {
   color: #075878;
   text-shadow: 1px 1px #313030;
   font-style: italic;
   font-size: 1.5em;
-  margin-top: 10px; /* Ajusta la separación entre este texto y el carrusel */
+  margin-top: 10px;
+  /* Ajusta la separación entre este texto y el carrusel */
   margin-bottom: 10px;
 }
+
 /* Estilos para el logo en el extremo inferior derecho */
 .logo {
   position: fixed;
@@ -307,7 +323,14 @@ li > button:hover {
   right: 10px;
   max-width: 175px;
   max-height: 110px;
+  transition: transform 0.3s ease, opacity 0.3s ease;
 }
+
+.logo:hover {
+  transform: scale(1.05);
+  opacity: 0.9;
+}
+
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
@@ -330,17 +353,23 @@ li > button:hover {
   .menu ul li a {
     font-size: 14px;
   }
+
   .login-button {
     padding: 8px 16px;
     font-size: 14px;
   }
+
   .text-overlay h1 {
-    font-size: 2.5vw; /* Ajuste para pantalla más pequeña */
+    font-size: 2.5vw;
+    /* Ajuste para pantalla más pequeña */
   }
+
   .text-overlay p {
-    font-size: 1em; /* Ajuste para pantalla más pequeña */
+    font-size: 1em;
+    /* Ajuste para pantalla más pequeña */
   }
 }
+
 /* App.css */
 
 .navbar {
@@ -352,7 +381,8 @@ li > button:hover {
   border: none;
   font-size: 24px;
   cursor: pointer;
-  color: #87ceeb; /* Color de la hamburguesa */
+  color: #87ceeb;
+  /* Color de la hamburguesa */
 }
 
 .menu ul {
@@ -366,6 +396,7 @@ li > button:hover {
 
 .menu a {
   text-decoration: none;
-  color: #ffff; /* Color blanco para el enlace */
+  color: #ffff;
+  /* Color blanco para el enlace */
   font-size: 18px;
 }
