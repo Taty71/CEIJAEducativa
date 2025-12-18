@@ -41,8 +41,8 @@ const insertarEstudianteCompleto = async (registro, archivosMigrados, connection
         console.log('👤 [BD] Insertando estudiante...');
         const estudianteResult = await conn.query(
             `INSERT INTO estudiantes (
-                nombre, apellido, tipoDocumento, paisEmision, dni, cuil, email, telefono, fechaNacimiento, sexo, idDomicilio
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+                nombre, apellido, tipoDocumento, paisEmision, dni, cuil, email, telefono, fechaNacimiento, sexo, idDomicilio, activo
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1)`,
             [
                 registro.datos.nombre,
                 registro.datos.apellido,
@@ -144,12 +144,18 @@ const insertarEstudianteCompleto = async (registro, archivosMigrados, connection
         } else {
             const idAnioPlan = parseInt(registro.planAnioId || registro.datos.planAnio) || null;
             const idEstado = parseInt(registro.idEstadoInscripcion || registro.datos.idEstadoInscripcion) || 1;
-            inscripcionQuery = `INSERT INTO inscripciones (fechaInscripcion, idEstudiante, idModalidad, idAnioPlan, idModulos, idEstadoInscripcion) VALUES (CURDATE(), ?, ?, ?, 0, ?)`;
-            inscripcionParams = [idEstudiante, modalidadId, idAnioPlan, idEstado];
-            console.log('✅ [BD] Preparando inscripción sin módulo:', {
+            // Capturar idDivision desde los datos del registro
+            const idDivision = registro.datos?.idDivision || registro.idDivision || null;
+            console.log(`🏫 [BD] División a inscribir: ${idDivision || 'Ninguna'}`);
+
+            const inscripcionQuery = `INSERT INTO inscripciones (fechaInscripcion, idEstudiante, idModalidad, idAnioPlan, idModulos, idDivision, idEstadoInscripcion) VALUES (CURDATE(), ?, ?, ?, 0, ?, ?)`;
+            const inscripcionParams = [idEstudiante, modalidadId, idAnioPlan, idDivision, idEstado];
+
+            console.log('✅ [BD] Preparando inscripción sin módulo (Presencial/Otro):', {
                 idEstudiante,
                 modalidadId,
                 idAnioPlan,
+                idDivision,
                 idEstado,
                 query: inscripcionQuery
             });
@@ -255,8 +261,133 @@ const procesarUbicaciones = async (datos) => {
     }
 };
 
+// Función para insertar solo inscripción (para estudiantes existentes)
+const insertarInscripcion = async (idEstudiante, registro, archivosMigrados, connection = null) => {
+    const conn = connection || db;
+    try {
+        console.log(`📝 [BD] Insertando/Verificando inscripción para estudiante ID: ${idEstudiante}`);
+
+        // 1. Actualizar datos personales del estudiante
+        // Envolvemos en try/catch para que un error en la actualización de datos (ej. formato fecha) no impida la inscripción
+        try {
+            const datos = registro.datos || {};
+            console.log(`👤 [BD] Intentando actualizar datos personales estudiante ID: ${idEstudiante}`);
+
+            await conn.query(
+                `UPDATE estudiantes SET 
+                    nombre = COALESCE(?, nombre),
+                    apellido = COALESCE(?, apellido),
+                    sexo = COALESCE(?, sexo),
+                    fechaNacimiento = COALESCE(?, fechaNacimiento),
+                    paisEmision = COALESCE(?, paisEmision),
+                    telefono = COALESCE(?, telefono),
+                    email = COALESCE(?, email),
+                    cuil = COALESCE(?, cuil)
+                 WHERE id = ?`,
+                [
+                    datos.nombre || null,
+                    datos.apellido || null,
+                    datos.sexo || null,
+                    datos.fechaNacimiento || null,
+                    datos.paisEmision || null,
+                    datos.telefono || null,
+                    datos.email || null,
+                    datos.cuil || null,
+                    idEstudiante
+                ]
+            );
+            console.log(`   ✅ [BD] Datos personales actualizados`);
+        } catch (updateError) {
+            console.warn(`   ⚠️ [BD] Error no bloqueante al actualizar datos personales: ${updateError.message}`);
+            // No hacemos throw, permitimos que continúe la inscripción
+        }
+
+        const modalidadId = parseInt(registro.modalidadId || registro.datos.modalidadId);
+        const idAnioPlan = parseInt(registro.planAnioId || registro.datos.planAnio) || null;
+
+        // 1. Verificar si ya existe inscripción para esta modalidad/año
+        // (Opcional: Si ya existe, podríamos retornar esa ID, pero el controlador debe decidir si es error o sync)
+
+        // Preparar datos de inscripción
+        let inscripcionQuery, inscripcionParams;
+        let idModulo = null;
+
+        // Procesar módulos si es necesario (similar a insertarEstudianteCompleto)
+        let modulosArray = [];
+        if (registro.datos?.idModulo) {
+            if (Array.isArray(registro.datos.idModulo)) modulosArray = registro.datos.idModulo;
+            else if (registro.datos.idModulo !== '') modulosArray = [registro.datos.idModulo];
+        } else if (registro.idModulo) {
+            if (Array.isArray(registro.idModulo)) modulosArray = registro.idModulo;
+            else if (registro.idModulo !== '') modulosArray = [registro.idModulo];
+        }
+
+        // Fallback: Check modulos field
+        if (modulosArray.length === 0) {
+            const modulosFallback = registro.datos?.modulos || registro.modulos;
+            if (modulosFallback !== undefined && modulosFallback !== null && modulosFallback !== '') {
+                modulosArray = [modulosFallback];
+            }
+        }
+
+        // Parsear a int los módulos
+        modulosArray = modulosArray.map(m => parseInt(m, 10)).filter(m => !isNaN(m));
+
+        if (modalidadId === 2) { // Semipresencial
+            if (modulosArray.length === 0) throw new Error('idModulo requerido para Semipresencial');
+            idModulo = modulosArray[0];
+
+            const idEstado = parseInt(registro.idEstadoInscripcion || registro.datos.idEstadoInscripcion) || 1;
+            inscripcionQuery = `INSERT INTO inscripciones (fechaInscripcion, idEstudiante, idModalidad, idAnioPlan, idModulos, idEstadoInscripcion) VALUES (CURDATE(), ?, ?, ?, ?, ?)`;
+            inscripcionParams = [idEstudiante, modalidadId, idAnioPlan, idModulo, idEstado];
+        } else {
+            const idEstado = parseInt(registro.idEstadoInscripcion || registro.datos.idEstadoInscripcion) || 1;
+            // Capturar idDivision desde los datos del registro
+            const idDivision = registro.datos?.idDivision || registro.idDivision || null;
+            console.log(`🏫 [BD] División a inscribir (Estudiante Existente): ${idDivision || 'Ninguna'}`);
+
+            inscripcionQuery = `INSERT INTO inscripciones (fechaInscripcion, idEstudiante, idModalidad, idAnioPlan, idModulos, idDivision, idEstadoInscripcion) VALUES (CURDATE(), ?, ?, ?, 0, ?, ?)`;
+            inscripcionParams = [idEstudiante, modalidadId, idAnioPlan, idDivision, idEstado];
+        }
+
+        const inscripcionResult = await conn.query(inscripcionQuery, inscripcionParams);
+        const idInscripcion = inscripcionResult[0]?.insertId || inscripcionResult.insertId;
+
+        console.log(`✅ [BD] Nueva inscripción creada con ID: ${idInscripcion}`);
+
+        // 2. Insertar detalle de documentación (archivos entregados)
+        const DocumentacionNameToId = {
+            archivo_dni: 1, archivo_cuil: 2, archivo_fichaMedica: 3,
+            archivo_partidaNacimiento: 4, archivo_solicitudPase: 5,
+            archivo_analiticoParcial: 6, archivo_certificadoNivelPrimario: 7, foto: 8,
+        };
+
+        for (const [campo, rutaArchivo] of Object.entries(archivosMigrados || {})) {
+            const idDoc = DocumentacionNameToId[campo];
+            if (idDoc && rutaArchivo) {
+                try {
+                    await buscarOInsertarDetalleDocumentacion(conn, idInscripcion, idDoc, 'Entregado', new Date(), rutaArchivo);
+                } catch (e) {
+                    console.warn(`⚠️ Error insertando detalle doc ${campo}:`, e.message);
+                }
+            }
+        }
+
+        // 3. Actualizar foto del estudiante si viene nueva
+        if (archivosMigrados['foto']) {
+            await conn.query('UPDATE estudiantes SET foto = ? WHERE id = ?', [archivosMigrados['foto'], idEstudiante]);
+        }
+
+        return { idInscripcion, idEstudiante };
+    } catch (error) {
+        console.error('❌ [BD] Error al insertar inscripción:', error);
+        throw error;
+    }
+};
+
 module.exports = {
     insertarEstudianteCompleto,
     verificarEstudianteExistente,
-    procesarUbicaciones
+    procesarUbicaciones,
+    insertarInscripcion // Nueva función exportada
 };

@@ -25,11 +25,11 @@ import '../../estilos/FormularioMejorado.css';
 import '../../estilos/ModalEditarRegistroCompleto.css';
 
 const ModalEditarRegistro = ({ registro, onClose, onGuardado, onEliminado }) => {
-        const { 
-        showSuccess, 
-        showError, 
-        showWarning, 
-        showInfo, 
+    const {
+        showSuccess,
+        showError,
+        showWarning,
+        showInfo,
         confirmAction,
         alerts,
         modal,
@@ -38,7 +38,7 @@ const ModalEditarRegistro = ({ registro, onClose, onGuardado, onEliminado }) => 
     } = useAlerts();
     const [guardando, setGuardando] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
-    
+
     // Usar el hook de gestión de documentación
     const {
         previews,
@@ -66,12 +66,12 @@ const ModalEditarRegistro = ({ registro, onClose, onGuardado, onEliminado }) => 
         modalidadId: (() => {
             const modalidad = registro.datos?.modalidad || registro.modalidad || '';
             const modalidadIdExistente = registro.datos?.modalidadId || registro.modalidadId;
-            
+
             // Si ya existe modalidadId, convertir a número
             if (modalidadIdExistente) {
                 return parseInt(modalidadIdExistente, 10);
             }
-            
+
             // Mapear modalidad a ID si no existe
             switch (modalidad) {
                 case 'Presencial': return 1;
@@ -84,34 +84,34 @@ const ModalEditarRegistro = ({ registro, onClose, onGuardado, onEliminado }) => 
             const planAnio = registro.datos?.planAnio || registro.planAnio;
             const modalidad = registro.datos?.modalidad || registro.modalidad;
             const dni = registro.datos?.dni || registro.dni;
-            
-            console.log('🔍 [INIT] ===== CALCULANDO MODULOS =====', { 
-                dni, 
-                modalidad, 
+
+            console.log('🔍 [INIT] ===== CALCULANDO MODULOS =====', {
+                dni,
+                modalidad,
                 planAnio,
                 modulosExistente: registro.datos?.modulos || registro.modulos,
                 idModulo: registro.datos?.idModulo,
                 registroCompleto: registro
             });
-            
+
             // Si ya tiene modulos explícito y no está vacío, usarlo
             const modulosExistente = registro.datos?.modulos || registro.modulos;
             console.log('🔍 [INIT] Verificando modulosExistente:', `"${modulosExistente}"`, 'length:', modulosExistente?.length, 'tipo:', typeof modulosExistente);
-            
+
             if (modulosExistente && modulosExistente !== '' && modulosExistente !== null && modulosExistente.trim() !== '') {
                 console.log('✅ [INIT] Usando modulos existente:', modulosExistente);
                 return modulosExistente;
             } else {
                 console.log('❌ [INIT] modulosExistente está vacío o nulo, continuando con idModulo array');
             }
-            
+
             // Si tiene idModulo array, usar el primer elemento válido
             const idModuloArray = registro.datos?.idModulo;
             console.log('🔍 [INIT] Verificando idModulo array:', idModuloArray, 'isArray:', Array.isArray(idModuloArray));
-            
+
             if (idModuloArray && Array.isArray(idModuloArray)) {
                 console.log('🔍 [INIT] Elementos del array idModulo:', idModuloArray.map((id, i) => `[${i}]: "${id}" (${typeof id})`));
-                
+
                 const moduloValido = idModuloArray.find(id => id && id !== '' && id !== null);
                 if (moduloValido) {
                     console.log('✅ [INIT] ¡ÉXITO! Usando idModulo válido:', moduloValido, 'de array:', idModuloArray);
@@ -122,16 +122,18 @@ const ModalEditarRegistro = ({ registro, onClose, onGuardado, onEliminado }) => 
             } else {
                 console.log('❌ [INIT] idModulo no es array o no existe:', idModuloArray);
             }
-            
+
             // Para Semipresencial, verificar si necesitamos hacer algo especial
             if (modalidad === 'Semipresencial' && planAnio) {
                 console.log('⚠️ [INIT] Modalidad Semipresencial detectada - módulo debe ser específico');
                 console.log('🔍 [INIT] PlanAnio:', planAnio, 'debería tener módulos disponibles 6,7,8,9 para Plan C');
             }
-            
+
             console.log('❌ [INIT] ===== NO SE PUDO DETERMINAR MODULOS =====');
             return null;
         })(),
+        sexo: registro.datos?.sexo || registro.sexo || '',
+        idDivision: registro.datos?.idDivision || registro.idDivision || '',
         idEstadoInscripcion: 1 // Estado por defecto para completar
     };
 
@@ -155,7 +157,7 @@ const ModalEditarRegistro = ({ registro, onClose, onGuardado, onEliminado }) => 
     const handleSubmit = async (formValues, { setSubmitting }) => {
         try {
             setGuardando(true);
-            
+
             console.log('� Completando registro pendiente:', formValues);
 
             // Validación de seguridad: planAnio no puede estar vacío
@@ -171,61 +173,63 @@ const ModalEditarRegistro = ({ registro, onClose, onGuardado, onEliminado }) => 
 
             // Procesar campos para envío al backend
             const valoresProcesados = { ...formValues };
-            
+
             // ModalidadId
             if (valoresProcesados.modalidadId !== undefined && valoresProcesados.modalidadId !== null) {
                 valoresProcesados.modalidadId = parseInt(valoresProcesados.modalidadId, 10);
             }
-            
+
             // PlanAnio (ID del plan)
             if (valoresProcesados.planAnio !== undefined && valoresProcesados.planAnio !== null) {
                 valoresProcesados.planAnio = parseInt(valoresProcesados.planAnio, 10);
             }
-            
-                // CRÍTICO: El backend espera 'idModulo' como array
-                // Mapear 'modulos' frontend → 'idModulo' backend
-                let modulosArray = [];
-                
-                // Procesar modulos del formulario
-                if (valoresProcesados.modulos !== undefined && valoresProcesados.modulos !== null) {
-                    const mod = parseInt(valoresProcesados.modulos, 10);
+
+            // CRÍTICO: El backend espera 'idModulo' como array
+            // Mapear 'modulos' frontend → 'idModulo' backend
+            let modulosArray = [];
+
+            // Procesar modulos del formulario
+            if (valoresProcesados.modulos !== undefined && valoresProcesados.modulos !== null) {
+                const mod = parseInt(valoresProcesados.modulos, 10);
+                if (!isNaN(mod)) {
+                    modulosArray = [mod];
+                }
+            }                // Si no hay módulos del formulario, buscar en idModulo del registro original
+            if (modulosArray.length === 0 && registro.datos?.idModulo) {
+                if (Array.isArray(registro.datos.idModulo)) {
+                    const mod = parseInt(registro.datos.idModulo[0], 10);
                     if (!isNaN(mod)) {
                         modulosArray = [mod];
                     }
-                }                // Si no hay módulos del formulario, buscar en idModulo del registro original
-                if (modulosArray.length === 0 && registro.datos?.idModulo) {
-                    if (Array.isArray(registro.datos.idModulo)) {
-                        const mod = parseInt(registro.datos.idModulo[0], 10);
-                        if (!isNaN(mod)) {
-                            modulosArray = [mod];
-                        }
-                    } else if (registro.datos.idModulo !== '') {
-                        const mod = parseInt(registro.datos.idModulo, 10);
-                        if (!isNaN(mod)) {
-                            modulosArray = [mod];
-                        }
+                } else if (registro.datos.idModulo !== '') {
+                    const mod = parseInt(registro.datos.idModulo, 10);
+                    if (!isNaN(mod)) {
+                        modulosArray = [mod];
                     }
                 }
+            }
 
-                // Asignar el array de módulos
-                if (modulosArray.length > 0) {
-                    valoresProcesados.idModulo = modulosArray;
-                    console.log(`✅ [BACKEND MAPPING] Módulos procesados:`, {
-                        original: valoresProcesados.modulos,
-                        procesado: modulosArray,
-                        fuente: 'formulario o registro'
-                    });
-                } else if (valoresProcesados.modalidad === 'Semipresencial') {
-                    console.error('❌ [BACKEND MAPPING] No se encontraron módulos válidos para modalidad Semipresencial');
-                } else {
-                    console.log('ℹ️ [BACKEND MAPPING] No se encontraron módulos (normal para modalidad no-Semipresencial)');
-                }
-                
-                // Eliminar 'modulos' ya que el backend no lo usa
-                delete valoresProcesados.modulos;            console.log('📤 [BACKEND] Valores procesados para envío:', {
+            // Asignar el array de módulos
+            if (modulosArray.length > 0) {
+                valoresProcesados.idModulo = modulosArray;
+                console.log(`✅ [BACKEND MAPPING] Módulos procesados:`, {
+                    original: valoresProcesados.modulos,
+                    procesado: modulosArray,
+                    fuente: 'formulario o registro'
+                });
+            } else if (valoresProcesados.modalidad === 'Semipresencial') {
+                console.error('❌ [BACKEND MAPPING] No se encontraron módulos válidos para modalidad Semipresencial');
+            } else {
+                console.log('ℹ️ [BACKEND MAPPING] No se encontraron módulos (normal para modalidad no-Semipresencial)');
+            }
+
+            // NO Eliminar 'modulos' para que sirva de fallback en el backend
+            // delete valoresProcesados.modulos; 
+            console.log('📤 [BACKEND] Valores procesados para envío:', {
                 modalidadId: valoresProcesados.modalidadId,
                 planAnio: valoresProcesados.planAnio,
                 idModulo: valoresProcesados.idModulo,
+                modulos: valoresProcesados.modulos, // Log para verificar
                 idEstadoInscripcion: valoresProcesados.idEstadoInscripcion
             });
 
@@ -247,12 +251,12 @@ const ModalEditarRegistro = ({ registro, onClose, onGuardado, onEliminado }) => 
                     modalidad: valoresProcesados.modalidad,
                     modalidadId: valoresProcesados.modalidadId
                 });
-                
-                const moduloValid = valoresProcesados.idModulo && 
-                                   valoresProcesados.idModulo !== '' && 
-                                   valoresProcesados.idModulo !== null && 
-                                   !isNaN(valoresProcesados.idModulo);
-                
+
+                const moduloValid = valoresProcesados.idModulo &&
+                    valoresProcesados.idModulo !== '' &&
+                    valoresProcesados.idModulo !== null &&
+                    !isNaN(valoresProcesados.idModulo);
+
                 if (!moduloValid) {
                     console.log('❌ [VALIDACION] Campo idModulo inválido para Semipresencial');
                     console.log('🔍 [VALIDACION] Datos disponibles:', {
@@ -261,7 +265,7 @@ const ModalEditarRegistro = ({ registro, onClose, onGuardado, onEliminado }) => 
                         idModuloOriginal: registro.datos?.idModulo,
                         modulosOriginal: formValues.modulos
                     });
-                    
+
                     // Para Semipresencial, idModulo es obligatorio y debe ser específico
                     showError('❌ Para modalidad Semipresencial, debe seleccionar un módulo específico. Verifique que el módulo esté seleccionado correctamente.');
                     setGuardando(false);
@@ -320,74 +324,74 @@ const ModalEditarRegistro = ({ registro, onClose, onGuardado, onEliminado }) => 
             console.log('🔍 [DEBUG SUBMIT] formValues.modulos:', formValues.modulos);
 
             formData.append('registroPendienteId', registro.dni);
-            
+
             let resultado;
-            
+
             console.log('🎯 FLUJO: Llamando SIEMPRE a completarRegistro (el backend decide si está completa)');
-            
+
             // SIEMPRE llamar al endpoint /procesar - el backend decide el estado final
             // 1. Subir archivos nuevos (si hay) usando PUT
             if (Object.keys(previews).length > 0) {
                 console.log('📎 Subiendo archivos nuevos antes del procesamiento...');
                 await registrosPendientesService.actualizarRegistroPendiente(registro.dni, formValues, previews);
             }
-            
+
             // 2. Procesar registro (migrar y guardar en BD)
             resultado = await registrosPendientesService.completarRegistro(formData);
 
-                console.log('✅ Respuesta de completar registro:', resultado);
+            console.log('✅ Respuesta de completar registro:', resultado);
 
             // Verificar la respuesta del backend según el estado
             if (resultado && resultado.estado === 'PROCESADO') {
                 // CASO 1: Documentación COMPLETA - estudiante creado en BD
                 const mensaje = resultado.mensaje || '✅ Registro procesado exitosamente - Estudiante creado en base de datos';
                 showSuccess(mensaje);
-                
+
                 console.log('✅ [PROCESADO] Estudiante creado en BD:', {
                     idEstudiante: resultado.idEstudiante,
                     estado: resultado.estado,
                     mensaje: resultado.mensaje
                 });
-                
+
                 onGuardado && onGuardado(registro, 'completado', resultado);
-                
+
             } else if (resultado && resultado.estado === 'PENDIENTE') {
                 // CASO 2: Documentación INCOMPLETA - registro actualizado en JSON
                 const progreso = resultado.progreso || 'N/A';
                 const mensaje = `⚠️ Documentación incompleta (${progreso}) - Registro actualizado\n\n${resultado.motivoPendiente || 'Faltan documentos requeridos'}`;
-                
+
                 showWarning(mensaje);
-                
+
                 console.log('⚠️ [PENDIENTE] Documentación incompleta:', {
                     progreso: resultado.progreso,
                     archivosActualizados: resultado.archivosActualizados,
                     faltantes: resultado.detalles?.faltantesBasicos,
                     motivoPendiente: resultado.motivoPendiente
                 });
-                
+
                 // No cerrar modal - permitir que usuario suba archivos faltantes
                 // Actualizar lista de registros
                 onGuardado && onGuardado(registro, 'actualizado_incompleto', resultado);
                 return; // NO cerrar el modal
-                
+
             } else if (resultado && resultado.yaExistia === true) {
                 // CASO 3: Estudiante ya existía en BD - registro sincronizado
                 const mensaje = resultado.mensaje || 'Estudiante ya registrado - sincronizado correctamente';
                 showSuccess(`✅ ${mensaje}`);
                 onGuardado && onGuardado(registro, 'ya_procesado', resultado);
                 console.log('✅ Registro sincronizado (ya existía):', resultado);
-                
+
             } else if (resultado && resultado.success === false) {
                 // CASO 4: Error explícito del backend
                 showError(resultado.message || 'Error al completar el registro');
                 throw new Error(resultado.message || 'Error al completar el registro');
-                
+
             } else if (resultado && (resultado.insertId || resultado.insertId === 0)) {
                 // CASO 5: Respuesta legacy (compatibilidad)
                 const mensaje = resultado.message || '✅ Registro procesado exitosamente';
                 showSuccess(mensaje);
                 onGuardado && onGuardado(registro, 'completado', resultado);
-                
+
             } else {
                 // CASO 6: Respuesta inesperada
                 showError('❌ Error: No se pudo completar el registro. Verifique la respuesta del servidor.');
@@ -395,33 +399,39 @@ const ModalEditarRegistro = ({ registro, onClose, onGuardado, onEliminado }) => 
                 return; // NO cerrar modal
             }
 
-            onClose();
+            // onClose(); // Comentado para permitir que se lea el mensaje antes de cerrar
+            // La función onGuardado o el usuario cerrarán el modal, o podemos cerrarlo con delay aquí si no hay onGuardado
+            if (!onGuardado) {
+                setTimeout(() => {
+                    onClose();
+                }, 2000);
+            }
 
         } catch (error) {
             console.error('❌ Error al procesar registro:', error);
-            
+
             // Manejo específico para errores HTTP de Axios
             if (error.response) {
                 const status = error.response.status;
                 const errorData = error.response.data;
-                
+
                 console.log('🔍 [AXIOS ERROR] Status:', status, 'Data:', errorData);
-                
+
                 // Error 409 - Estudiante ya existe con inscripción activa
                 if (status === 409) {
                     const mensajeBackend = errorData?.message || 'El estudiante ya existe en la base de datos';
                     const idEstudiante = errorData?.idEstudiante;
-                    
+
                     console.log('⚠️ [409] Estudiante ya existe con inscripción activa:', {
                         dni: registro.dni,
                         idEstudiante,
                         mensaje: mensajeBackend
                     });
-                    
+
                     // Mostrar mensaje detallado al usuario
                     showWarning(`⚠️ ${mensajeBackend}`);
                     showInfo('ℹ️ El registro se marcará como procesado y se eliminará de pendientes.');
-                    
+
                     // Marcar como procesado y cerrar modal
                     if (onGuardado) {
                         onGuardado(registro, 'ya_procesado', {
@@ -434,7 +444,7 @@ const ModalEditarRegistro = ({ registro, onClose, onGuardado, onEliminado }) => 
                     onClose();
                     return;
                 }
-                
+
                 // Error 400 - Bad Request (puede incluir validaciones de modulos)
                 if (status === 400) {
                     const mensaje = errorData?.mensaje || errorData?.message || 'Error de validación';
@@ -442,7 +452,7 @@ const ModalEditarRegistro = ({ registro, onClose, onGuardado, onEliminado }) => 
                     showError(`❌ Error de validación: ${mensaje}`);
                     return;
                 }
-                
+
                 // Error 500 - Error interno del servidor
                 if (status === 500) {
                     const mensaje = errorData?.mensaje || errorData?.message || 'Error interno del servidor';
@@ -450,26 +460,26 @@ const ModalEditarRegistro = ({ registro, onClose, onGuardado, onEliminado }) => 
                     showError(`❌ Error del servidor: ${mensaje}`);
                     return;
                 }
-                
+
                 // Otros errores HTTP
                 const mensajeGenerico = errorData?.mensaje || errorData?.message || `Error HTTP ${status}`;
                 showError(`❌ Error: ${mensajeGenerico}`);
                 return;
             }
-            
+
             // Manejo de errores sin response (red, timeout, etc.)
             if (error.request) {
                 console.log('🌐 [AXIOS NETWORK] Error de red o timeout:', error.request);
                 showError('❌ Error de conexión. Verifique su conexión a internet e intente nuevamente.');
                 return;
             }
-            
+
             // Error en la configuración de la request
             const errorMessage = error.message || error.toString();
             console.log('⚙️ [AXIOS CONFIG] Error de configuración:', errorMessage);
-            
+
             // Verificar si el "error" en realidad contiene un mensaje de éxito (caso raro)
-            if (errorMessage.includes('actualizado exitosamente') || 
+            if (errorMessage.includes('actualizado exitosamente') ||
                 errorMessage.includes('completado exitosamente') ||
                 (errorMessage.includes('exitosamente') && !errorMessage.toLowerCase().includes('error al')) ||
                 errorMessage.includes('correctamente')) {
@@ -479,7 +489,7 @@ const ModalEditarRegistro = ({ registro, onClose, onGuardado, onEliminado }) => 
                 onClose();
                 return;
             }
-            
+
             // Error genérico
             showError(`❌ Error al procesar el registro: ${errorMessage}`);
         } finally {
@@ -491,7 +501,7 @@ const ModalEditarRegistro = ({ registro, onClose, onGuardado, onEliminado }) => 
     // Función para eliminar registro
     const handleEliminar = async () => {
         const confirmado = await confirmAction('¿Está seguro de que desea eliminar este registro permanentemente?');
-        
+
         if (!confirmado) {
             return;
         }
@@ -499,7 +509,7 @@ const ModalEditarRegistro = ({ registro, onClose, onGuardado, onEliminado }) => 
         try {
             setGuardando(true);
             const resultado = await registrosPendientesService.eliminarRegistroPendiente(registro.dni);
-            
+
             if (resultado.success) {
                 showSuccess('🗑️ Registro eliminado de pendientes');
                 onEliminado && onEliminado(registro);
@@ -522,10 +532,10 @@ const ModalEditarRegistro = ({ registro, onClose, onGuardado, onEliminado }) => 
         if (registro.archivos || registro.datos || registro.modalidad) {
             const planAnio = registro.datos?.planAnio || registro.planAnio;
             const modalidad = registro.datos?.modalidad || registro.modalidad;
-            
+
             // Calcular modulos correcto para sessionStorage
             let modulosCalculado = registro.datos?.modulos || registro.modulos;
-            
+
             // Si modulos está vacío pero hay idModulo array, usar el primer elemento válido
             if ((!modulosCalculado || modulosCalculado === '') && registro.datos?.idModulo && Array.isArray(registro.datos.idModulo)) {
                 const moduloValido = registro.datos.idModulo.find(id => id && id !== '' && id !== null);
@@ -534,7 +544,7 @@ const ModalEditarRegistro = ({ registro, onClose, onGuardado, onEliminado }) => 
                     console.log('🔧 [SESSION] Calculando modulos desde idModulo:', moduloValido);
                 }
             }
-            
+
             // Para Semipresencial, NO auto-calcular modulos desde planAnio
             // Los módulos son independientes (planAnio=6 → módulos pueden ser 6,7,8,9)
             if ((!modulosCalculado || modulosCalculado === '') && modalidad === 'Semipresencial') {
@@ -542,7 +552,7 @@ const ModalEditarRegistro = ({ registro, onClose, onGuardado, onEliminado }) => 
                 console.log('� [SESSION] PlanAnio', planAnio, 'requiere selección de módulo específico por el usuario');
                 // Dejar modulosCalculado vacío para que el usuario seleccione
             }
-            
+
             // Guardar todos los datos del registro en sessionStorage para que los componentes los procesen
             const datosRegistroPendiente = {
                 archivosExistentes: registro.archivos || {},
@@ -553,7 +563,7 @@ const ModalEditarRegistro = ({ registro, onClose, onGuardado, onEliminado }) => 
                 modulos: modulosCalculado,
                 idModulo: registro.datos?.idModulo || registro.idModulo || (modulosCalculado ? [modulosCalculado] : [])
             };
-            
+
             console.log('💾 [SESSION] Guardando datos en sessionStorage para modal:', datosRegistroPendiente);
             console.log('🔍 [SESSION] Valores calculados:', {
                 dni: registro.dni,
@@ -564,20 +574,21 @@ const ModalEditarRegistro = ({ registro, onClose, onGuardado, onEliminado }) => 
                 idModuloOriginal: registro.datos?.idModulo
             });
             sessionStorage.setItem('datosRegistroPendiente', JSON.stringify(datosRegistroPendiente));
-            
+
             // Procesar archivos existentes manualmente
             const previewsExistentes = {};
             Object.entries(registro.archivos).forEach(([tipoDocumento, rutaArchivo]) => {
                 if (rutaArchivo) {
                     const rutaLimpia = rutaArchivo.replace(/\\/g, '/');
                     const nombreArchivo = rutaLimpia.split('/').pop();
-                    const urlArchivo = `http://localhost:5000${rutaArchivo}`;
-                    
+                    const rutaNormalizada = rutaLimpia.startsWith('/') ? rutaLimpia : `/${rutaLimpia}`;
+                    const urlArchivo = `http://localhost:5000${rutaNormalizada}`;
+
                     const extension = nombreArchivo.split('.').pop().toLowerCase();
-                    const tipoArchivo = extension === 'pdf' ? 'application/pdf' : 
-                                      ['jpg', 'jpeg', 'png', 'gif'].includes(extension) ? `image/${extension}` : 
-                                      'application/octet-stream';
-                    
+                    const tipoArchivo = extension === 'pdf' ? 'application/pdf' :
+                        ['jpg', 'jpeg', 'png', 'gif'].includes(extension) ? `image/${extension}` :
+                            'application/octet-stream';
+
                     previewsExistentes[tipoDocumento] = {
                         url: urlArchivo,
                         type: tipoArchivo,
@@ -589,13 +600,13 @@ const ModalEditarRegistro = ({ registro, onClose, onGuardado, onEliminado }) => 
                     };
                 }
             });
-            
+
             // Actualizar previews con archivos existentes
             setPreviews(prevPreviews => ({
                 ...prevPreviews,
                 ...previewsExistentes
             }));
-            
+
             console.log('📋 Archivos existentes cargados en modal:', previewsExistentes);
         }
     }, [registro, setPreviews, initialValues.modalidadId]);
@@ -617,7 +628,7 @@ const ModalEditarRegistro = ({ registro, onClose, onGuardado, onEliminado }) => 
     return (
         <div className="modal-overlay" onClick={(e) => e.target === e.currentTarget && onClose()}>
             <div className="modal-container registro-modal-grande">
-                
+
                 <Formik
                     initialValues={initialValues}
                     validationSchema={validationSchema}
@@ -628,7 +639,7 @@ const ModalEditarRegistro = ({ registro, onClose, onGuardado, onEliminado }) => 
                 >
                     {({ values: formikValues, setFieldValue: formikSetFieldValue, isSubmitting }) => (
                         <Form encType="multipart/form-data">
-                            
+
                             {/* Header igual que RegistroEstd */}
                             <div className="registro-header-container">
                                 <div className="registro-header-row">
@@ -648,7 +659,7 @@ const ModalEditarRegistro = ({ registro, onClose, onGuardado, onEliminado }) => 
                             <div className="mensaje-registro-pendiente">
                                 <h4>🔄 Completando Registro Pendiente</h4>
                                 <p>
-                                    Los datos del registro pendiente han sido cargados. 
+                                    Los datos del registro pendiente han sido cargados.
                                     Complete o verifique la información y documentación para finalizar la inscripción.
                                 </p>
                             </div>
@@ -658,11 +669,11 @@ const ModalEditarRegistro = ({ registro, onClose, onGuardado, onEliminado }) => 
                                 <div className="form-datos">
                                     <DatosPersonales />
                                 </div>
-                                
+
                                 <div className="form-domicilio">
                                     <Domicilio esAdmin={true} />
                                 </div>
-                                
+
                                 <div className="form-eleccion">
                                     <ModalidadSelection
                                         modalidad={formikValues.modalidad}
@@ -673,7 +684,7 @@ const ModalEditarRegistro = ({ registro, onClose, onGuardado, onEliminado }) => 
                                         handleChange={(e) => {
                                             const { name, value } = e.target;
                                             formikSetFieldValue(name, value);
-                                            
+
                                             // Para Semipresencial, NO auto-actualizar modulos desde planAnio
                                             // Los módulos deben ser seleccionados específicamente por el usuario
                                             if (name === 'planAnio' && formikValues.modalidad === 'Semipresencial') {
@@ -681,13 +692,13 @@ const ModalEditarRegistro = ({ registro, onClose, onGuardado, onEliminado }) => 
                                                 formikSetFieldValue('modulos', '');
                                                 console.log(`🔄 Plan cambió en Semipresencial - limpiando módulos para nueva selección`);
                                             }
-                                            
+
                                             // Si cambia a modalidad Semipresencial, limpiar modulos para selección manual
                                             if (name === 'modalidad' && value === 'Semipresencial') {
                                                 formikSetFieldValue('modulos', '');
                                                 console.log(`🔄 Cambio a Semipresencial - módulos debe ser seleccionado manualmente`);
                                             }
-                                            
+
                                             // Si cambia desde Semipresencial, limpiar modulos
                                             if (name === 'modalidad' && formikValues.modalidad === 'Semipresencial' && value !== 'Semipresencial') {
                                                 formikSetFieldValue('modulos', '');
@@ -696,21 +707,23 @@ const ModalEditarRegistro = ({ registro, onClose, onGuardado, onEliminado }) => 
                                         }}
                                         editMode={{}}
                                         formData={{}}
-                                        setFormData={() => {}}
+                                        setFormData={() => { }}
+                                        isAdmin={true}
+                                        division={formikValues.idDivision}
                                     />
                                 </div>
-                                
+
                                 <div className="left-container button-stack">
                                     <h4>Acciones</h4>
-                                    
-                                    <button 
-                                        type="button" 
-                                        className="boton-principal" 
+
+                                    <button
+                                        type="button"
+                                        className="boton-principal"
                                         onClick={() => setIsModalOpen(true)}
                                     >
                                         Adjuntar Documentación
                                     </button>
-                                    
+
                                     {guardando || isSubmitting ? (
                                         <BotonCargando loading={true}>
                                             Completando Registro...
@@ -720,12 +733,12 @@ const ModalEditarRegistro = ({ registro, onClose, onGuardado, onEliminado }) => 
                                             ✅ Completar Registro
                                         </button>
                                     )}
-                                    
+
                                     <EstadoInscripcion
                                         value={formikValues.idEstadoInscripcion}
                                         handleChange={e => formikSetFieldValue('idEstadoInscripcion', e.target.value)}
                                     />
-                                    
+
                                     <button
                                         type="button"
                                         onClick={handleEliminar}
@@ -735,7 +748,7 @@ const ModalEditarRegistro = ({ registro, onClose, onGuardado, onEliminado }) => 
                                         🗑️ Eliminar Registro
                                     </button>
                                 </div>
-                                
+
                                 {/* Modal de documentación igual que RegistroEstd */}
                                 {isModalOpen && (
                                     <FormDocumentacion
@@ -751,7 +764,7 @@ const ModalEditarRegistro = ({ registro, onClose, onGuardado, onEliminado }) => 
                     )}
                 </Formik>
             </div>
-            
+
             {/* Sistema de Alertas y Modales de Confirmación */}
             <AlertaMens
                 mode="floating"

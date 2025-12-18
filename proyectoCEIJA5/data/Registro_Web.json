@@ -43,229 +43,12 @@
     "motivoPendiente": "Faltan: archivo_fichaMedica, archivo_partidaNacimiento, archivo_analiticoParcial"
   },
   {
-    "id": "1759887321575",
-    "timestamp": "2025-10-08T01:35:21.575Z",
-    "fechaRegistro": "7/10/2025",
-    "horaRegistro": "10:35:21",
-    "tipo": "WEB_REGISTRATION",
-    "estado": "PROCESADO_A_PENDIENTES",
-    "datos": {
-      "nombre": "Patricia ",
-      "apellido": "Machado",
-      "dni": "45125874",
-      "cuil": "20-45125874-6",
-      "email": "crisbmaia50@gmail.com",
-      "telefono": "03517845214",
-      "fechaNacimiento": "2002-05-15",
-      "tipoDocumento": "DNI",
-      "paisEmision": "Argentina",
-      "calle": "Francisco Miranda",
-      "numero": "631",
-      "barrio": "11",
-      "localidad": "108",
-      "provincia": "5",
-      "modalidad": "Presencial",
-      "modalidadId": "1",
-      "planAnio": "2",
-      "modulos": "",
-      "idModulo": null,
-      "usuario": "usuario_web",
-      "ipAddress": "::1",
-      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36"
-    },
-    "archivos": {
-      "foto": "/archivosDocWeb/Patricia_Machado_45125874_foto.png",
-      "archivo_dni": "/archivosDocWeb/Patricia_Machado_45125874_archivo_dni.pdf",
-      "archivo_cuil": "/archivosDocWeb/Patricia_Machado_45125874_archivo_cuil.pdf",
-      "archivo_fichaMedica": "/archivosDocWeb/Patricia_Machado_45125874_archivo_fichaMedica.pdf",
-      "archivo_partidaNacimiento": "/archivosDocWeb/Patricia_Machado_45125874_archivo_partidaNacimiento.pdf"
-    },
-    "observaciones": "Movido a registros pendientes el 8/10/2025 - Faltan: archivo_analiticoParcial",
-    "fechaMovimiento": "2025-10-08T04:27:32.454Z",
-    "motivoPendiente": "Faltan: archivo_analiticoParcial"
-  },
-  {
-    "id": "1759922701679",
-    "timestamp": "2025-10-08T11:25:01.679Z",
-    "fechaRegistro": "8/10/2025",
-    "horaRegistro": "08:25:01",
-    "tipo": "WEB_REGISTRATION",
-    "estado": "PROCESADO_A_PENDIENTES",
-    "datos": {
-      "nombre": "Carlos",
-      "apellido": "Mercado",
-      "dni": "39458569",
-      "cuil": "20-39458569-7",
-      "email": "crisbmaia50@gmail.com",
-      "telefono": "035156789415",
-      "fechaNacimiento": "1995-08-16",
-      "tipoDocumento": "DNI",
-      "paisEmision": "Argentina",
-      "calle": "Mitre",
-      "numero": "952",
-      "barrio": "1",
-      "localidad": "108",
-      "provincia": "5",
-      "modalidad": "Semipresencial",
-      "modalidadId": "2",
-      "planAnio": "4",
-      "modulos": "",
-      "idModulo": [
-        "1",
-        ""
-      ],
-      "usuario": "usuario_web",
-      "ipAddress": "::1",
-      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36"
-    },
-    "archivos": {
-      "archivo_dni": "/archivosDocWeb/Carlos_Mercado_39458569_archivo_dni.pdf",
-      "archivo_cuil": "/archivosDocWeb/Carlos_Mercado_39458569_archivo_cuil.pdf",
-      "foto": "/archivosDocWeb/Carlos_Mercado_39458569_foto.png",
-      "archivo_fichaMedica": "/archivosDocWeb/Carlos_Mercado_39458569_archivo_fichaMedica.pdf"
-    },
-    "observaciones": "Procesado por admin y movido a registros pendientes el 20/11/2025 - Faltan: archivo_partidaNacimiento, archivo_certificadoNivelPrimario",
-    "fechaMovimiento": "2025-11-20T05:06:46.544Z",
-    "fechaActualizacion": "2025-11-20T05:06:46.544Z",
-    "motivoPendiente": "Faltan: archivo_partidaNacimiento, archivo_certificadoNivelPrimario"
-  },
-  {
-    "id": "1759936566233",
-    "timestamp": "2025-10-08T15:16:06.233Z",
-    "fechaRegistro": "8/10/2025",
-    "horaRegistro": "12:16:06",
-    "tipo": "WEB_REGISTRATION",
-    "estado": "PENDIENTE",
-    "datos": {
-      "nombre": "Fernanda",
-      "apellido": "Ceballos",
-      "dni": "36256456",
-      "cuil": "20-36256456-6",
-      "email": "crisbmaia50@gmail.com",
-      "telefono": "035156123963",
-      "fechaNacimiento": "1993-05-06",
-      "tipoDocumento": "DNI",
-      "paisEmision": "Argentina",
-      "calle": "Francisco Miranda",
-      "numero": "235",
-      "barrio": "11",
-      "localidad": "108",
-      "provincia": "5",
-      "modalidad": "Semipresencial",
-      "modalidadId": "2",
-      "planAnio": "4",
-      "modulos": "",
-      "idModulo": [
-        "1",
-        ""
-      ],
-      "usuario": "usuario_web",
-      "ipAddress": "::1",
-      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36"
-    },
-    "archivos": {
-      "foto": "/archivosDocWeb/Fernanda_Ceballos_36256456_foto.png",
-      "archivo_dni": "/archivosDocWeb/Fernanda_Ceballos_36256456_archivo_dni.pdf",
-      "archivo_cuil": "/archivosDocWeb/Fernanda_Ceballos_36256456_archivo_cuil.pdf"
-    },
-    "observaciones": "Registro web realizado el 8/10/2025 a las 12:16:06"
-  },
-  {
-    "id": "1761941274268",
-    "timestamp": "2025-10-31T20:07:54.268Z",
-    "fechaRegistro": "31/10/2025",
-    "horaRegistro": "05:07:54",
-    "tipo": "WEB_REGISTRATION",
-    "estado": "PENDIENTE",
-    "datos": {
-      "nombre": "Leonela",
-      "apellido": "Bustamante",
-      "dni": "40258852",
-      "cuil": "20-40258852-8",
-      "email": "crisbmaia50@gmail.com",
-      "telefono": "03516689456",
-      "fechaNacimiento": "1997-02-03",
-      "tipoDocumento": "DNI",
-      "paisEmision": "Argentina",
-      "calle": "Sucre",
-      "numero": "368",
-      "barrio": "11",
-      "localidad": "108",
-      "provincia": "5",
-      "modalidad": "Semipresencial",
-      "modalidadId": "2",
-      "planAnio": "5",
-      "modulos": "",
-      "idModulo": [
-        "4",
-        ""
-      ],
-      "usuario": "usuario_web",
-      "ipAddress": "::1",
-      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36"
-    },
-    "archivos": {
-      "foto": "/archivosDocWeb/Leonela_Bustamante_40258852_foto.png",
-      "archivo_dni": "/archivosDocWeb/Leonela_Bustamante_40258852_archivo_dni.pdf",
-      "archivo_fichaMedica": "/archivosDocWeb/Leonela_Bustamante_40258852_archivo_fichaMedica.pdf"
-    },
-    "observaciones": "Registro web realizado el 31/10/2025 a las 05:07:54"
-  },
-  {
-    "id": "1761943089662",
-    "timestamp": "2025-10-31T20:38:09.662Z",
-    "fechaRegistro": "31/10/2025",
-    "horaRegistro": "05:38:09",
-    "tipo": "WEB_REGISTRATION",
-    "estado": "PROCESADO_Y_Completa",
-    "datos": {
-      "nombre": "David",
-      "apellido": "Cárdena",
-      "dni": "44501105",
-      "cuil": "20-44501105-4",
-      "email": "crisbmaia50@gmail.com",
-      "telefono": "03517845841",
-      "fechaNacimiento": "2001-12-02",
-      "tipoDocumento": "DNI",
-      "paisEmision": "Argentina",
-      "calle": "Balcarce",
-      "numero": "125",
-      "barrio": "10",
-      "localidad": "108",
-      "provincia": "5",
-      "modalidad": "Semipresencial",
-      "modalidadId": "2",
-      "planAnio": "5",
-      "modulos": "",
-      "idModulo": [
-        "4",
-        ""
-      ],
-      "usuario": "usuario_web",
-      "ipAddress": "::1",
-      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/141.0.0.0 Safari/537.36"
-    },
-    "archivos": {
-      "foto": "/archivosDocWeb/David_Cárdena_44501105_foto.png",
-      "archivo_dni": "/archivosDocWeb/David_Cárdena_44501105_archivo_dni.pdf",
-      "archivo_cuil": "/archivosDocWeb/David_Cárdena_44501105_archivo_cuil.pdf",
-      "archivo_fichaMedica": "/archivosDocWeb/David_Cárdena_44501105_archivo_fichaMedica.pdf",
-      "archivo_partidaNacimiento": "/archivosPendientes/David_Cárdena_44501105_archivo_partidaNacimiento.pdf",
-      "archivo_analiticoParcial": "/archivosPendientes/David_Cárdena_44501105_archivo_analiticoParcial.pdf"
-    },
-    "observaciones": "Registro web realizado el 31/10/2025 a las 05:38:09\nMovido a pendientes por gestor.\nProcesado automáticamente: DNI ya existe en la base de datos (idEstudiante=168).",
-    "fechaMovimiento": "2025-11-01T14:35:00.400Z",
-    "fechaActualizacion": "2025-11-01T14:35:00.400Z",
-    "motivoPendiente": "Error en base de datos: Request failed with status code 400",
-    "fechaProcesado": "2025-11-01T14:35:00.406Z"
-  },
-  {
     "id": "1762810826462",
     "timestamp": "2025-11-10T21:40:26.463Z",
     "fechaRegistro": "10/11/2025",
     "horaRegistro": "06:40:26",
     "tipo": "WEB_REGISTRATION",
-    "estado": "PENDIENTE",
+    "estado": "PROCESADO_A_PENDIENTES",
     "datos": {
       "nombre": "Cristian",
       "apellido": "Montellano",
@@ -299,46 +82,10 @@
       "archivo_cuil": "/archivosDocWeb/Cristian_Montellano_45125563_archivo_cuil.pdf",
       "archivo_certificadoNivelPrimario": "/archivosDocWeb/Cristian_Montellano_45125563_archivo_certificadoNivelPrimario.pdf"
     },
-    "observaciones": "Registro web realizado el 10/11/2025 a las 06:40:26"
-  },
-  {
-    "id": "1763684956644",
-    "timestamp": "2025-11-21T00:29:16.644Z",
-    "fechaRegistro": "20/11/2025",
-    "horaRegistro": "09:29:16",
-    "tipo": "WEB_REGISTRATION",
-    "estado": "PENDIENTE",
-    "datos": {
-      "nombre": "Manuel",
-      "apellido": "Gutierrez",
-      "dni": "30900600",
-      "cuil": "20-30900600-4",
-      "email": "manu@gmail.com",
-      "telefono": "03518945680",
-      "fechaNacimiento": "1999-05-25",
-      "tipoDocumento": "DNI",
-      "paisEmision": "Argentina",
-      "calle": "San Martin",
-      "numero": "568",
-      "barrio": "2",
-      "localidad": "108",
-      "provincia": "5",
-      "modalidad": "Semipresencial",
-      "modalidadId": "2",
-      "planAnio": "5",
-      "modulos": "",
-      "idModulo": [
-        "4",
-        ""
-      ],
-      "usuario": "usuario_web",
-      "ipAddress": "::1",
-      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36"
-    },
-    "archivos": {
-      "foto": "/archivosDocWeb/Manuel_Gutierrez_30900600_foto.png"
-    },
-    "observaciones": "Registro web realizado el 20/11/2025 a las 09:29:16"
+    "observaciones": "Registro ya estaba en pendientes, contabilizado como procesado a pendientes el 16/12/2025",
+    "fechaMovimiento": "2025-12-17T01:10:04.077Z",
+    "fechaActualizacion": "2025-12-17T01:10:04.077Z",
+    "motivoPendiente": "Ya existe en pendientes"
   },
   {
     "id": "1763749158188",
@@ -346,7 +93,7 @@
     "fechaRegistro": "21/11/2025",
     "horaRegistro": "03:19:18",
     "tipo": "WEB_REGISTRATION",
-    "estado": "PENDIENTE",
+    "estado": "PROCESADO_A_PENDIENTES",
     "datos": {
       "nombre": "Abel",
       "apellido": "Lopez",
@@ -377,7 +124,10 @@
     "archivos": {
       "archivo_cuil": "/archivosDocWeb/Abel_Lopez_45123563_archivo_cuil.pdf"
     },
-    "observaciones": "Registro web realizado el 21/11/2025 a las 03:19:18"
+    "observaciones": "Movido a registros pendientes el 16/12/2025 - ⚠️ Documentación incompleta (1/5) para Semipresencial - Registro quedará PENDIENTE. Faltan: 📷 Foto 4x4, 📄 DNI, 🏥 Ficha Médica CUS, 📜 Partida de Nacimiento",
+    "fechaMovimiento": "2025-12-17T01:42:53.206Z",
+    "fechaActualizacion": "2025-12-17T01:42:53.206Z",
+    "motivoPendiente": "⚠️ Documentación incompleta (1/5) para Semipresencial - Registro quedará PENDIENTE. Faltan: 📷 Foto 4x4, 📄 DNI, 🏥 Ficha Médica CUS, 📜 Partida de Nacimiento"
   },
   {
     "id": "1763751914825",
@@ -425,7 +175,7 @@
     "fechaRegistro": "2/12/2025",
     "horaRegistro": "11:53:17",
     "tipo": "WEB_REGISTRATION",
-    "estado": "PENDIENTE",
+    "estado": "PROCESADO_A_PENDIENTES",
     "datos": {
       "nombre": "Uriel",
       "apellido": "Santos",
@@ -455,7 +205,10 @@
       "foto": "/archivosDocWeb/Uriel_Santos_42125541_foto.png",
       "archivo_partidaNacimiento": "/archivosDocWeb/Uriel_Santos_42125541_archivo_partidaNacimiento.pdf"
     },
-    "observaciones": "Registro web realizado el 2/12/2025 a las 11:53:17"
+    "observaciones": "Procesado por admin y movido a registros pendientes el 16/12/2025 - Faltan: archivo_cuil, archivo_fichaMedica, archivo_analiticoParcial",
+    "fechaMovimiento": "2025-12-17T01:48:20.708Z",
+    "fechaActualizacion": "2025-12-17T01:48:20.708Z",
+    "motivoPendiente": "Faltan: archivo_cuil, archivo_fichaMedica, archivo_analiticoParcial"
   },
   {
     "id": "1764732970497",
@@ -463,7 +216,7 @@
     "fechaRegistro": "3/12/2025",
     "horaRegistro": "12:36:10",
     "tipo": "WEB_REGISTRATION",
-    "estado": "PENDIENTE",
+    "estado": "PROCESADO_A_PENDIENTES",
     "datos": {
       "nombre": "Jorgelina",
       "apellido": "Martinez",
@@ -494,7 +247,10 @@
       "archivo_partidaNacimiento": "/archivosDocWeb/Jorgelina_Martinez_45125896_archivo_partidaNacimiento.pdf",
       "archivo_solicitudPase": "/archivosDocWeb/Jorgelina_Martinez_45125896_archivo_solicitudPase.pdf"
     },
-    "observaciones": "Registro web realizado el 3/12/2025 a las 12:36:10"
+    "observaciones": "Registro ya estaba en pendientes, contabilizado como procesado a pendientes el 16/12/2025",
+    "fechaMovimiento": "2025-12-17T02:43:55.018Z",
+    "fechaActualizacion": "2025-12-17T02:43:55.018Z",
+    "motivoPendiente": "Ya existe en pendientes"
   },
   {
     "id": "1764734652699",
@@ -502,7 +258,7 @@
     "fechaRegistro": "3/12/2025",
     "horaRegistro": "01:04:12",
     "tipo": "WEB_REGISTRATION",
-    "estado": "PENDIENTE",
+    "estado": "PROCESADO_A_PENDIENTES",
     "datos": {
       "nombre": "Ludmila",
       "apellido": "Cáceres",
@@ -535,7 +291,10 @@
       "archivo_dni": "/archivosDocWeb/Ludmila_Cáceres_49563200_archivo_dni.pdf",
       "archivo_fichaMedica": "/archivosDocWeb/Ludmila_Cáceres_49563200_archivo_fichaMedica.pdf"
     },
-    "observaciones": "Registro web realizado el 3/12/2025 a las 01:04:12"
+    "observaciones": "Procesado por admin y movido a registros pendientes el 16/12/2025 - Faltan: archivo_cuil, archivo_partidaNacimiento, archivo_analiticoParcial",
+    "fechaMovimiento": "2025-12-17T00:39:56.307Z",
+    "fechaActualizacion": "2025-12-17T00:39:56.307Z",
+    "motivoPendiente": "Faltan: archivo_cuil, archivo_partidaNacimiento, archivo_analiticoParcial"
   },
   {
     "id": "1764734945367",
@@ -587,7 +346,7 @@
     "fechaRegistro": "3/12/2025",
     "horaRegistro": "12:56:23",
     "tipo": "WEB_REGISTRATION",
-    "estado": "PENDIENTE",
+    "estado": "PROCESADO_A_PENDIENTES",
     "datos": {
       "nombre": "Fabian",
       "apellido": "Muñoz",
@@ -620,7 +379,10 @@
       "archivo_dni": "/archivosDocWeb/Fabian_Muñoz_46256123_archivo_dni.pdf",
       "archivo_analiticoParcial": "/archivosDocWeb/Fabian_Muñoz_46256123_archivo_analiticoParcial.pdf"
     },
-    "observaciones": "Registro web realizado el 3/12/2025 a las 12:56:23"
+    "observaciones": "Procesado por admin y movido a registros pendientes el 16/12/2025 - Faltan: archivo_cuil, archivo_fichaMedica, archivo_partidaNacimiento",
+    "fechaMovimiento": "2025-12-17T02:02:41.598Z",
+    "fechaActualizacion": "2025-12-17T02:02:41.598Z",
+    "motivoPendiente": "Faltan: archivo_cuil, archivo_fichaMedica, archivo_partidaNacimiento"
   },
   {
     "id": "1764806134812",
@@ -628,7 +390,7 @@
     "fechaRegistro": "3/12/2025",
     "horaRegistro": "08:55:34",
     "tipo": "WEB_REGISTRATION",
-    "estado": "PENDIENTE",
+    "estado": "PROCESADO_A_PENDIENTES",
     "datos": {
       "nombre": "Federico",
       "apellido": "Moyano",
@@ -658,7 +420,10 @@
       "archivo_dni": "/archivosDocWeb/Federico_Moyano_49125302_archivo_dni.pdf",
       "archivo_cuil": "/archivosDocWeb/Federico_Moyano_49125302_archivo_cuil.pdf"
     },
-    "observaciones": "Registro web realizado el 3/12/2025 a las 08:55:34"
+    "observaciones": "Procesado por admin y movido a registros pendientes el 16/12/2025 - Faltan: archivo_fichaMedica, archivo_partidaNacimiento, archivo_analiticoParcial",
+    "fechaMovimiento": "2025-12-17T02:51:44.391Z",
+    "fechaActualizacion": "2025-12-17T02:51:44.391Z",
+    "motivoPendiente": "Faltan: archivo_fichaMedica, archivo_partidaNacimiento, archivo_analiticoParcial"
   },
   {
     "id": "1764899287774",
@@ -666,7 +431,7 @@
     "fechaRegistro": "4/12/2025",
     "horaRegistro": "10:48:07",
     "tipo": "WEB_REGISTRATION",
-    "estado": "PENDIENTE",
+    "estado": "PROCESADO_A_PENDIENTES",
     "datos": {
       "nombre": "María Fernanda",
       "apellido": "Ochoa",
@@ -698,7 +463,10 @@
       "archivo_fichaMedica": "/archivosDocWeb/María_Fernanda_Ochoa_38256632_archivo_fichaMedica.pdf",
       "archivo_certificadoNivelPrimario": "/archivosDocWeb/María_Fernanda_Ochoa_38256632_archivo_certificadoNivelPrimario.pdf"
     },
-    "observaciones": "Registro web realizado el 4/12/2025 a las 10:48:07"
+    "observaciones": "Procesado por admin y movido a registros pendientes el 16/12/2025 - Faltan: archivo_partidaNacimiento, archivo_solicitudPase",
+    "fechaMovimiento": "2025-12-17T02:15:47.135Z",
+    "fechaActualizacion": "2025-12-17T02:15:47.135Z",
+    "motivoPendiente": "Faltan: archivo_partidaNacimiento, archivo_solicitudPase"
   },
   {
     "id": "1765057505236",
@@ -706,7 +474,7 @@
     "fechaRegistro": "6/12/2025",
     "horaRegistro": "06:45:05",
     "tipo": "WEB_REGISTRATION",
-    "estado": "PENDIENTE",
+    "estado": "PROCESADO_A_PENDIENTES",
     "datos": {
       "nombre": "Marianela",
       "apellido": "Bustos",
@@ -735,7 +503,10 @@
       "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36"
     },
     "archivos": {},
-    "observaciones": "Registro web realizado el 6/12/2025 a las 06:45:05"
+    "observaciones": "Procesado por admin y movido a registros pendientes el 17/12/2025 - Faltan: foto, archivo_dni, archivo_cuil, archivo_fichaMedica, archivo_partidaNacimiento, archivo_certificadoNivelPrimario",
+    "fechaMovimiento": "2025-12-17T03:30:51.582Z",
+    "fechaActualizacion": "2025-12-17T03:30:51.582Z",
+    "motivoPendiente": "Faltan: foto, archivo_dni, archivo_cuil, archivo_fichaMedica, archivo_partidaNacimiento, archivo_certificadoNivelPrimario"
   },
   {
     "id": "1765219666561",
@@ -743,7 +514,7 @@
     "fechaRegistro": "8/12/2025",
     "horaRegistro": "03:47:46",
     "tipo": "WEB_REGISTRATION",
-    "estado": "PENDIENTE",
+    "estado": "PROCESADO_A_PENDIENTES",
     "datos": {
       "nombre": "Dario",
       "apellido": "Prietes",
@@ -774,7 +545,10 @@
     "archivos": {
       "foto": "/archivosDocWeb/Dario_Prietes_42123632_foto.png"
     },
-    "observaciones": "Registro web realizado el 8/12/2025 a las 03:47:46"
+    "observaciones": "Procesado por admin y movido a registros pendientes el 17/12/2025 - Faltan: archivo_dni, archivo_cuil, archivo_fichaMedica, archivo_partidaNacimiento, archivo_analiticoParcial",
+    "fechaMovimiento": "2025-12-17T03:06:27.804Z",
+    "fechaActualizacion": "2025-12-17T03:06:27.804Z",
+    "motivoPendiente": "Faltan: archivo_dni, archivo_cuil, archivo_fichaMedica, archivo_partidaNacimiento, archivo_analiticoParcial"
   },
   {
     "id": "1765232658365",
@@ -1315,5 +1089,42 @@
       "archivo_fichaMedica": "/archivosDocWeb/Graciela_Olmos_33256698_archivo_fichaMedica.pdf"
     },
     "observaciones": "Registro web realizado el 13/12/2025 a las 02:17:01"
+  },
+  {
+    "id": "1766023947226",
+    "timestamp": "2025-12-18T02:12:27.226Z",
+    "fechaRegistro": "17/12/2025",
+    "horaRegistro": "11:12:27",
+    "tipo": "WEB_REGISTRATION",
+    "estado": "PENDIENTE",
+    "datos": {
+      "nombre": "Nahuel",
+      "apellido": "Torres",
+      "dni": "39789412",
+      "cuil": "20-39789412-7",
+      "email": "ceija52025@gmail.com",
+      "telefono": "0351-4561289",
+      "fechaNacimiento": "1996-10-25",
+      "tipoDocumento": "DNI",
+      "paisEmision": "Argentina",
+      "sexo": "Masculino",
+      "calle": "Mitre",
+      "numero": "896",
+      "barrio": "25",
+      "localidad": "108",
+      "provincia": "5",
+      "modalidad": "Presencial",
+      "modalidadId": "1",
+      "planAnio": "2",
+      "modulos": "",
+      "idModulo": null,
+      "usuario": "usuario_web",
+      "ipAddress": "::1",
+      "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36"
+    },
+    "archivos": {
+      "foto": "/archivosDocWeb/Nahuel_Torres_39789412_foto.png"
+    },
+    "observaciones": "Registro web realizado el 17/12/2025 a las 11:12:27"
   }
 ]

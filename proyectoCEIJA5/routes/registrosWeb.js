@@ -3,6 +3,11 @@ const router = express.Router();
 const fs = require('fs').promises;
 const path = require('path');
 const multer = require('multer');
+const buscarOInsertarProvincia = require('../utils/buscarOInsertarProvincia');
+const buscarOInsertarLocalidad = require('../utils/buscarOInsertarLocalidad');
+const buscarOInsertarBarrio = require('../utils/buscarOInsertarBarrio');
+const insertarInscripcion = require('../utils/insertarInscripcion');
+const buscarOInsertarDetalleDocumentacion = require('../utils/buscarOInsertarDetalleDocumentacion');
 
 // Configurar multer para manejar archivos de registros web
 const storage = multer.diskStorage({
@@ -29,22 +34,44 @@ const upload = multer({ storage });
 // Ruta del archivo JSON donde se guardarán los registros web
 const REGISTROS_WEB_PATH = path.join(__dirname, '..', 'data', 'Registro_Web.json');
 
+// Ruta para estadísticas persistentes (contadores históricos)
+const REGISTROS_STATS_PATH = path.join(__dirname, '..', 'data', 'Registros_Web_Stats.json');
+
 // Función para asegurar que existe el directorio y el archivo
 const ensureFileExists = async () => {
     const dir = path.dirname(REGISTROS_WEB_PATH);
-
     try {
         await fs.access(dir);
     } catch {
         await fs.mkdir(dir, { recursive: true });
     }
-
     try {
         await fs.access(REGISTROS_WEB_PATH);
     } catch {
         await fs.writeFile(REGISTROS_WEB_PATH, JSON.stringify([], null, 2));
     }
 };
+
+const ensureStatsFileExists = async () => {
+    try {
+        await fs.access(REGISTROS_STATS_PATH);
+    } catch {
+        await fs.writeFile(REGISTROS_STATS_PATH, JSON.stringify({ procesados_archivados: 0 }, null, 2));
+    }
+};
+
+// Helper para incrementar contador de procesados archivados
+const incrementarProcesadosArchivados = async () => {
+    await ensureStatsFileExists();
+    const data = await fs.readFile(REGISTROS_STATS_PATH, 'utf8');
+    const stats = JSON.parse(data);
+    stats.procesados_archivados = (stats.procesados_archivados || 0) + 1;
+    await fs.writeFile(REGISTROS_STATS_PATH, JSON.stringify(stats, null, 2));
+    return stats.procesados_archivados;
+};
+
+
+
 
 // GET: Obtener todos los registros web
 router.get('/', async (req, res) => {
@@ -197,7 +224,7 @@ router.put('/:id', async (req, res) => {
     }
 });
 
-// DELETE: Eliminar un registro web
+// DELETE: Eliminar un registro web (Optimización: Limpieza)
 router.delete('/:id', async (req, res) => {
     try {
         await ensureFileExists();
@@ -212,23 +239,37 @@ router.delete('/:id', async (req, res) => {
             return res.status(404).json({ error: 'Registro no encontrado' });
         }
 
-        // Filtrar registros (eliminar el seleccionado)
+        // Lógica de Optimización:
+        // Si el registro ya fue PROCESADO (está completo o movido a pendientes histórico),
+        // lo eliminamos físicamente de la lista para limpiar, PERO incrementamos el contador histórico.
+        const estadoUpper = (registroAEliminar.estado || '').toUpperCase();
+        const esProcesado = ['PROCESADO_Y_COMPLETA', 'PROCESADO', 'COMPLETA', 'PROCESADO_A_PENDIENTES'].includes(estadoUpper) ||
+            estadoUpper.includes('PROCESADO');
+
+        if (esProcesado) {
+            console.log(`🧹 Limpiando registro procesado ID: ${id}. Incrementando estadísticas históricas.`);
+            await incrementarProcesadosArchivados();
+        } else {
+            console.log(`🗑️ Eliminando registro PENDIENTE ID: ${id}. No suma a históricos.`);
+        }
+
+        // Hard Delete (Eliminación física para optimizar JSON)
         registros = registros.filter(r => r.id !== id);
 
         await fs.writeFile(REGISTROS_WEB_PATH, JSON.stringify(registros, null, 2));
 
-        console.log(`🗑️ Registro web eliminado - DNI: ${registroAEliminar.datos.dni}`);
-
         res.json({
-            message: 'Registro eliminado exitosamente',
-            registroEliminado: registroAEliminar
+            message: esProcesado ? 'Registro limpiado exitosamente (histórico guardado)' : 'Registro eliminado exitosamente',
+            registroEliminado: registroAEliminar,
+            tipoEliminacion: esProcesado ? 'LIMPIEZA' : 'ELIMINACION',
+            esProcesado
         });
 
     } catch (error) {
         console.error('Error al eliminar registro web:', error);
         res.status(500).json({
             error: 'Error al eliminar el registro web',
-            userMessage: 'No se pudo eliminar el registro web. Intente nuevamente o contacte al equipo técnico.',
+            userMessage: 'No se pudo eliminar el registro web. Intente nuevamente.',
             technical: error.message
         });
     }
@@ -255,13 +296,44 @@ router.post('/:id/procesar', upload.any(), async (req, res) => {
         const archivosNuevos = {};
         if (req.files) {
             req.files.forEach(file => {
-                // Multer en este router guarda en archivosDocWeb, por eso referenciamos esa carpeta.
-                // Posteriormente se decidirá si se copian a archivosDocumento o archivosPendientes.
                 archivosNuevos[file.fieldname] = `/archivosDocWeb/${file.filename}`;
             });
         }
-        // Combinar archivos existentes y nuevos
-        const archivosCombinados = { ...registro.archivos, ...archivosNuevos };
+
+        // Recuperar rutas de archivos existentes que vienen en el body (enviados por frontend)
+        const archivosExistentesBody = {};
+        console.log('🔍 [DEBUG] req.body keys:', Object.keys(req.body)); // Ver qué llega
+
+        for (const [key, value] of Object.entries(req.body)) {
+            // Normalizar clave 'foto' (case insensitive)
+            let cleanKey = key;
+            if (key.toLowerCase() === 'foto') {
+                cleanKey = 'foto';
+            }
+
+            // Asumimos que los campos de archivo empiezan con 'archivo_' o son 'foto'
+            // Y que el valor es un string (ruta)
+            if ((cleanKey.startsWith('archivo_') || cleanKey === 'foto')) {
+                console.log(`🔍 [DEBUG] Analizando body key: ${key} -> ${cleanKey}, Value: ${value}`);
+                // Aceptar tanto / (Linux/Web) como \ (Windows)
+                if (typeof value === 'string' && (value.startsWith('/') || value.startsWith('\\'))) {
+                    // Normalizar a forward slashes para consistencia interna
+                    const rutaNormalizada = value.replace(/\\/g, '/');
+                    archivosExistentesBody[cleanKey] = rutaNormalizada;
+                    if (cleanKey === 'foto') {
+                        console.log(`📸 [DEBUG-FOTO] Foto detectada y guardada en archivosExistentesBody: ${rutaNormalizada}`);
+                    }
+                }
+            }
+        }
+
+        console.log('📂 [DEBUG] archivosExistentesBody:', archivosExistentesBody);
+        console.log('📂 [DEBUG] registro.archivos original:', registro.archivos);
+
+        // Combinar archivos: Prioridad: Nuevos > Body (UI) > Original JSON
+        const archivosCombinados = { ...registro.archivos, ...archivosExistentesBody, ...archivosNuevos };
+
+        console.log('📂 [DEBUG] archivosCombinados FINAL:', archivosCombinados);
         // Combinar datos del formulario
         const datosCompletos = { ...registro.datos, ...req.body };
         // Validar documentación (usa tu lógica de validación)
@@ -492,10 +564,35 @@ router.post('/:id/procesar', upload.any(), async (req, res) => {
         }
 
         try {
-            // Insertar estudiante en la tabla 'estudiantes'
+            // ─── 1) Datos de domicilio ─────────────────────────────
+            const provincia = datosCompletos.provincia;
+            const localidad = datosCompletos.localidad;
+            const barrio = datosCompletos.barrio;
+            const calle = datosCompletos.calle;
+            const numero = Number(datosCompletos.numero);
+            let idDomicilio = null;
+
+            if (provincia && localidad && barrio && calle && !isNaN(numero)) {
+                try {
+                    const provinciaResult = await buscarOInsertarProvincia(pool, provincia);
+                    const localidadResult = await buscarOInsertarLocalidad(pool, localidad, provinciaResult.id);
+                    const barrioResult = await buscarOInsertarBarrio(pool, barrio, localidadResult.id);
+
+                    const [domicilioRes] = await pool.query(
+                        'INSERT INTO domicilios (calle, numero, idBarrio, idLocalidad, idProvincia) VALUES (?,?,?,?,?)',
+                        [calle, numero, barrioResult.id, localidadResult.id, provinciaResult.id]
+                    );
+                    idDomicilio = domicilioRes.insertId;
+                } catch (addrErr) {
+                    console.warn('⚠️ Error guardando domicilio, se guardará sin idDomicilio:', addrErr.message);
+                }
+            }
+
+            // ─── 2) Insertar estudiante en la tabla 'estudiantes' ────────────────────────────
+            // Se mantienen columnas legacy y se agrega idDomicilio
             const [result] = await pool.query(
-                `INSERT INTO estudiantes (nombre, apellido, dni, cuil, email, telefono, fechaNacimiento, tipoDocumento, paisEmision, sexo, calle, numero, barrio, localidad, provincia, modalidad, planAnio, modulos, usuario, archivo_dni, archivo_cuil, archivo_fichaMedica, archivo_partidaNacimiento, foto, archivo_analiticoParcial, archivo_certificadoNivelPrimario, archivo_solicitudPase)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+                `INSERT INTO estudiantes (nombre, apellido, dni, cuil, email, telefono, fechaNacimiento, tipoDocumento, paisEmision, sexo, calle, numero, barrio, localidad, provincia, modalidad, planAnio, modulos, usuario, archivo_dni, archivo_cuil, archivo_fichaMedica, archivo_partidaNacimiento, foto, archivo_analiticoParcial, archivo_certificadoNivelPrimario, archivo_solicitudPase, idDomicilio, activo)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1)`,
                 [
                     datosCompletos.nombre,
                     datosCompletos.apellido,
@@ -523,9 +620,100 @@ router.post('/:id/procesar', upload.any(), async (req, res) => {
                     archivosCombinados['foto'] || '',
                     archivosCombinados['archivo_analiticoParcial'] || '',
                     archivosCombinados['archivo_certificadoNivelPrimario'] || '',
-                    archivosCombinados['archivo_solicitudPase'] || ''
+                    archivosCombinados['archivo_solicitudPase'] || '',
+                    idDomicilio
                 ]
             );
+            const idEstudiante = result.insertId;
+
+            // ─── 3) Insertar Inscripción ───────────────────────────
+            try {
+                // Parsear IDs si vienen como strings
+                // Parsear IDs si vienen como strings, o BUSCAR por nombre si no vienen IDs
+                let modalidadId = parseInt(datosCompletos.modalidadId) || null;
+                const modalidadNombre = datosCompletos.modalidad;
+                if (!modalidadId && modalidadNombre) {
+                    try {
+                        const [mRows] = await pool.query('SELECT id FROM modalidades WHERE nombre = ?', [modalidadNombre]);
+                        if (mRows.length) modalidadId = mRows[0].id;
+                    } catch (err) { console.warn('Error buscando modalidad por nombre:', err.message); }
+                }
+
+                let planAnioId = parseInt(datosCompletos.planAnio) || parseInt(datosCompletos.anioPlan) || null;
+                const planNombre = datosCompletos.planAnio || datosCompletos.anioPlan;
+                if (!planAnioId && planNombre) {
+                    try {
+                        const [pRows] = await pool.query('SELECT id FROM anio_plan WHERE anio = ?', [planNombre]);
+                        if (pRows.length) planAnioId = pRows[0].id;
+                    } catch (err) { console.warn('Error buscando plan por nombre:', err.message); }
+                }
+
+                let modulosId = parseInt(datosCompletos.idModulo) || parseInt(datosCompletos.modulos) || null;
+                const moduloNombre = datosCompletos.modulos || datosCompletos.modulo;
+                if (!modulosId && moduloNombre) {
+                    try {
+                        const [moRows] = await pool.query('SELECT id FROM modulos WHERE nombre = ? OR descripcion = ?', [moduloNombre, moduloNombre]);
+                        if (moRows.length) modulosId = moRows[0].id;
+                    } catch (err) { console.warn('Error buscando modulo por nombre:', err.message); }
+                }
+                const idEstadoInscripcion = 1; // Asumimos 'Completa' o 'Regular' id=1? Validar DB. 
+                // registroEst.js usa req.body.idEstadoInscripcion
+                // Aquí asumimos que al procesar, queda inscripto (4 = inscripto? 1=regular?)
+                // Usaremos 1 (Regular) o obtener de datosCompletos 'estadoInscripcion'
+
+                if (modalidadId) {
+                    const idInscripcion = await insertarInscripcion(
+                        pool,
+                        idEstudiante,
+                        modalidadId,
+                        planAnioId,
+                        modulosId,
+                        idEstadoInscripcion, // Default a 1 si no hay dato
+                        'CURDATE()',
+                        datosCompletos.idDivision || null
+                    );
+
+                    // ─── 4) Detalle de documentación ──────────────────────
+                    let detalleDocumentacion = [];
+                    // Intentar obtener detalle de datosCompletos (añadido por frontend)
+                    if (datosCompletos.detalleDocumentacion) {
+                        detalleDocumentacion = typeof datosCompletos.detalleDocumentacion === 'string'
+                            ? JSON.parse(datosCompletos.detalleDocumentacion)
+                            : datosCompletos.detalleDocumentacion;
+                    }
+
+                    if (Array.isArray(detalleDocumentacion)) {
+                        for (const det of detalleDocumentacion) {
+                            const url = archivosCombinados[det.nombreArchivo] || null;
+                            await buscarOInsertarDetalleDocumentacion(
+                                pool,
+                                idInscripcion,
+                                det.idDocumentaciones,
+                                det.estadoDocumentacion || 'Entregado',
+                                det.fechaEntrega || new Date(),
+                                url
+                            );
+                        }
+                    }
+                }
+            } catch (inscErr) {
+                console.error('❌ Error creando inscripción/detalle:', inscErr);
+                // No abortar, el estudiante se creó
+            }
+
+            // ─── 5) Insertar en archivos_estudiantes (Tabla auxiliar de archivos) ────────────────
+            for (const [campo, rutaArchivo] of Object.entries(archivosCombinados)) {
+                if (rutaArchivo && (campo.startsWith('archivo_') || campo === 'foto')) {
+                    try {
+                        await pool.query(
+                            'INSERT INTO archivos_estudiantes (idEstudiante, tipoArchivo, rutaArchivo) VALUES (?, ?, ?)',
+                            [idEstudiante, campo, rutaArchivo]
+                        );
+                    } catch (fileDbErr) {
+                        console.warn(`⚠️ Error guardando archivo ${campo} en archivos_estudiantes:`, fileDbErr.message);
+                    }
+                }
+            }
             registros[indiceRegistro] = {
                 ...registro,
                 estado: 'PROCESADO_Y_Completa',
@@ -681,16 +869,33 @@ router.post('/:id/mover-pendiente', async (req, res) => {
 router.get('/stats', async (req, res) => {
     try {
         await ensureFileExists();
+        await ensureStatsFileExists();
+
         const data = await fs.readFile(REGISTROS_WEB_PATH, 'utf8');
         const registros = JSON.parse(data);
 
+        const dataStats = await fs.readFile(REGISTROS_STATS_PATH, 'utf8');
+        const statsPersistentes = JSON.parse(dataStats);
+        const archivados = statsPersistentes.procesados_archivados || 0;
+
+        // Calcular vivos
+        const pendientesVivos = registros.filter(r => r.estado === 'PENDIENTE' || r.estado === 'REGISTRO_WEB_PENDIENTE').length;
+
+        // Procesados Vivos (en la lista)
+        const procesadosVivos = registros.filter(r => {
+            const estadoUpper = (r.estado || '').toUpperCase();
+            return ['PROCESADO_Y_COMPLETA', 'PROCESADO', 'COMPLETA', 'PROCESADO_A_PENDIENTES'].includes(estadoUpper) ||
+                estadoUpper.includes('PROCESADO');
+        }).length;
+
+        // Total Procesados = Vivos + Archivados
+        const totalProcesados = procesadosVivos + archivados;
+
         const stats = {
-            total: registros.length,
-            pendientes: registros.filter(r => r.estado === 'PENDIENTE').length,
-            // Contamos como procesados tanto los registros Completas como los que fueron procesados pero quedaron en pendientes
-            procesados: registros.filter(r => r.estado === 'PROCESADO_Y_Completa' || r.estado === 'PROCESADO' || r.estado === 'PROCESADO_A_PENDIENTES').length,
-            anulados: registros.filter(r => r.estado === 'ANULADO').length,
-            movidosAPendientes: registros.filter(r => r.estado === 'PROCESADO_A_PENDIENTES').length,
+            total: registros.length, // Total actual en lista
+            pendientes: pendientesVivos,
+            procesados: totalProcesados, // Histórico + Vivos
+            archivados: archivados,
             ultimoRegistro: registros.length > 0 ? registros[registros.length - 1].timestamp : null
         };
 
@@ -699,7 +904,7 @@ router.get('/stats', async (req, res) => {
         console.error('Error al obtener estadísticas:', error);
         res.status(500).json({
             error: 'Error al obtener estadísticas',
-            userMessage: 'No se pudieron calcular las estadísticas. Intente nuevamente o contacte al equipo técnico.',
+            userMessage: 'No se pudieron calcular las estadísticas.',
             technical: error.message
         });
     }

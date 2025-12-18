@@ -1,9 +1,12 @@
-
 import * as yup from 'yup';
 
 export const formularioInscripcionSchema = yup.object().shape({
-    nombre: yup.string().required('Nombre es requerido'),
-    apellido: yup.string().required('Apellido es requerido'),
+    nombre: yup.string()
+        .required('Nombre es requerido')
+        .matches(/^[a-zA-Z\u00C0-\u00FF\s]+$/, 'El nombre solo debe contener letras'),
+    apellido: yup.string()
+        .required('Apellido es requerido')
+        .matches(/^[a-zA-Z\u00C0-\u00FF\s]+$/, 'El apellido solo debe contener letras'),
     tipoDocumento: yup.string().required('Tipo de documento es requerido'),
     dni: yup
         .string()
@@ -57,11 +60,17 @@ export const formularioInscripcionSchema = yup.object().shape({
         .string()
         .required('Teléfono es requerido')
         .matches(
-            /^(\+54\s?)?(\d{2,5}[-\s]?\d{5,9}|\d{2,4}[-\s]?\d{4}[-\s]?\d{4}|\d{3}[-\s]?\d{3}[-\s]?\d{4}|\d{10,13})$/,
-            'Formato inválido. Ej: 0351-4567890, 11-1234-5678, o sin guiones.'
+            /^[0-9+\-\s]+$/,
+            'El teléfono solo puede contener números, guiones y espacios'
         )
-        .min(8, 'El teléfono debe tener al menos 8 dígitos')
-        .max(18, 'El teléfono no puede tener más de 18 caracteres'),
+        .min(8, 'El teléfono debe tener al menos 8 caracteres')
+        .max(20, 'El teléfono no puede tener más de 20 caracteres')
+        .test('cantidad-numeros', 'Debe contener al menos 8 números', (value) => {
+            if (!value) return false;
+            // Elimina todo lo que no sea número y cuenta los dígitos
+            const numeros = value.replace(/[^0-9]/g, '');
+            return numeros.length >= 8;
+        }),
     fechaNacimiento: yup
         .date()
         .required('Fecha de nacimiento es requerida')

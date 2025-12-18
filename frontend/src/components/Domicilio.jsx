@@ -1,14 +1,16 @@
 import { Field, ErrorMessage, useFormikContext } from 'formik';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import PropTypes from 'prop-types';
-import AlertaMens from './AlertaMens';
 import FormatError from '../utils/MensajeError';
 import SpinnerCeiJa from './SpinnerCeiJa';
 import ubicacionesService from '../services/ubicacionesService';
 import '../estilos/ModalAgregarBarrio.css';
+import axios from 'axios';
+import { AlertContext } from '../context/alertContextDefinition';
 
 export const Domicilio = ({ esAdmin = false }) => {
     const { values, setFieldValue } = useFormikContext();
+    const { showSuccess, showError } = useContext(AlertContext);
 
     // Estados para selects dinámicos
     const [provincias, setProvincias] = useState([]);
@@ -19,7 +21,10 @@ export const Domicilio = ({ esAdmin = false }) => {
     const [showModalBarrio, setShowModalBarrio] = useState(false);
     const [nuevoBarrio, setNuevoBarrio] = useState('');
     const [guardandoBarrio, setGuardandoBarrio] = useState(false);
-    const [alerta, setAlerta] = useState({ text: '', variant: '' });
+    // Estados para nueva localidad
+    const [showModalLocalidad, setShowModalLocalidad] = useState(false);
+    const [nuevaLocalidad, setNuevaLocalidad] = useState('');
+    const [guardandoLocalidad, setGuardandoLocalidad] = useState(false);
 
     // Cargar provincias al montar el componente
     useEffect(() => {
@@ -29,12 +34,6 @@ export const Domicilio = ({ esAdmin = false }) => {
                 setError('');
                 const data = await ubicacionesService.getProvincias();
                 setProvincias(data);
-
-                // Si hay una provincia preseleccionada, cargar localidades
-                if (values.provincia) {
-                    setFieldValue('localidad', '');
-                    setFieldValue('barrio', '');
-                }
             } catch (error) {
                 setError('Error cargando provincias');
                 console.error('🚨 Error al cargar provincias:', error);
@@ -44,7 +43,7 @@ export const Domicilio = ({ esAdmin = false }) => {
         };
 
         cargarProvincias();
-    }, [values.provincia, setFieldValue]);
+    }, []); // Dependencias vacías para cargar solo al montar
 
     // Cargar localidades cuando cambia la provincia
     useEffect(() => {
@@ -67,9 +66,7 @@ export const Domicilio = ({ esAdmin = false }) => {
         };
 
         cargarLocalidades();
-        setFieldValue('localidad', '');
-        setFieldValue('barrio', '');
-    }, [values.provincia, setFieldValue]);
+    }, [values.provincia]);
 
     // Cargar barrios cuando cambia la localidad
     useEffect(() => {
@@ -92,38 +89,50 @@ export const Domicilio = ({ esAdmin = false }) => {
         };
 
         cargarBarrios();
-        setFieldValue('barrio', '');
-    }, [values.localidad, setFieldValue]);
+    }, [values.localidad]);
 
     const handleSelectChange = (e) => {
         const { name, value } = e.target;
         setFieldValue(name, value);
+        // Limpiar dependientes
+        if (name === 'provincia') {
+            setFieldValue('localidad', '');
+            setFieldValue('barrio', '');
+        } else if (name === 'localidad') {
+            setFieldValue('barrio', '');
+        }
     };
 
     const handleAddNew = (tipo) => {
         if (tipo === 'barrio') {
             if (!values.localidad) {
-                setAlerta({ text: 'Primero debe seleccionar una localidad', variant: 'error' });
+                showError('Primero debe seleccionar una localidad');
                 return;
             }
             setShowModalBarrio(true);
             setNuevoBarrio('');
+        } else if (tipo === 'localidad') {
+            if (!values.provincia) {
+                showError('Primero debe seleccionar una provincia');
+                return;
+            }
+            setShowModalLocalidad(true);
+            setNuevaLocalidad('');
         } else {
-            // TODO: Implementar modales para agregar provincia y localidad
             console.log(`➕ [ADMIN] Agregar nueva ${tipo}`);
-            setAlerta({ text: `Funcionalidad "Agregar ${tipo}" en desarrollo`, variant: 'info' });
+            showError(`Funcionalidad "Agregar ${tipo}" en desarrollo`);
         }
     };
 
     // Función para guardar nuevo barrio
     const guardarNuevoBarrio = async () => {
         if (!nuevoBarrio.trim()) {
-            setAlerta({ text: 'Por favor ingrese un nombre para el barrio', variant: 'error' });
+            showError('Por favor ingrese un nombre para el barrio');
             return;
         }
 
         if (!values.localidad) {
-            setAlerta({ text: 'Error: No hay localidad seleccionada', variant: 'error' });
+            showError('Error: No hay localidad seleccionada');
             return;
         }
 
@@ -134,7 +143,18 @@ export const Domicilio = ({ esAdmin = false }) => {
                 idLocalidad: values.localidad
             });
 
-            const nuevo = await ubicacionesService.crearBarrio(nuevoBarrio.trim(), values.localidad);
+            let nuevo;
+            // FIX: Verificamos si el método existe en el servicio, si no, usamos axios directo
+            if (ubicacionesService.crearBarrio && typeof ubicacionesService.crearBarrio === 'function') {
+                nuevo = await ubicacionesService.crearBarrio(nuevoBarrio.trim(), values.localidad);
+            } else {
+                // Fallback: llamada directa a la API con axios
+                const response = await axios.post('http://localhost:5000/api/ubicaciones/barrios', {
+                    nombre: nuevoBarrio.trim(),
+                    idLocalidad: values.localidad
+                });
+                nuevo = response.data.barrio || response.data;
+            }
 
             // Recargar la lista de barrios
             const dataBarrios = await ubicacionesService.getBarriosByLocalidad(values.localidad);
@@ -144,23 +164,96 @@ export const Domicilio = ({ esAdmin = false }) => {
             setFieldValue('barrio', nuevo.id);
 
             console.log('✅ Barrio creado exitosamente:', nuevo);
-            setAlerta({ text: `Barrio "${nuevoBarrio}" creado exitosamente`, variant: 'success' });
+            showSuccess(`Barrio "${nuevoBarrio}" creado exitosamente`);
 
             setShowModalBarrio(false);
             setNuevoBarrio('');
         } catch (error) {
             console.error('❌ Error al crear barrio:', error);
-            setAlerta({ text: `Error al crear barrio: ${FormatError(error)}`, variant: 'error' });
+            showError(`Error al crear barrio: ${FormatError(error)}`);
         } finally {
             setGuardandoBarrio(false);
         }
+    };
+
+    // Función para guardar nueva localidad
+    const guardarNuevaLocalidad = async () => {
+        if (!nuevaLocalidad.trim()) {
+            showError('Por favor ingrese un nombre para la localidad');
+            return;
+        }
+
+        if (!values.provincia) {
+            showError('Error: No hay provincia seleccionada');
+            return;
+        }
+
+        try {
+            setGuardandoLocalidad(true);
+            console.log('💾 Guardando nueva localidad:', {
+                nombre: nuevaLocalidad.trim(),
+                idProvincia: values.provincia
+            });
+
+            let nueva;
+            // FIX: Verificamos si el método existe en el servicio, si no, usamos axios directo
+            if (ubicacionesService.crearLocalidad && typeof ubicacionesService.crearLocalidad === 'function') {
+                nueva = await ubicacionesService.crearLocalidad(nuevaLocalidad.trim(), values.provincia);
+            } else {
+                // Fallback: llamada directa a la API con axios
+                const response = await axios.post('http://localhost:5000/api/ubicaciones/localidades', {
+                    nombre: nuevaLocalidad.trim(),
+                    idProvincia: values.provincia
+                });
+                nueva = response.data.localidad || response.data;
+            }
+
+            // Recargar la lista de localidades
+            const dataLocalidades = await ubicacionesService.getLocalidadesByProvincia(values.provincia);
+            setLocalidades(dataLocalidades);
+
+            // Seleccionar automáticamente la localidad recién creada
+            setFieldValue('localidad', nueva.id);
+            // Limpiar barrio ya que cambió la localidad (aunque sea nueva)
+            setFieldValue('barrio', '');
+            setBarrios([]);
+
+            console.log('✅ Localidad creada exitosamente:', nueva);
+            showSuccess(`Localidad "${nuevaLocalidad}" creada exitosamente`);
+
+            setShowModalLocalidad(false);
+            setNuevaLocalidad('');
+        } catch (error) {
+            console.error('❌ Error al crear localidad:', error);
+            showError(`Error al crear localidad: ${FormatError(error)}`);
+        } finally {
+            setGuardandoLocalidad(false);
+        }
+    };
+
+    // Estilos en línea para sobrescribir el CSS verde y usar variables del sistema
+    const modalBtnCrearStyle = {
+        backgroundColor: 'var(--color-acento)',
+        color: 'white',
+        border: 'none'
+    };
+
+    const modalBtnCancelarStyle = {
+        backgroundColor: '#e0e0e0',
+        color: 'var(--color-texto-principal)',
+        border: '1px solid var(--color-borde)'
+    };
+
+    const modalHeaderStyle = {
+        color: 'var(--color-acento)',
+        borderBottom: '2px solid var(--color-acento-claro)'
     };
 
     return (
         <div className="form-domicilio">
             <h3>
                 Domicilio {esAdmin ? '(Administrador)' : ' '}
-                {loading && <span style={{ color: 'blue', marginLeft: '10px' }}>⏳</span>}
+                {loading && <span style={{ color: 'var(--color-acento)', marginLeft: '10px' }}>⏳</span>}
             </h3>
 
             {error && (
@@ -212,13 +305,14 @@ export const Domicilio = ({ esAdmin = false }) => {
                                 onClick={() => handleAddNew('provincia')}
                                 className="btn-add-location btn-add-provincia"
                                 title="Agregar nueva provincia"
+                                style={{ backgroundColor: 'var(--color-acento)' }}
                             >
                                 ➕
                             </button>
                         )}
                     </div>
                     <ErrorMessage name="provincia" component="div" className="error" />
-                    <small style={{ color: 'gray' }}>
+                    <small style={{ color: 'var(--color-texto-secundario)' }}>
                         {provincias.length} provincias disponibles
                     </small>
                 </div>
@@ -248,13 +342,14 @@ export const Domicilio = ({ esAdmin = false }) => {
                                 onClick={() => handleAddNew('localidad')}
                                 className="btn-add-location btn-add-localidad"
                                 title="Agregar nueva localidad"
+                                style={{ backgroundColor: 'var(--color-acento)' }}
                             >
                                 ➕
                             </button>
                         )}
                     </div>
                     <ErrorMessage name="localidad" component="div" className="error" />
-                    <small style={{ color: 'gray' }}>
+                    <small style={{ color: 'var(--color-texto-secundario)' }}>
                         {localidades.length} localidades disponibles
                     </small>
                 </div>
@@ -285,13 +380,14 @@ export const Domicilio = ({ esAdmin = false }) => {
                             onClick={() => handleAddNew('barrio')}
                             className="btn-add-location btn-add-barrio"
                             title="Agregar nuevo barrio"
+                            style={{ backgroundColor: 'var(--color-acento)' }}
                         >
                             ➕
                         </button>
                     )}
                 </div>
                 <ErrorMessage name="barrio" component="div" className="error" />
-                <small style={{ color: 'gray' }}>
+                <small style={{ color: 'var(--color-texto-secundario)' }}>
                     {barrios.length} barrios disponibles
                 </small>
             </div>
@@ -300,7 +396,7 @@ export const Domicilio = ({ esAdmin = false }) => {
             {showModalBarrio && (
                 <div className="modal-agregar-barrio-overlay">
                     <div className="modal-agregar-barrio-container">
-                        <h3 className="modal-agregar-barrio-titulo">
+                        <h3 className="modal-agregar-barrio-titulo" style={modalHeaderStyle}>
                             🏠 Agregar Nuevo Barrio
                         </h3>
 
@@ -331,7 +427,8 @@ export const Domicilio = ({ esAdmin = false }) => {
                                     setNuevoBarrio('');
                                 }}
                                 disabled={guardandoBarrio}
-                                className="modal-agregar-barrio-btn modal-agregar-barrio-btn-cancelar"
+                                className="modal-agregar-barrio-btn"
+                                style={modalBtnCancelarStyle}
                             >
                                 Cancelar
                             </button>
@@ -339,8 +436,8 @@ export const Domicilio = ({ esAdmin = false }) => {
                                 type="button"
                                 onClick={guardarNuevoBarrio}
                                 disabled={guardandoBarrio || !nuevoBarrio.trim()}
-                                className={`modal-agregar-barrio-btn modal-agregar-barrio-btn-crear ${guardandoBarrio ? 'modal-agregar-barrio-guardando' : ''
-                                    }`}
+                                className="modal-agregar-barrio-btn"
+                                style={modalBtnCrearStyle}
                             >
                                 {guardandoBarrio ? (
                                     <>
@@ -356,31 +453,65 @@ export const Domicilio = ({ esAdmin = false }) => {
                 </div>
             )}
 
-            {/* Estado informativo 
-            <div style={{
-                background: esAdmin ? '#e8f5e8' : '#e3f2fd',
-                padding: '8px',
-                borderRadius: '4px',
-                marginTop: '10px',
-                fontSize: '13px',
-                color: esAdmin ? '#2e7d2e' : '#1976d2'
-            }}>
-                {esAdmin ? (
-                    <>✅ <strong>Modo Admin:</strong> Selects dinámicos con botones para agregar ubicaciones</>
-                ) : (
-                    <>🌐 <strong>Usuario Web:</strong> Selects dinámicos cargados desde base de datos</>
-                )}
-                <br />
-                📊 {provincias.length} provincias, {localidades.length} localidades, {barrios.length} barrios
-            </div>*/}
+            {/* Modal para agregar nueva localidad */}
+            {showModalLocalidad && (
+                <div className="modal-agregar-barrio-overlay">
+                    <div className="modal-agregar-barrio-container">
+                        <h3 className="modal-agregar-barrio-titulo" style={modalHeaderStyle}>
+                            🏙️ Agregar Nueva Localidad
+                        </h3>
 
-            {/* Alertas */}
-            {alerta.text && (
-                <AlertaMens
-                    text={alerta.text}
-                    variant={alerta.variant}
-                    onClose={() => setAlerta({ text: '', variant: '' })}
-                />
+                        <div className="modal-agregar-barrio-grupo">
+                            <label className="modal-agregar-barrio-label">
+                                Nombre de la localidad:
+                            </label>
+                            <input
+                                type="text"
+                                value={nuevaLocalidad}
+                                onChange={(e) => setNuevaLocalidad(e.target.value)}
+                                placeholder="Ej: La Calera, Saldán, Villa Allende..."
+                                className="modal-agregar-barrio-input"
+                                onKeyPress={(e) => {
+                                    if (e.key === 'Enter') {
+                                        guardarNuevaLocalidad();
+                                    }
+                                }}
+                                autoFocus
+                            />
+                        </div>
+
+                        <div className="modal-agregar-barrio-botones">
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    setShowModalLocalidad(false);
+                                    setNuevaLocalidad('');
+                                }}
+                                disabled={guardandoLocalidad}
+                                className="modal-agregar-barrio-btn"
+                                style={modalBtnCancelarStyle}
+                            >
+                                Cancelar
+                            </button>
+                            <button
+                                type="button"
+                                onClick={guardarNuevaLocalidad}
+                                disabled={guardandoLocalidad || !nuevaLocalidad.trim()}
+                                className="modal-agregar-barrio-btn"
+                                style={modalBtnCrearStyle}
+                            >
+                                {guardandoLocalidad ? (
+                                    <>
+                                        <SpinnerCeiJa size={12} text="" style={{ display: 'inline-block', verticalAlign: 'middle', marginRight: 4 }} />
+                                        Guardando...
+                                    </>
+                                ) : (
+                                    <>✅ Crear Localidad</>
+                                )}
+                            </button>
+                        </div>
+                    </div>
+                </div>
             )}
         </div>
     );

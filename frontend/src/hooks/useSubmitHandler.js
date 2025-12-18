@@ -431,7 +431,7 @@ export const useSubmitHandler = (files, previews, resetArchivos, buildDetalleDoc
             const estadoDocumentacion = obtenerEstadoDocumentacion(filesArg, previewsArg, modalidad, planAnio, modulos);
             console.log('� Estado documentación registro web (VALIDACIÓN):', estadoDocumentacion);
 
-            // Construir información de documentos para guardar
+            // Construir información de documentos para guardar (usado en moverRegistroWebAPendientes)
             const documentos = {
                 files: filesArg,
                 previews: previewsArg,
@@ -439,24 +439,47 @@ export const useSubmitHandler = (files, previews, resetArchivos, buildDetalleDoc
                 estado: estadoDocumentacion
             };
 
+            // Construir mapa plano de documentos para el servicio procesarRegistroWeb (files + rutas originales)
+            const documentosFlat = {};
+
+            // 1. Agregar archivos NUEVOS (File objects)
+            Object.entries(filesArg || {}).forEach(([key, file]) => {
+                if (file instanceof File) {
+                    documentosFlat[key] = file;
+                }
+            });
+
+            // 2. Agregar archivos EXISTENTES (rutas) si no se está subiendo uno nuevo
+            Object.entries(previewsArg || {}).forEach(([key, previewData]) => {
+                // Si no hay archivo nuevo para este campo, y existe un preview con ruta original
+                if (!documentosFlat[key] && previewData?.existente && previewData?.rutaOriginal) {
+                    documentosFlat[key] = previewData.rutaOriginal;
+                    console.log(`📎 [DEBUG] Incluyendo archivo existente para migración: ${key} -> ${previewData.rutaOriginal}`);
+                }
+            });
+
             if (estadoDocumentacion.completo) {
                 // Documentación completa: procesar en BD
                 console.log('✅ Documentación completa - Procesando registro web en BD');
-                const resultado = await serviceRegistrosWeb.procesarRegistroWeb(idRegistroWeb, datosCompletos, documentos);
+                // Enviar el mapa plano de documentos
+                const datosParaEnvio = {
+                    ...datosCompletos,
+                    detalleDocumentacion: buildDetalleDocumentacion()
+                };
+                const resultado = await serviceRegistrosWeb.procesarRegistroWeb(idRegistroWeb, datosParaEnvio, documentosFlat);
 
                 // Verificar si el estudiante ya existe
                 if (resultado.yaExiste) {
-                    console.log('ℹ️ Estudiante ya registrado - Mostrando modal de actualización');
-                    // Guardar datos para el modal
-                    sessionStorage.setItem('estudianteExistente', JSON.stringify({
-                        estudiante: resultado.estudianteExistente,
-                        inscripciones: resultado.inscripciones,
-                        archivosNuevos: resultado.archivosNuevosRegistroWeb
-                    }));
+                    console.log('ℹ️ Estudiante ya registrado');
+                    showWarning('El DNI ingresado ya pertenece a un estudiante registrado. Por favor, verifique la información.');
 
-                    // Redirigir al dashboard con flag para mostrar modal
-                    window.location.href = '/dashboard?tab=registros-web&mostrarActualizacion=true';
-                    return;
+                    // Opcional: Si se desea mantener la redirección para actualizar, se puede dejar o preguntar.
+                    // Por ahora, solo notificamos como pidió el usuario y detenemos el flujo de éxito "visual"
+                    // (aunque el backend devolvió 200, visualmente es una advertencia).
+
+                    // Si se prefiere actualizar datos existentes, se podría mostrar un modal aquí.
+                    // Pero la solicitud fue "notifique que verifique".
+                    return { success: false, error: 'DNI Duplicado' };
                 }
 
                 showSuccess('Registro web procesado y guardado en la base de datos exitosamente');

@@ -106,10 +106,10 @@ const registrosPendientesService = {
     // Completar un registro pendiente (procesar y migrar a la BD)
     completarRegistro: async (formData) => {
         try {
-            const dni = formData.get('dni') || formData.get('registroPendienteId');
+            const dni = formData.get('registroPendienteId') || formData.get('dni');
             if (!dni) throw new Error('No se encontró el DNI en el FormData');
-            console.log('✅ Procesando registro pendiente y migrando a BD...');
-            
+            console.log('✅ Procesando registro pendiente y migrando a BD... ID:', dni);
+
             // POST con multipart/form-data para enviar archivos
             const response = await axiosInstance.post(`/registros-pendientes/${dni}/procesar`, formData, {
                 headers: {

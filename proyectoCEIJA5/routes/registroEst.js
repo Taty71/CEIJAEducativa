@@ -218,8 +218,8 @@ router.post('/registrar', upload.any(), async (req, res) => {
 
     const [estRes] = await db.query(
       `INSERT INTO estudiantes
-       (nombre, apellido, tipoDocumento, paisEmision, dni, cuil, email, telefono, fechaNacimiento, sexo, foto, idDomicilio, idUsuarios)
-       VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)`,
+       (nombre, apellido, tipoDocumento, paisEmision, dni, cuil, email, telefono, fechaNacimiento, sexo, foto, idDomicilio, idUsuarios, activo)
+       VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,1)`,
       [nombre, apellido, tipoDocumento, paisEmision, dni, cuil, req.body.email || null, req.body.telefono || null, fechaNacimiento, req.body.sexo || null, fotoUrl, idDomicilio, idUsuarios]
     );
     const idEstudiante = estRes.insertId;

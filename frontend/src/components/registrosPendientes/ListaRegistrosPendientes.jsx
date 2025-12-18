@@ -1,7 +1,8 @@
 import PropTypes from 'prop-types';
+import SpinnerCeiJa from '../SpinnerCeiJa';
 import RegistroPendienteItem from './RegistroPendienteItem';
 
-const ListaRegistrosPendientes = ({ 
+const ListaRegistrosPendientes = ({
     registros,
     cargandoRegistros,
     mapeoDocumentos,
@@ -16,9 +17,8 @@ const ListaRegistrosPendientes = ({
 }) => {
     if (cargandoRegistros) {
         return (
-            <div className="estado-cargando">
-                <div>⏳</div>
-                <div>Cargando registros pendientes...</div>
+            <div className="estado-cargando" style={{ display: 'flex', justifyContent: 'center', padding: '40px' }}>
+                <SpinnerCeiJa text="Cargando registros pendientes..." />
             </div>
         );
     }

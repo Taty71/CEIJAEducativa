@@ -203,12 +203,42 @@
       },
       "completada": true,
       "created_at": "2025-12-13T17:34:06.175Z"
+    },
+    {
+      "id": 1765925522006,
+      "dni_estudiante": "",
+      "modalidad": "Semipresencial",
+      "fecha": "2025-12-16T22:52:01.803Z",
+      "respuestas": {
+        "facilidad_uso": 2,
+        "claridad_informacion": 2,
+        "tiempo_completado": "10-15 minutos",
+        "problemas_encontrados": "Ninguno",
+        "sugerencias": "Un poco extenso, pero claro y detallado"
+      },
+      "completada": true,
+      "created_at": "2025-12-16T22:52:02.006Z"
+    },
+    {
+      "id": 1766023998029,
+      "dni_estudiante": "",
+      "modalidad": "Presencial",
+      "fecha": "2025-12-18T02:13:17.850Z",
+      "respuestas": {
+        "facilidad_uso": 2,
+        "claridad_informacion": 2,
+        "tiempo_completado": "10-15 minutos",
+        "problemas_encontrados": "Problemas al adjuntar documentación",
+        "sugerencias": "Mejorar las opciones de domicilio"
+      },
+      "completada": true,
+      "created_at": "2025-12-18T02:13:18.029Z"
     }
   ],
   "estadisticas": {
-    "total": 14,
-    "promedio_facilidad": "2.57",
-    "promedio_claridad": "2.43",
-    "ultima_actualizacion": "2025-12-13T17:34:06.175Z"
+    "total": 16,
+    "promedio_facilidad": "2.50",
+    "promedio_claridad": "2.38",
+    "ultima_actualizacion": "2025-12-18T02:13:18.031Z"
   }
 }

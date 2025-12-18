@@ -132,11 +132,11 @@ const registrosWebService = {
             console.log(`🔍 Buscando registro web ID: ${id}`);
             const registros = await registrosWebService.obtenerRegistrosWeb();
             const registro = registros.find(r => r.id === id);
-            
+
             if (!registro) {
                 throw new Error(`Registro web con ID ${id} no encontrado`);
             }
-            
+
             console.log(`✅ Registro web encontrado:`, registro.datos.nombre, registro.datos.apellido);
             return registro;
         } catch (error) {
@@ -157,13 +157,26 @@ const registrosWebService = {
             if (destinoBD) {
                 // Enviar a la BD: usar FormData para archivos
                 const formData = new FormData();
-                formData.append('datosFormulario', JSON.stringify(datosFormulario));
+                // Aplanar datosFormulario para que el backend lo reciba como req.body.campo
+                Object.entries(datosFormulario || {}).forEach(([key, value]) => {
+                    if (value !== null && value !== undefined) {
+                        if (typeof value === 'object' && key === 'detalleDocumentacion') {
+                            formData.append(key, JSON.stringify(value));
+                        } else if (typeof value === 'object') {
+                            // Otros objetos tambien stringify por si acaso (ej. arrays simples)
+                            formData.append(key, JSON.stringify(value));
+                        } else {
+                            formData.append(key, value);
+                        }
+                    }
+                });
+
                 // documentos: puede tener File o string (ruta existente)
                 Object.entries(documentos || {}).forEach(([key, value]) => {
                     if (value instanceof File) {
                         formData.append(key, value);
                     } else if (typeof value === 'string') {
-                        formData.append(key + '_ruta', value); // backend debe aceptar *_ruta para rutas existentes
+                        formData.append(key, value); // Enviar clave exacta para que el backend la encuentre en req.body con el mismo nombre que detalleDocumentacion
                     }
                 });
                 response = await fetch(`${API_BASE_URL}/registros-web/${id}/procesar`, {
@@ -192,7 +205,7 @@ const registrosWebService = {
 
             const resultado = await response.json();
             console.log(`✅ Registro web procesado y guardado:`, resultado);
-            
+
             // Emitir evento para que GestorRegistrosWeb actualice la UI
             try {
                 if (resultado.registroWebActualizado) {
@@ -202,7 +215,7 @@ const registrosWebService = {
                     window.dispatchEvent(new CustomEvent('registroWeb:actualizado', { detail: resultado.registroProcesado }));
                     console.log('🔔 Evento emitido: registroWeb:actualizado', resultado.registroProcesado.id);
                 }
-                
+
                 // Si el estudiante ya existe, también emitir evento
                 if (resultado.yaExiste && resultado.registroWebActualizado) {
                     window.dispatchEvent(new CustomEvent('registroWeb:actualizado', { detail: resultado.registroWebActualizado }));
@@ -211,7 +224,7 @@ const registrosWebService = {
             } catch (evErr) {
                 console.warn('⚠️ No se pudo emitir evento registroWeb:actualizado', evErr.message);
             }
-            
+
             return resultado;
         } catch (error) {
             console.error('❌ Error al procesar registro web:', error);
@@ -223,7 +236,7 @@ const registrosWebService = {
     moverRegistroWebAPendientes: async (id, motivoPendiente) => {
         try {
             console.log(`📋 Moviendo registro web ${id} a pendientes`);
-            
+
             const response = await fetch(`${API_BASE_URL}/registros-web/${id}/mover-pendiente`, {
                 method: 'POST',
                 headers: {
@@ -241,7 +254,7 @@ const registrosWebService = {
 
             const resultado = await response.json();
             console.log(`✅ Registro web movido a pendientes:`, resultado);
-            
+
             // Emitir evento para que GestorRegistrosWeb actualice la UI
             try {
                 if (resultado.registroWebActualizado) {
@@ -251,11 +264,22 @@ const registrosWebService = {
             } catch (evErr) {
                 console.warn('⚠️ No se pudo emitir evento registroWeb:actualizado', evErr.message);
             }
-            
+
             return resultado;
         } catch (error) {
             console.error('❌ Error al mover registro web a pendientes:', error);
             throw error;
+        }
+    },
+    // Obtener estadísticas
+    obtenerStats: async () => {
+        try {
+            const response = await fetch(`${API_BASE_URL}/registros-web/stats`);
+            if (!response.ok) throw new Error('Error al obtener estadísticas');
+            return await response.json();
+        } catch (error) {
+            console.error('Error obteniendo stats:', error);
+            return { total: 0, pendientes: 0, procesados: 0, anulados: 0 };
         }
     }
 };

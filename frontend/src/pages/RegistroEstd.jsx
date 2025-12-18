@@ -43,8 +43,10 @@ const RegistroEstd = ({
     const [showEncuesta, setShowEncuesta] = useState(false);
 
     // Limpiar archivos/documentos y sessionStorage justo ANTES de abrir el modal de documentación para un registro nuevo
+    // PERO NO si estamos completando un registro existente (completarRegistro es true)
     const handleAbrirModalDocumentacion = () => {
-        if ((isWebUser || isAdmin) && accion === 'Registrar') {
+        // Solo limpiar si NO estamos completando un registro. Si completamos, queremos conservar los datos.
+        if (!completarRegistro && (isWebUser || isAdmin) && accion === 'Registrar') {
             if (typeof setFieldValue === 'function') {
                 setFieldValue('archivos', {});
                 setFieldValue('previews', {});
@@ -56,9 +58,13 @@ const RegistroEstd = ({
             if (window.archivos) window.archivos = {};
             if (window.previews) window.previews = {};
         }
-        // Refuerzo: limpiar previews y archivos en el objeto values si existen
-        if (values && values.previews) values.previews = {};
-        if (values && values.archivos) values.archivos = {};
+
+        // NO limpiar values.previews si estamos completando, pues ahí están los datos cargados.
+        if (!completarRegistro) {
+            if (values && values.previews) values.previews = {};
+            if (values && values.archivos) values.archivos = {};
+        }
+
         setIsModalOpen(false); // Cierra primero por si quedó abierto
         setTimeout(() => setIsModalOpen(true), 0); // Reabre limpio
     };

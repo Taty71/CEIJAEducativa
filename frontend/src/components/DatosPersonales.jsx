@@ -126,6 +126,19 @@ export const DatosPersonales = memo(() => {
         }, 0);
     };
 
+    // Función para filtrar entrada de texto (solo letras y espacios)
+    const handleTextoChange = (e, fieldName) => {
+        const val = e.target.value.replace(/[^a-zA-Z\u00C0-\u00FF\s]/g, '');
+        setFieldValue(fieldName, val);
+    };
+
+    // Función para filtrar entrada de teléfono (solo números, guiones, espacios y +)
+    const handleTelefonoChange = (e) => {
+        // Reemplaza cualquier caracter que NO sea número (0-9), guion (-), espacio (\s) o más (+)
+        const val = e.target.value.replace(/[^0-9\-\s+]/g, '');
+        setFieldValue('telefono', val);
+    };
+
     return (
         <>
             <ValidadorDni />
@@ -137,12 +150,32 @@ export const DatosPersonales = memo(() => {
                 <div className="nombre-apellido-group">
                     <div className="form-group">
                         <label>Nombre:</label>
-                        <Field type="text" name="nombre" placeholder="Nombre" className="form-control" />
+                        <Field name="nombre">
+                            {({ field }) => (
+                                <input
+                                    {...field}
+                                    type="text"
+                                    placeholder="Nombre"
+                                    className="form-control"
+                                    onChange={(e) => handleTextoChange(e, 'nombre')}
+                                />
+                            )}
+                        </Field>
                         <ErrorMessage name="nombre" component="div" className="error" />
                     </div>
                     <div className="form-group">
                         <label>Apellido:</label>
-                        <Field type="text" name="apellido" placeholder="Apellido" className="form-control" />
+                        <Field name="apellido">
+                            {({ field }) => (
+                                <input
+                                    {...field}
+                                    type="text"
+                                    placeholder="Apellido"
+                                    className="form-control"
+                                    onChange={(e) => handleTextoChange(e, 'apellido')}
+                                />
+                            )}
+                        </Field>
                         <ErrorMessage name="apellido" component="div" className="error" />
                     </div>
                 </div>
@@ -281,14 +314,19 @@ export const DatosPersonales = memo(() => {
 
                 <div className="form-group">
                     <label>Teléfono/Celular:</label>
-                    <Field
-                        type="tel"
-                        name="telefono"
-                        placeholder="Ej: 11-1234-5678 o 0351-4567890"
-                        disabled={!isDniValid}
-                        className={`form-control ${errors && errors.telefono ? 'is-invalid' : ''}`}
-                        maxLength="15"
-                    />
+                    <Field name="telefono">
+                        {({ field }) => (
+                            <input
+                                {...field}
+                                type="tel"
+                                placeholder="Ej: 11-1234-5678 o 0351-4567890"
+                                disabled={!isDniValid}
+                                className={`form-control ${errors && errors.telefono ? 'is-invalid' : ''}`}
+                                maxLength="20"
+                                onChange={handleTelefonoChange}
+                            />
+                        )}
+                    </Field>
                     <ErrorMessage name="telefono" component="div" className="error" />
                     <small className="form-text text-muted">
                         Incluir código de área sin el 15. Ej: 11-1234-5678

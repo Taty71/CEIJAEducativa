@@ -133,7 +133,7 @@ export const useAlerts = () => {
         alerts,
         modal,
         loading,
-        
+
         // Funciones de alertas
         showSuccess,
         showError,
@@ -141,16 +141,16 @@ export const useAlerts = () => {
         showInfo,
         removeAlert,
         clearAlerts,
-        
+
         // Funciones de loading
         showLoading,
         hideLoading,
-        
+
         // Funciones de modal
         showConfirmModal,
         closeModal,
         confirmAction,
-        
+
         // Utilidades
         handleValidationErrors,
         handleApiResponse

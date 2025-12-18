@@ -117,17 +117,25 @@ const GestorRegistrosWeb = ({ onClose, onRegistroSeleccionado, isAdmin = false }
     const cargarRegistrosWeb = async () => {
         try {
             setLoading(true);
-            const data = await serviceRegistrosWeb.obtenerRegistrosWeb();
-            console.log('📥 Registros web cargados desde backend:', data?.length || 0);
+            const [data, statsBackend] = await Promise.all([
+                serviceRegistrosWeb.obtenerRegistrosWeb(),
+                serviceRegistrosWeb.obtenerStats()
+            ]);
+
+            console.log('📥 Registros web cargados:', data?.length || 0);
+
             // Añadir flag procesado derivado del estado para uso local
             const enriched = (data || []).map(r => {
-                const procesado = ['PROCESADO_Y_Completa', 'PROCESADO_A_PENDIENTES', 'PROCESADO', 'Completa', 'Completa'].includes(r.estado);
+                const procesado = ['PROCESADO_Y_Completa', 'PROCESADO_A_PENDIENTES', 'PROCESADO', 'Completa'].includes(r.estado);
                 return { ...r, procesado };
             });
+
             setRegistros(enriched);
-            const nuevosStats = calcularContadoresFromRegistros(enriched);
-            console.log('📊 Contadores calculados:', nuevosStats);
-            setStats(nuevosStats);
+
+            // Usar estadísticas del backend (incluyen históricos)
+            console.log('📊 Stats backend:', statsBackend);
+            setStats(statsBackend);
+
         } catch (error) {
             console.error('Error al cargar registros web:', error);
             showError('Error al cargar los registros web: ' + error.message);
@@ -202,15 +210,23 @@ const GestorRegistrosWeb = ({ onClose, onRegistroSeleccionado, isAdmin = false }
         if (!registroAEliminar) return;
 
         setEliminando(true);
-        setMostrarConfirmacion(false);
+        // setMostrarConfirmacion(false); // Mantener modal un momento o cerrar antes? Mejor cerrar antes si usamos toast
 
         try {
-            await serviceRegistrosWeb.eliminarRegistroWeb(registroAEliminar.id);
-            showSuccess(`🗑️ Registro de ${registroAEliminar.datos.apellido}, ${registroAEliminar.datos.nombre} eliminado`);
+            const response = await serviceRegistrosWeb.eliminarRegistroWeb(registroAEliminar.id);
+            setMostrarConfirmacion(false);
+
+            if (response.esProcesado) {
+                showSuccess(`🧹 Registro limpiado de la lista (histórico guardado)`);
+            } else {
+                showSuccess(`🗑️ Solicitud de ${registroAEliminar.datos.apellido} eliminada permanentemente`);
+            }
+
             await cargarRegistrosWeb();
         } catch (error) {
             console.error('Error al eliminar registro:', error);
             showError('❌ Error al eliminar registro: ' + error.message);
+            setMostrarConfirmacion(false);
         } finally {
             setEliminando(false);
             setRegistroAEliminar(null);
@@ -285,60 +301,62 @@ const GestorRegistrosWeb = ({ onClose, onRegistroSeleccionado, isAdmin = false }
         return registroLocal ? { ...r, estado: registroLocal.estado } : r;
     });
 
-    // Generar PDF de Registros Web
+    // Generar PDF de Registros Web (Reporte Completo por Secciones)
     const generarReportePDFWeb = () => {
         try {
-            // Usar los registros actualmente filtrados para el reporte
-            const registrosParaReporte = registrosFiltrados;
-
-            if (registrosParaReporte.length === 0) {
+            if (!registros || registros.length === 0) {
                 showWarning('No hay registros para generar el reporte.');
                 return;
             }
+
+            const listaPendientes = registros.filter(r => {
+                const estado = (r.estado || '').toUpperCase();
+                return estado === 'PENDIENTE' || estado === 'REGISTRO_WEB_PENDIENTE';
+            }).sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
+            const listaProcesados = registros.filter(r => {
+                const estado = (r.estado || '').toUpperCase();
+                return ['PROCESADO_Y_COMPLETA', 'PROCESADO', 'COMPLETA', 'PROCESADO_A_PENDIENTES'].includes(estado) ||
+                    estado.includes('PROCESADO');
+            }).sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
 
             const doc = new jsPDF();
             const pageWidth = doc.internal.pageSize.width;
             const margin = 20;
             let yPosition = 20;
-
-            // Encabezado institucional (Estilo IDÉNTICO a ModalRegistrosPendientes)
-            doc.setTextColor(45, 65, 119);
-            doc.setFontSize(14);
-            doc.setFont('helvetica', 'bold');
-            doc.text('CEIJA5 LA CALERA CBA', pageWidth / 2, yPosition, { align: 'center' });
-            yPosition += 5;
-
-            doc.setFontSize(11);
-            doc.setFont('helvetica', 'bold');
-            doc.text('Educacion Integral de Jóvenes y Adultos', pageWidth / 2, yPosition, { align: 'center' });
-            yPosition += 2;
-
-            // Blue separator line
-            doc.setDrawColor(0, 0, 255);
-            doc.setLineWidth(0.5);
-            doc.line(margin, yPosition + 2, pageWidth - margin, yPosition + 2);
-            yPosition += 4;
-            yPosition += 8;
-
-            doc.setTextColor(45, 65, 119);
-            // Título del Reporte
-            doc.setFontSize(16);
-            doc.setFont('helvetica', 'bold');
-            doc.text('REPORTE DE REGISTROS WEB', pageWidth / 2, yPosition, { align: 'center' });
-            yPosition += 10;
-
-            doc.setFontSize(10);
-            doc.setFont('helvetica', 'normal');
-            doc.setTextColor(0, 0, 0);
-            doc.text(`Fecha: ${new Date().toLocaleString('es-AR')}`, pageWidth / 2, yPosition, { align: 'center' });
-            doc.text(`Total: ${registrosParaReporte.length} registros (${filtro})`, pageWidth / 2, yPosition + 5, { align: 'center' });
-            yPosition += 20;
-
-            // Pie de página y paginación
             let pageNum = 1;
+
+            // Función para dibujar encabezado
+            const imprimirEncabezado = () => {
+                doc.setTextColor(45, 65, 119);
+                doc.setFontSize(14);
+                doc.setFont('helvetica', 'bold');
+                doc.text('CEIJA5 LA CALERA CBA', pageWidth / 2, 20, { align: 'center' });
+
+                doc.setFontSize(11);
+                doc.setFont('helvetica', 'bold');
+                doc.text('Educacion Integral de Jóvenes y Adultos', pageWidth / 2, 25, { align: 'center' });
+
+                doc.setDrawColor(0, 0, 255);
+                doc.setLineWidth(0.5);
+                doc.line(margin, 27, pageWidth - margin, 27);
+
+                doc.setTextColor(45, 65, 119);
+                doc.setFontSize(16);
+                doc.text('REPORTE DE REGISTROS PRE-INSCRIPCIONES WEB', pageWidth / 2, 35, { align: 'center' });
+
+                doc.setFontSize(10);
+                doc.setFont('helvetica', 'normal');
+                doc.setTextColor(0, 0, 0);
+                doc.text(`Fecha: ${new Date().toLocaleString('es-AR')}`, pageWidth / 2, 42, { align: 'center' });
+
+                return 50; // Nueva posición Y inicial
+            };
+
             const addFooter = (pageNum) => {
                 doc.setFontSize(10);
                 doc.setFont('helvetica', 'normal');
+                doc.setTextColor(100, 100, 100);
                 const footerText = `Reporte CEIJA5 - Registros Web`;
                 const pageText = `Página ${pageNum}`;
                 const yFooter = doc.internal.pageSize.height - 10;
@@ -346,130 +364,110 @@ const GestorRegistrosWeb = ({ onClose, onRegistroSeleccionado, isAdmin = false }
                 doc.text(pageText, pageWidth - margin, yFooter, { align: 'right' });
             };
 
-            registrosParaReporte.forEach((registro, index) => {
-                // Verificar salto de página
-                if (yPosition > 250) {
+            const imprimirLista = (titulo, lista) => {
+                if (lista.length === 0) return;
+
+                // Título de Sección
+                if (yPosition > 240) { // Si queda poco espacio, saltar página antes del título
                     addFooter(pageNum);
                     doc.addPage();
                     pageNum++;
-                    yPosition = 20;
+                    yPosition = imprimirEncabezado();
+                }
 
-                    // Repetir encabezado en cada página
-                    doc.setTextColor(45, 65, 119);
-                    doc.setFontSize(14);
+                doc.setFillColor(240, 240, 240);
+                doc.rect(margin, yPosition, pageWidth - margin * 2, 10, 'F');
+                doc.setTextColor(45, 65, 119);
+                doc.setFontSize(12);
+                doc.setFont('helvetica', 'bold');
+                doc.text(`${titulo} (${lista.length})`, margin + 5, yPosition + 7);
+                yPosition += 15;
+
+                lista.forEach((registro, index) => {
+                    if (yPosition > 250) {
+                        addFooter(pageNum);
+                        doc.addPage();
+                        pageNum++;
+                        yPosition = imprimirEncabezado();
+                        // Repetir título de sección si salta página
+                        doc.setFillColor(240, 240, 240);
+                        doc.rect(margin, yPosition, pageWidth - margin * 2, 10, 'F');
+                        doc.setTextColor(45, 65, 119);
+                        doc.setFontSize(12);
+                        doc.setFont('helvetica', 'bold');
+                        doc.text(`${titulo} (Cont.)`, margin + 5, yPosition + 7);
+                        yPosition += 15;
+                    }
+
+                    const nombreCompleto = `${registro.datos.apellido}, ${registro.datos.nombre}`;
+                    const dni = registro.datos.dni || 'Sin DNI';
+                    const email = registro.datos.email || 'Sin Email';
+                    const telefono = registro.datos.telefono || 'Sin Teléfono';
+                    const modalidad = registro.datos.modalidad || 'No especificada';
+                    const fechaRegistro = formatearFecha(registro.timestamp);
+                    const estadoDoc = calcularEstadoDocumentacionWeb(registro);
+
+                    // Item
                     doc.setFont('helvetica', 'bold');
-                    doc.text('CEIJA5 LA CALERA CBA', pageWidth / 2, yPosition, { align: 'center' });
+                    doc.setFontSize(11);
+                    doc.setTextColor(0, 0, 0);
+                    doc.text(`${index + 1}. ${nombreCompleto}`, margin, yPosition);
                     yPosition += 5;
 
-                    doc.setFontSize(11);
-                    doc.setFont('helvetica', 'bold');
-                    doc.text('Educacion Integral de Jóvenes y Adultos', pageWidth / 2, yPosition, { align: 'center' });
-                    yPosition += 2;
-
-                    doc.setDrawColor(0, 0, 255);
-                    doc.setLineWidth(0.5);
-                    doc.line(margin, yPosition + 2, pageWidth - margin, yPosition + 2);
-                    yPosition += 4;
-                    yPosition += 8;
-
-                    doc.setTextColor(45, 65, 119);
-                    doc.setFontSize(16);
-                    doc.text('REPORTE DE REGISTROS WEB', pageWidth / 2, yPosition, { align: 'center' });
-                    yPosition += 20;
-                }
-
-                const nombreCompleto = `${registro.datos.apellido}, ${registro.datos.nombre}`;
-                const dni = registro.datos.dni || 'Sin DNI';
-                const email = registro.datos.email || 'Sin Email';
-                const telefono = registro.datos.telefono || 'Sin Teléfono';
-                const modalidad = registro.datos.modalidad || 'No especificada';
-                const fechaRegistro = formatearFecha(registro.timestamp);
-
-                // Calcular estado documentación para el reporte
-                const estadoDoc = calcularEstadoDocumentacionWeb(registro);
-
-                // Item Principal
-                doc.setFont('helvetica', 'bold');
-                doc.setFontSize(12);
-                doc.setTextColor(0, 0, 0);
-                doc.text(`${index + 1}. ${nombreCompleto}`, margin, yPosition);
-                yPosition += 6;
-
-                // Detalles
-                doc.setFont('helvetica', 'normal');
-                doc.setFontSize(9);
-                doc.text(`DNI: ${dni}   |   Fecha: ${fechaRegistro}   |   Tel: ${telefono}`, margin + 5, yPosition);
-                yPosition += 5;
-                doc.text(`Email: ${email}`, margin + 5, yPosition);
-                yPosition += 5;
-                doc.text(`Modalidad: ${modalidad}   |   Estado: ${getEstadoVisual(registro)}`, margin + 5, yPosition);
-                yPosition += 5;
-
-                // Sección Documentación
-                doc.setFont('helvetica', 'normal');
-                doc.setFontSize(8); // Igual que Adjuntos
-                let colorEstado = [0, 0, 0]; // Negro por defecto
-
-                // Limpiar mensaje para asegurar solo caracteres en castellano (whitelist strategy)
-                // Esto elimina radicalmente emojis y cualquier símbolo no standard
-                const cleanMensaje = estadoDoc.mensaje
-                    .replace(/[^a-zA-Z0-9áéíóúÁÉÍÓÚñÑüÜ\s\.,;:\(\)\-@\/]/g, '')
-                    .replace(/\s+/g, ' ')
-                    .trim();
-
-                if (estadoDoc.esCompleto) colorEstado = [0, 128, 0]; // Verde
-                else if (estadoDoc.mensaje.includes('Faltan')) colorEstado = [45, 65, 119]; // Azul solicitado
-
-                doc.setTextColor(...colorEstado);
-                const textoDoc = `Documentación: ${cleanMensaje}`;
-                doc.text(textoDoc, margin + 5, yPosition, { maxWidth: pageWidth - margin * 2 - 5 });
-
-                // Calcular líneas ocupadas para ajustar posición Y
-                const linesDoc = doc.splitTextToSize(textoDoc, pageWidth - margin * 2 - 5);
-                yPosition += (linesDoc.length * 4) + 2;
-
-                doc.setTextColor(0, 0, 0); // Reset color
-
-                // Listar archivos adjuntos si existen
-                if (registro.archivos && Object.keys(registro.archivos).length > 0) {
                     doc.setFont('helvetica', 'normal');
+                    doc.setFontSize(9);
+                    doc.text(`DNI: ${dni} | Fecha: ${fechaRegistro} | Tel: ${telefono}`, margin + 5, yPosition);
+                    yPosition += 5;
+                    doc.text(`Email: ${email} | Modalidad: ${modalidad}`, margin + 5, yPosition);
+                    yPosition += 5;
+
+                    // Estado Doc
+                    const cleanMensaje = estadoDoc.mensaje.replace(/[^a-zA-Z0-9áéíóúÁÉÍÓÚñÑüÜ\s\.,;:\(\)\-@\/]/g, '').replace(/\s+/g, ' ').trim();
+                    let colorEstado = [0, 0, 0];
+                    if (estadoDoc.esCompleto) colorEstado = [0, 128, 0];
+                    else if (estadoDoc.mensaje.includes('Faltan')) colorEstado = [180, 0, 0]; // Rojo para faltantes en reporte
+
+                    doc.setTextColor(...colorEstado);
                     doc.setFontSize(8);
-                    const archivosTexto = Object.keys(registro.archivos).map(tipo => {
-                        const mapNombres = {
-                            'foto': 'Foto', 'archivo_dni': 'DNI', 'archivo_cuil': 'CUIL',
-                            'archivo_fichaMedica': 'Ficha Médica', 'archivo_partidaNacimiento': 'Partida Nac.',
-                            'archivo_solicitudPase': 'Solicitud Pase', 'archivo_analiticoParcial': 'Analítico Parc.',
-                            'archivo_certificadoNivelPrimario': 'Cert. Primario'
-                        };
-                        return mapNombres[tipo] || tipo;
-                    }).join(', ');
+                    const textoDoc = `Doc: ${cleanMensaje}`;
+                    const linesDoc = doc.splitTextToSize(textoDoc, pageWidth - margin * 2 - 5);
+                    doc.text(linesDoc, margin + 5, yPosition);
+                    yPosition += (linesDoc.length * 4) + 2;
 
-                    doc.text(`Adjuntos: ${archivosTexto}`, margin + 5, yPosition, { maxWidth: pageWidth - margin * 2 - 5 });
-                    // Calcular altura aproximada si el texto es largo (simple estimación)
-                    const lines = doc.splitTextToSize(`Adjuntos: ${archivosTexto}`, pageWidth - margin * 2 - 5);
-                    yPosition += (lines.length * 4);
-                } else {
-                    yPosition += 2;
-                }
+                    // Adjuntos
+                    if (registro.archivos && Object.keys(registro.archivos).length > 0) {
+                        doc.setTextColor(0, 0, 0);
+                        const archivosTexto = Object.keys(registro.archivos).map(tipo => {
+                            const mapNombres = { 'foto': 'Foto', 'archivo_dni': 'DNI', 'archivo_cuil': 'CUIL', 'archivo_fichaMedica': 'Ficha Méd.', 'archivo_partidaNacimiento': 'Partida Nac.', 'archivo_certificadoNivelPrimario': 'Cert. Primario' };
+                            return mapNombres[tipo] || tipo;
+                        }).join(', ');
+                        const textAdj = `Adjuntos: ${archivosTexto}`;
+                        const linesAdj = doc.splitTextToSize(textAdj, pageWidth - margin * 2 - 5);
+                        doc.text(linesAdj, margin + 5, yPosition);
+                        yPosition += (linesAdj.length * 4);
+                    }
 
-                // Separador de items
-                yPosition += 3;
-                doc.setDrawColor(200, 200, 200);
-                doc.setLineWidth(0.1);
-                doc.line(margin, yPosition, pageWidth - margin, yPosition);
-                yPosition += 8;
-            });
+                    yPosition += 4;
+                    doc.setDrawColor(220, 220, 220);
+                    doc.line(margin, yPosition, pageWidth - margin, yPosition); // Separador item
+                    yPosition += 6;
+                });
 
-            // Pie de página final
+                yPosition += 10; // Espacio tras sección
+            };
+
+            // Ejecución
+            yPosition = imprimirEncabezado();
+
+            imprimirLista('REGISTROS PENDIENTES', listaPendientes);
+            imprimirLista('REGISTROS PROCESADOS / HISTÓRICOS (EN LISTA)', listaProcesados);
+
             addFooter(pageNum);
-
-            // Descargar
-            doc.save(`reporte-registros-web-${new Date().toISOString().split('T')[0]}.pdf`);
-            showSuccess('📄 Reporte PDF generado exitosamente');
+            doc.save('reporte_registros_web_completo.pdf');
 
         } catch (error) {
-            console.error('Error generando PDF web:', error);
-            showError('Error al generar el PDF: ' + error.message);
+            console.error('Error al generar PDF:', error);
+            showError('Error al crear el PDF: ' + error.message);
         }
     };
 
@@ -479,7 +477,7 @@ const GestorRegistrosWeb = ({ onClose, onRegistroSeleccionado, isAdmin = false }
             <div className="gestor-registros-web">
                 <div className="gestor-modal-container">
                     <div className="gestor-header">
-                        <h2>🌐 Gestión de Registros Web</h2>
+                        <h2>🌐 Gestión de Registros Pre-InscripcionesWeb</h2>
                         <CloseButton onClose={onClose} className="cerrar-button" />
                     </div>
 
@@ -498,10 +496,6 @@ const GestorRegistrosWeb = ({ onClose, onRegistroSeleccionado, isAdmin = false }
                                 <div className="stat-number">{contadoresVisuales.procesados}</div>
                                 <div className="stat-label">Procesados</div>
                             </div>
-                            <div className="stat-card">
-                                <div className="stat-number">{contadoresVisuales.anulados}</div>
-                                <div className="stat-label">Anulados</div>
-                            </div>
                         </div>
 
                         {/* Segunda fila: Controles y filtros */}
@@ -516,7 +510,6 @@ const GestorRegistrosWeb = ({ onClose, onRegistroSeleccionado, isAdmin = false }
                                     <option value="TODOS">Todos los registros</option>
                                     <option value="PENDIENTE">Solo pendientes</option>
                                     <option value="PROCESADO">Solo procesados</option>
-                                    <option value="ANULADO">Solo anulados</option>
                                 </select>
                             </div>
 
@@ -709,12 +702,24 @@ const GestorRegistrosWeb = ({ onClose, onRegistroSeleccionado, isAdmin = false }
                         {mostrarConfirmacion && registroAEliminar && (
                             <div className="modal-confirmacion-overlay">
                                 <div className="modal-confirmacion">
-                                    <h3>Confirmar Eliminación</h3>
+                                    <h3>
+                                        {['PROCESADO_Y_Completa', 'PROCESADO', 'Completa'].some(s => (registroAEliminar.estado || '').includes(s))
+                                            ? 'Limpiar Registro Procesado'
+                                            : 'Confirmar Eliminación'}
+                                    </h3>
                                     <p>
-                                        ¿Está seguro de que desea eliminar el registro de{' '}
-                                        <strong>
-                                            {registroAEliminar.datos.apellido}, {registroAEliminar.datos.nombre}
-                                        </strong>?
+                                        {['PROCESADO_Y_Completa', 'PROCESADO', 'Completa'].some(s => (registroAEliminar.estado || '').includes(s)) ? (
+                                            <>
+                                                Este registro ya fue procesado. Se <strong>limpiará de la lista</strong> para ahorrar espacio,
+                                                pero el contador de estadísticas de procesados <strong>se mantendrá</strong>.
+                                            </>
+                                        ) : (
+                                            <>
+                                                ⚠️ ¿Está seguro de que desea eliminar permanentemente la solicitud pendiente de{' '}
+                                                <strong>{registroAEliminar.datos.apellido}, {registroAEliminar.datos.nombre}</strong>?
+                                                <br />Se perderá toda la información.
+                                            </>
+                                        )}
                                     </p>
                                     <p className="dni-info">DNI: {registroAEliminar.datos.dni}</p>
                                     <div className="modal-botones">

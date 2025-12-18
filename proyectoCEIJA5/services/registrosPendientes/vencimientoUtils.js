@@ -5,11 +5,11 @@ const calcularDiasRestantes = (fechaRegistro) => {
     const fechaCreacion = new Date(fechaRegistro);
     const fechaVencimiento = new Date(fechaCreacion);
     fechaVencimiento.setDate(fechaVencimiento.getDate() + 7); // 7 días por defecto
-    
+
     const hoy = new Date();
     const diferencia = fechaVencimiento - hoy;
     const diasRestantes = Math.ceil(diferencia / (1000 * 60 * 60 * 24));
-    
+
     return {
         diasRestantes,
         fechaVencimiento,
@@ -20,6 +20,20 @@ const calcularDiasRestantes = (fechaRegistro) => {
 
 // Función para determinar el estado de notificación
 const determinarEstadoNotificacion = (registro) => {
+    // Si el registro ya fue procesado, no tiene vencimiento
+    if (registro.estado === 'PROCESADO') {
+        return {
+            diasRestantes: 7, // Valor dummy positivo
+            fechaVencimiento: registro.fechaVencimiento || new Date().toISOString(),
+            fechaVencimientoLocal: 'N/A',
+            tipoNotificacion: 'procesado', // Nuevo tipo
+            mensaje: 'PROCESADO',
+            puedeReiniciarAlarma: false,
+            alarmaReiniciada: false,
+            extensionesAnteriores: 0
+        };
+    }
+
     // Si tiene fecha de vencimiento personalizada (extensión)
     let fechaVencimiento;
     if (registro.fechaVencimiento) {
@@ -30,14 +44,14 @@ const determinarEstadoNotificacion = (registro) => {
         fechaVencimiento = new Date(fechaCreacion);
         fechaVencimiento.setDate(fechaVencimiento.getDate() + 7);
     }
-    
+
     const hoy = new Date();
     const diferencia = fechaVencimiento - hoy;
     const diasRestantes = Math.ceil(diferencia / (1000 * 60 * 60 * 24));
-    
+
     let tipoNotificacion = 'normal';
     let mensaje = '';
-    
+
     if (diasRestantes < 0) {
         tipoNotificacion = 'vencido';
         mensaje = `Vencido hace ${Math.abs(diasRestantes)} día${Math.abs(diasRestantes) > 1 ? 's' : ''}`;
@@ -50,7 +64,7 @@ const determinarEstadoNotificacion = (registro) => {
     } else {
         mensaje = `${diasRestantes} días restantes`;
     }
-    
+
     return {
         diasRestantes,
         fechaVencimiento: fechaVencimiento.toISOString(),

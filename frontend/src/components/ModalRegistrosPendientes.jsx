@@ -303,9 +303,11 @@ const ModalRegistrosPendientes = ({ onClose }) => {
     };
 
     // Función para cerrar modal de edición
-    const cerrarModalEdicion = () => {
-        // Limpiar alertas al cerrar el modal
-        clearAlerts();
+    const cerrarModalEdicion = (conservarAlertas = false) => {
+        // Limpiar alertas al cerrar el modal solo si no se indica conservarlas
+        if (!conservarAlertas) {
+            clearAlerts();
+        }
         setMostrarModalEdicion(false);
         setRegistroEditando(null);
     };
@@ -332,8 +334,12 @@ const ModalRegistrosPendientes = ({ onClose }) => {
                     showSuccess(`🎉 ${nombreCompleto} - Estudiante registrado exitosamente.`);
                 }
 
-                // Eliminar automáticamente de la lista local
-                setRegistros(prevRegistros => prevRegistros.filter(r => r.dni !== registro.dni));
+                // Actualizar estado en la lista local en lugar de eliminar
+                setRegistros(prevRegistros => prevRegistros.map(r =>
+                    r.dni === registro.dni
+                        ? { ...r, estado: 'PROCESADO', fechaProcesado: new Date().toISOString() }
+                        : r
+                ));
 
                 // Refrescar listas desde el servidor
                 await recargarRegistros(false);
@@ -354,6 +360,11 @@ const ModalRegistrosPendientes = ({ onClose }) => {
                     showInfo(`ℹ️ Detalles: ${infoAdicional.join(' | ')}`);
                 }
 
+                // Cerrar modal tras éxito
+                setTimeout(() => {
+                    cerrarModalEdicion(true);
+                }, 2000);
+
             } else if (tipoOperacion === 'ya_procesado') {
                 const nombreCompleto = `${registro.datos?.nombre || registro.nombre} ${registro.datos?.apellido || registro.apellido}`.trim();
 
@@ -369,9 +380,18 @@ const ModalRegistrosPendientes = ({ onClose }) => {
                     showInfo(resultado.detalles);
                 }
 
-                // Eliminar de la lista local y sincronizar
-                setRegistros(prevRegistros => prevRegistros.filter(r => r.dni !== registro.dni));
+                // Actualizar estado en la lista local en lugar de eliminar
+                setRegistros(prevRegistros => prevRegistros.map(r =>
+                    r.dni === registro.dni
+                        ? { ...r, estado: 'PROCESADO' }
+                        : r
+                ));
                 await recargarRegistros(false);
+
+                // Cerrar modal
+                setTimeout(() => {
+                    cerrarModalEdicion(true);
+                }, 2000);
 
             } else if (tipoOperacion === 'actualizado') {
                 // Recargar lista después de una actualización
@@ -382,16 +402,21 @@ const ModalRegistrosPendientes = ({ onClose }) => {
                 } else {
                     showSuccess('✅ Registro actualizado exitosamente');
                 }
+                // También cerrar si fue una actualización exitosa
+                setTimeout(() => {
+                    cerrarModalEdicion(true);
+                }, 1500);
+            } else if (tipoOperacion === 'actualizado_incompleto') {
+                // Recargar lista para reflejar cambio de fecha de vencimiento (alarma reiniciada)
+                await recargarRegistros(false);
+                console.log('🔄 Lista recargada por actualización incompleta (alarma reiniciada)');
+                // No cerramos el modal para permitir seguir editando
             }
         } catch (error) {
             console.error('Error en handleRegistroGuardado:', error);
             showError(`❌ Error al procesar el registro: ${error.message}`);
-        } finally {
-            // Cerrar modal con delay para mostrar mensajes
-            setTimeout(() => {
-                cerrarModalEdicion();
-            }, 500);
         }
+        // Eliminado finally para evitar cierre prematuro en casos de error o advertencia
     };
 
     // Función para manejar eliminación desde el modal
@@ -896,7 +921,7 @@ const ModalRegistrosPendientes = ({ onClose }) => {
             doc.setFontSize(16);
             doc.setFont('helvetica', 'bold');
             doc.setTextColor(45, 65, 119);
-            doc.text('REPORTE DE REGISTROS PENDIENTES', pageWidth / 2, yPosition, { align: 'center' });
+            doc.text('REPORTE DE REGISTROS PRE-INSCRIPCIONESPENDIENTES', pageWidth / 2, yPosition, { align: 'center' });
             yPosition += 10;
             doc.setFontSize(10);
             doc.setFont('helvetica', 'normal');
@@ -1117,44 +1142,92 @@ const ModalRegistrosPendientes = ({ onClose }) => {
             const doc = new jsPDF();
             const pageWidth = doc.internal.pageSize.width;
             const margin = 20;
-            let y = 20;
+            let yPosition = 20; // Usar yPosition consistente con el otro reporte
 
-            doc.setFontSize(14);
-            doc.setFont('helvetica', 'bold');
-            doc.setTextColor(45, 65, 119);
-            doc.text('EXTENSIÓN DE INSCRIPCIÓN - Alumnos con reinicio de alarma', pageWidth / 2, y, { align: 'center' });
-            y += 10;
-            doc.setFontSize(10);
-            doc.setFont('helvetica', 'normal');
-            doc.text(`Generado: ${new Date().toLocaleString('es-AR')}`, margin, y);
-            y += 8;
+            // --- FUNCIÓN DE PIE DE PÁGINA (Idéntica a generarReportePDF) ---
+            const addFooter = (pageNum) => {
+                doc.setFontSize(10);
+                doc.setFont('helvetica', 'normal');
+                doc.setTextColor(0, 0, 0); // Reset color a negro para pie de página
+                const footerText = `Reporte CEIJA5`;
+                const pageText = `Página ${pageNum}`;
+                const yFooter = doc.internal.pageSize.height - 10;
+                doc.text(footerText, margin, yFooter, { align: 'left' });
+                doc.text(pageText, pageWidth - margin, yFooter, { align: 'right' });
+            };
+
+            let pageNum = 1;
+
+            // --- HEADER (Idéntico a generarReportePDF) ---
+            const printHeader = () => {
+                doc.setTextColor(45, 65, 119);
+                doc.setFontSize(14);
+                doc.setFont('helvetica', 'bold');
+                doc.text('CEIJA5 LA CALERA CBA', pageWidth / 2, yPosition, { align: 'center' });
+                yPosition += 5;
+                doc.setFontSize(11);
+                doc.setFont('helvetica', 'bold');
+                doc.text('Educacion Integral de Jóvenes y Adultos', pageWidth / 2, yPosition, { align: 'center' });
+                yPosition += 2;
+                // Blue separator line
+                doc.setDrawColor(0, 0, 255);
+                doc.setLineWidth(0.5);
+                doc.line(margin, yPosition + 2, pageWidth - margin, yPosition + 2);
+                yPosition += 4;
+                yPosition += 8;
+                doc.setTextColor(45, 65, 119);
+                // Encabezado de reporte específico
+                doc.setFontSize(16);
+                doc.setFont('helvetica', 'bold');
+                doc.setTextColor(45, 65, 119);
+                doc.text('REPORTE DE EXTENSIÓN DE PRE-INSCRIPCIÓN', pageWidth / 2, yPosition, { align: 'center' });
+                yPosition += 10;
+                doc.setFontSize(10);
+                doc.setFont('helvetica', 'normal');
+                doc.setTextColor(0, 0, 0);
+                doc.text(`Fecha: ${new Date().toLocaleString('es-AR')}`, pageWidth / 2, yPosition, { align: 'center' });
+                doc.text(`Total seleccionados: ${seleccion.length} estudiantes`, pageWidth / 2, yPosition + 5, { align: 'center' });
+                yPosition += 20;
+            };
+
+            // Imprimir header primera página
+            printHeader();
 
             seleccion.forEach((reg, idx) => {
-                if (y > 250) {
+                if (yPosition > 250) {
+                    addFooter(pageNum);
                     doc.addPage();
-                    y = 20;
+                    pageNum++;
+                    yPosition = 20;
+                    printHeader(); // Repetir header en nueva página
                 }
+
                 const nombre = `${reg.datos?.nombre || reg.nombre || ''} ${reg.datos?.apellido || reg.apellido || ''}`.trim();
                 const dni = reg.datos?.dni || reg.dni || '';
                 const email = reg.datos?.email || reg.email || 'Sin email';
                 const fechaReinicio = reg.fechaReinicio || reg.fechaReinicioISO || '';
                 const motivo = reg.motivoExtension || reg.motivo || '';
 
+                // Cuerpo del reporte (mantenemos lógica de contenido previa pero con posicionamiento consistente)
+                doc.setTextColor(0, 0, 0); // Asegurar texto negro
                 doc.setFont('helvetica', 'bold');
                 doc.setFontSize(11);
-                doc.text(`${idx + 1}. ${nombre}`, margin, y);
-                y += 6;
+                doc.text(`${idx + 1}. ${nombre}`, margin, yPosition);
+                yPosition += 6;
                 doc.setFont('helvetica', 'normal');
                 doc.setFontSize(9);
-                doc.text(`DNI: ${dni}   Email: ${email}`, margin + 4, y);
-                y += 5;
+                doc.text(`DNI: ${dni}   Email: ${email}`, margin + 4, yPosition);
+                yPosition += 5;
                 if (fechaReinicio) {
                     const fechaFmt = new Date(fechaReinicio).toLocaleString('es-AR');
-                    doc.text(`Fecha reinicio: ${fechaFmt}   Motivo: ${motivo}`, margin + 4, y);
-                    y += 6;
+                    doc.text(`Fecha reinicio: ${fechaFmt}   Motivo: ${motivo}`, margin + 4, yPosition);
+                    yPosition += 6;
                 }
-                y += 4;
+                yPosition += 4;
             });
+
+            // Pie de página de la última página
+            addFooter(pageNum);
 
             doc.save(`extension-inscripcion-${new Date().toISOString().split('T')[0]}.pdf`);
             showSuccess('📄 Extensión Inscripción generada');
@@ -1172,6 +1245,46 @@ const ModalRegistrosPendientes = ({ onClose }) => {
     // Handler para cerrar/ocultar el estado de duplicados (prefijado para evitar linter cuando no se usa)
     const _limpiarEstadoDuplicados = () => setEstadoDuplicados(null);
 
+    // Estado para búsqueda y filtro
+    const [busqueda, setBusqueda] = useState('');
+    const [filtroEstado, setFiltroEstado] = useState('TODOS');
+
+    // Filtrado de registros
+    const registrosFiltrados = registros.filter(registro => {
+        // 1. Filtro de Texto (Búsqueda)
+        let coincideBusqueda = true;
+        if (busqueda) {
+            const termino = busqueda.toLowerCase();
+            const nombre = (registro.datos?.nombre || registro.nombre || '').toLowerCase();
+            const apellido = (registro.datos?.apellido || registro.apellido || '').toLowerCase();
+            const dni = (registro.datos?.dni || registro.dni || '').toString();
+            const email = (registro.datos?.email || registro.email || '').toLowerCase();
+
+            coincideBusqueda = nombre.includes(termino) ||
+                apellido.includes(termino) ||
+                dni.includes(termino) ||
+                email.includes(termino);
+        }
+
+        // 2. Filtro de Estado (Select)
+        let coincideEstado = true;
+        if (filtroEstado !== 'TODOS') {
+            const info = obtenerInfoVencimiento(registro);
+            const esProcesado = registro.estado === 'PROCESADO';
+
+            if (filtroEstado === 'PROCESADOS') {
+                coincideEstado = esProcesado;
+            } else if (filtroEstado === 'PENDIENTES_VENCIDOS') {
+                coincideEstado = !esProcesado && info.vencido;
+            } else if (filtroEstado === 'PENDIENTES_COMPLETAR') {
+                // "Pendientes Completar" lo interpretamos como Pendientes VIGENTES (no vencidos)
+                coincideEstado = !esProcesado && !info.vencido;
+            }
+        }
+
+        return coincideBusqueda && coincideEstado;
+    });
+
     return (
         <div className="gestor-registros-web modal-registros-pendientes"> {/* modal-registros-pendientes mantenido para compatibilidad de estilos internos */}
             {/* Alertas Flotantes */}
@@ -1181,24 +1294,64 @@ const ModalRegistrosPendientes = ({ onClose }) => {
 
                 {/* Header estilo Gestor */}
                 <div className="gestor-header">
-                    <h2>📋 Registros Pendientes</h2>
+                    <h2>📋 Registros Pre-Inscripciones Pendientes</h2>
                     <CloseButton onClose={onClose} className="cerrar-button" />
                 </div>
 
                 {/* Contenido principal */}
                 <div className="gestor-content">
 
-                    {/* Stats / Info Header (Reemplaza la info que estaba en HeaderModal) */}
-                    <div style={{ marginBottom: '15px', padding: '0 5px', color: '#666', fontSize: '0.9rem', display: 'flex', justifyContent: 'space-between', borderBottom: '1px solid #eee', paddingBottom: '10px' }}>
-                        <div>
-                            Total: <strong>{registros.length}</strong> registros
-                            {fechaActualizacion && <span style={{ marginLeft: '15px' }}>📅 Actualizado: {fechaActualizacion}</span>}
+                    {/* Stats / Info Header y Buscador */}
+                    <div style={{ marginBottom: '15px', padding: '0 5px', borderBottom: '1px solid #eee', paddingBottom: '15px' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px', color: '#666', fontSize: '0.9rem' }}>
+                            <div>
+                                Mostrando <strong>{registrosFiltrados.length}</strong> de <strong>{registros.length}</strong> registros
+                                {fechaActualizacion && <span style={{ marginLeft: '15px' }}>📅 Actualizado: {fechaActualizacion}</span>}
+                            </div>
+                        </div>
+
+                        {/* Barra de Filtros y Búsqueda */}
+                        <div className="gestor-filter-bar" style={{ marginTop: '10px', display: 'flex', gap: '10px', alignItems: 'center' }}>
+                            {/* Select de Estado */}
+                            <div className="filter-select-container" style={{ minWidth: '200px' }}>
+                                <select
+                                    className="filter-select"
+                                    value={filtroEstado}
+                                    onChange={(e) => setFiltroEstado(e.target.value)}
+                                    style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid #ddd' }}
+                                >
+                                    <option value="TODOS">📋 Todos los registros</option>
+                                    <option value="PENDIENTES_COMPLETAR">📝 Pendientes (Vigentes)</option>
+                                    <option value="PENDIENTES_VENCIDOS">⏰ Pendientes (Vencidos)</option>
+                                    <option value="PROCESADOS">✅ Procesados / Completos</option>
+                                </select>
+                            </div>
+
+                            {/* Buscador */}
+                            <div className="search-container" style={{ flex: 1, maxWidth: '350px', position: 'relative' }}>
+                                <input
+                                    type="text"
+                                    placeholder="🔍 Buscar por DNI, nombre..."
+                                    value={busqueda}
+                                    onChange={(e) => setBusqueda(e.target.value)}
+                                    className="search-input"
+                                    style={{ width: '100%', padding: '8px 35px 8px 10px', borderRadius: '20px' }}
+                                />
+                                {busqueda && (
+                                    <div style={{ position: 'absolute', right: '4px', top: '50%', transform: 'translateY(-50%)', zIndex: 5 }}>
+                                        <CloseButton
+                                            onClose={() => setBusqueda('')}
+                                            className="boton-limpiar-busqueda boton-small"
+                                        />
+                                    </div>
+                                )}
+                            </div>
                         </div>
                     </div>
 
                     {/* Lista de registros */}
                     <ListaRegistrosPendientes
-                        registros={registros}
+                        registros={registrosFiltrados}
                         cargandoRegistros={cargandoRegistros}
                         mapeoDocumentos={{
                             'cuil': 'CUIL',
@@ -1228,7 +1381,7 @@ const ModalRegistrosPendientes = ({ onClose }) => {
                         onClick={() => setMostrarAcciones(true)}
                     >
                         <span className="icon">⚙️</span>
-                        Panel de Gestión y Reportes
+                        Notificaciones y Reportes
                     </button>
                 </div>
             </div> {/* fin gestor-modal-container */}

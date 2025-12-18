@@ -12,7 +12,7 @@ export const inicializarSistemaLimpieza = () => {
         limpiarRegistrosVencidos(); // Limpieza inicial
         sistemaInicializado = true;
         console.log('🚀 Sistema de registros sin documentación inicializado (7 días)');
-        
+
         // 🧪 Ejecutar test automático al inicializar (solo en desarrollo)
         if (typeof window !== 'undefined' && window.location.hostname === 'localhost') {
             setTimeout(() => {
@@ -44,11 +44,17 @@ export const obtenerDocumentosRequeridos = (modalidad, planAnio, modulos) => {
     let documentosAlternativos = null; // Para casos especiales con opciones
 
     // Documentos adicionales según modalidad y plan
-    if (modalidad === 'Presencial') {
-        if (planAnio === '1') {
-            // 1er Año: Certificado Primario + Solicitud Pase (ambos requeridos)
-            documentosAdicionales = ["archivo_certificadoNivelPrimario", "archivo_solicitudPase"];
-        } else if (planAnio === '2' || planAnio === '3') {
+    // Documentos adicionales según modalidad y plan
+    // Normalizar entradas para asegurar coincidencia (usar strings para evitar problemas de tipo)
+    const modString = String(modalidad || '');
+    const planString = String(planAnio || '');
+    const modulosString = String(modulos || '');
+
+    if (modString === 'Presencial' || modString === '1') {
+        if (planString === '1' || planString === '1er Año') {
+            // 1er Año: Certificado Primario ÚNICAMENTE (además de básicos)
+            documentosAdicionales = ["archivo_certificadoNivelPrimario"];
+        } else if (planString === '2' || planString === '3' || planString === '2do Año' || planString === '3er Año') {
             // 2do/3er Año: ANALÍTICO PARCIAL (definitivo) o SOLICITUD DE PASE (temporal)
             documentosAdicionales = [];
             documentosAlternativos = {
@@ -58,11 +64,11 @@ export const obtenerDocumentosRequeridos = (modalidad, planAnio, modulos) => {
                 descripcion: "Analítico Parcial (definitivo) O Solicitud de Pase (temporal - luego deberá presentar analítico)"
             };
         }
-    } else if (modalidad === 'Semipresencial') {
-        if (planAnio === '4') {
-            // Plan A: Certificado Primario + Solicitud Pase (ambos requeridos)
-            documentosAdicionales = ["archivo_certificadoNivelPrimario", "archivo_solicitudPase"];
-        } else if (planAnio === '5' || planAnio === '6') {
+    } else if (modString === 'Semipresencial' || modString === '2') {
+        if (planString === '4' || planString === 'Plan A') {
+            // Plan A: Certificado Primario ÚNICAMENTE (además de básicos)
+            documentosAdicionales = ["archivo_certificadoNivelPrimario"];
+        } else if (planString === '5' || planString === '6' || planString === 'Plan B' || planString === 'Plan C') {
             // Plan B/C: ANALÍTICO PARCIAL (definitivo) o SOLICITUD DE PASE (temporal)
             documentosAdicionales = [];
             documentosAlternativos = {
@@ -73,41 +79,35 @@ export const obtenerDocumentosRequeridos = (modalidad, planAnio, modulos) => {
             };
         }
     }
-    
+
     // Construir lista de documentos requeridos
     const documentosRequeridos = [...documentosBase, ...documentosAdicionales];
-    
+
     // Agregar documento alternativo (se requiere UNO de los dos)
     if (documentosAlternativos) {
         documentosRequeridos.push(documentosAlternativos.preferido);
     }
-    
+
     // Logging mejorado con información del criterio usado
     let criterioInfo = '';
-    if (modalidad === 'Presencial') {
-        if (planAnio === '1') criterioInfo = '1er Año (ID 1): Título primario + Solicitud de pase (ambos requeridos)';
-        else if (planAnio === '2') criterioInfo = '2do Año (ID 2): Solo documentos base + (Analítico Parcial O Solicitud de Pase)';
-        else if (planAnio === '3') criterioInfo = '3er Año (ID 3): Solo documentos base + (Analítico Parcial O Solicitud de Pase)';
-        else criterioInfo = `${planAnio}° Año: Documentos base + (Analítico Parcial O Solicitud de Pase)`;
-    } else if (modalidad === 'Semipresencial') {
-        if (planAnio === '4') {
-            criterioInfo = 'Plan A (ID 4 - Módulos 1,2,3): Base + Certificado Primario (definitivo) O Solicitud de Pase (temporal) - 6 docs';
-        } else if (planAnio === '5') {
-            criterioInfo = 'Plan B (ID 5 - Módulos 4,5): Base + Analítico Parcial (obligatorio) O Solicitud de Pase (temporal) - 6 docs';
-        } else if (planAnio === '6') {
-            criterioInfo = 'Plan C (ID 6 - Módulos 6,7,8,9): Base + Analítico Parcial (obligatorio) O Solicitud de Pase (temporal) - 6 docs';
-        } else {
-            criterioInfo = `Plan ${planAnio}: Documentos base + (Analítico Parcial O Solicitud de Pase)`;
+    if (modString === 'Presencial' || modString === '1') {
+        if (planString === '1' || planString === '1er Año') criterioInfo = '1er Año: Solo Título primario (NO Pase ni Analítico)';
+        else criterioInfo = `${planString}: Documentos base + (Analítico Parcial O Solicitud de Pase)`;
+    } else if (modString === 'Semipresencial' || modString === '2') {
+        if (planString === '4' || planString === 'Plan A') {
+            criterioInfo = 'Plan A: Base + Certificado Primario (NO Pase ni Analítico)';
+        } else if (planString === '5' || planString === 'Plan B' || planString === '6' || planString === 'Plan C') {
+            criterioInfo = `Plan ${planString}: Base + Analítico Parcial O Solicitud de Pase`;
         }
     }
-    
+
     // Logs comentados para evitar spam - solo activar para debugging
     // console.log(`📋 [VALIDACIÓN] ${modalidad} - ${criterioInfo}`);
     // console.log(`📋 [VALIDACIÓN] Documentos requeridos (${documentosRequeridos.length}):`, documentosRequeridos);
     // if (documentosAlternativos) {
     //     console.log(`🔄 [ALTERNATIVAS] ${documentosAlternativos.descripcion}`);
     // }
-    
+
     return {
         documentos: documentosRequeridos,
         alternativos: documentosAlternativos,
@@ -126,7 +126,7 @@ export const obtenerEstadoDocumentacion = (files = {}, previews = {}, modalidad 
     const nombresLegibles = {
         "foto": "📷 Foto 4x4",
         "archivo_dni": "📄 DNI",
-        "archivo_cuil": "📄 CUIL", 
+        "archivo_cuil": "📄 CUIL",
         "archivo_fichaMedica": "🏥 Ficha Médica CUS",
         "archivo_partidaNacimiento": "📜 Partida de Nacimiento",
         "archivo_solicitudPase": "📝 Solicitud de Pase",
@@ -148,7 +148,7 @@ export const obtenerEstadoDocumentacion = (files = {}, previews = {}, modalidad 
     // Validar documentos uno por uno
     for (const doc of documentosRequeridos) {
         // Si este documento es parte de un grupo alternativo
-        if (documentosAlternativos && 
+        if (documentosAlternativos &&
             (doc === documentosAlternativos.preferido || doc === documentosAlternativos.alternativa)) {
 
             const tienePreferido = documentoPresente(documentosAlternativos.preferido);
@@ -184,17 +184,17 @@ export const obtenerEstadoDocumentacion = (files = {}, previews = {}, modalidad 
     // Eliminar duplicados de documentos alternativos procesados
     if (documentosAlternativos) {
         // Filtrar para evitar duplicados en subidos
-        documentosSubidos = documentosSubidos.filter((doc, index, array) => 
+        documentosSubidos = documentosSubidos.filter((doc, index, array) =>
             array.indexOf(doc) === index
         );
 
         // Si ya procesamos el grupo alternativo, remover el otro documento de faltantes
         if (documentosSubidos.includes(documentosAlternativos.preferido)) {
-            documentosFaltantes = documentosFaltantes.filter(doc => 
+            documentosFaltantes = documentosFaltantes.filter(doc =>
                 doc !== documentosAlternativos.alternativa
             );
         } else if (documentosSubidos.includes(documentosAlternativos.alternativa)) {
-            documentosFaltantes = documentosFaltantes.filter(doc => 
+            documentosFaltantes = documentosFaltantes.filter(doc =>
                 doc !== documentosAlternativos.preferido
             );
         }
@@ -230,7 +230,7 @@ export const obtenerEstadoDocumentacion = (files = {}, previews = {}, modalidad 
     } else {
         tipo = 'DOCUMENTACION_COMPLETA';
         // Mensaje especial para alternativas temporales (cualquier plan con Solicitud de Pase)
-        if (documentosAlternativos && documentosSubidos.includes(documentosAlternativos.alternativa) && 
+        if (documentosAlternativos && documentosSubidos.includes(documentosAlternativos.alternativa) &&
             !documentosSubidos.includes(documentosAlternativos.preferido) &&
             documentosAlternativos.alternativa === 'archivo_solicitudPase') {
             mensaje = `✅ Documentación completa para ${modalidad} - Registro será marcado como PROCESADO. ⚠️ NOTA: Deberá presentar Analítico Parcial posteriormente.`;
@@ -264,7 +264,7 @@ export const obtenerEstadoDocumentacion = (files = {}, previews = {}, modalidad 
 export const generarMensajeNotificacion = (estadoDocumentacion, datosEstudiante) => {
     const { nombre = '', apellido = '', dni = '', email = '' } = datosEstudiante;
     const nombreCompleto = `${nombre} ${apellido}`.trim();
-    
+
     if (estadoDocumentacion.completo) {
         return {
             necesitaNotificacion: false,
@@ -272,24 +272,24 @@ export const generarMensajeNotificacion = (estadoDocumentacion, datosEstudiante)
             mensaje: `✅ Registro completo para ${nombreCompleto} (DNI: ${dni}) - Documentación procesada exitosamente.`
         };
     }
-    
+
     const { tipo, cantidadSubidos, totalDocumentos, nombresDocumentosFaltantes } = estadoDocumentacion;
-    
+
     let mensaje;
     if (tipo === 'SIN_DOCUMENTACION') {
         mensaje = `⚠️ REGISTRO PENDIENTE - ${nombreCompleto} (DNI: ${dni})\n` +
-                 `Sin documentación adjunta. El registro quedará PENDIENTE hasta completar los archivos requeridos.\n` +
-                 `📧 Email: ${email || 'No proporcionado'}\n` +
-                 `📋 Documentos requeridos: ${totalDocumentos}\n` +
-                 `⏰ El estudiante debe completar la documentación para procesar la inscripción.`;
+            `Sin documentación adjunta. El registro quedará PENDIENTE hasta completar los archivos requeridos.\n` +
+            `📧 Email: ${email || 'No proporcionado'}\n` +
+            `📋 Documentos requeridos: ${totalDocumentos}\n` +
+            `⏰ El estudiante debe completar la documentación para procesar la inscripción.`;
     } else {
         mensaje = `⚠️ REGISTRO PENDIENTE - ${nombreCompleto} (DNI: ${dni})\n` +
-                 `Documentación incompleta (${cantidadSubidos}/${totalDocumentos}). El registro quedará PENDIENTE.\n` +
-                 `📧 Email: ${email || 'No proporcionado'}\n` +
-                 `📄 Documentos faltantes:\n${nombresDocumentosFaltantes.map(doc => `  • ${doc}`).join('\n')}\n` +
-                 `⏰ El estudiante debe completar los documentos faltantes para procesar la inscripción.`;
+            `Documentación incompleta (${cantidadSubidos}/${totalDocumentos}). El registro quedará PENDIENTE.\n` +
+            `📧 Email: ${email || 'No proporcionado'}\n` +
+            `📄 Documentos faltantes:\n${nombresDocumentosFaltantes.map(doc => `  • ${doc}`).join('\n')}\n` +
+            `⏰ El estudiante debe completar los documentos faltantes para procesar la inscripción.`;
     }
-    
+
     return {
         necesitaNotificacion: true,
         tipoNotificacion: tipo.toLowerCase(),
@@ -302,23 +302,23 @@ export const generarMensajeNotificacion = (estadoDocumentacion, datosEstudiante)
 // Función para mostrar notificación en consola y/o enviar alerta
 export const procesarNotificacionDocumentacion = (estadoDocumentacion, datosEstudiante, setAlert) => {
     const notificacion = generarMensajeNotificacion(estadoDocumentacion, datosEstudiante);
-    
+
     // Siempre mostrar en consola para admins
     console.log(`📨 [NOTIFICACIÓN] ${notificacion.mensaje}`);
-    
+
     if (notificacion.necesitaNotificacion) {
         // Mostrar alerta visual
         if (setAlert) {
-            const alertaTexto = estadoDocumentacion.tipo === 'SIN_DOCUMENTACION' 
+            const alertaTexto = estadoDocumentacion.tipo === 'SIN_DOCUMENTACION'
                 ? `${estadoDocumentacion.mensaje}\n📨 Se ha generado notificación para seguimiento administrativo.`
                 : `${estadoDocumentacion.mensaje}\n📨 Se ha generado notificación para seguimiento administrativo.`;
-                
-            setAlert({ 
-                text: alertaTexto, 
-                variant: 'warning' 
+
+            setAlert({
+                text: alertaTexto,
+                variant: 'warning'
             });
         }
-        
+
         // Log detallado para administradores
         console.log('📊 [DETALLE DOCUMENTACIÓN]:', {
             estudiante: `${datosEstudiante.nombre} ${datosEstudiante.apellido}`,
@@ -329,21 +329,21 @@ export const procesarNotificacionDocumentacion = (estadoDocumentacion, datosEstu
             documentosFaltantes: notificacion.documentosFaltantes,
             estadoFinal: 'PENDIENTE'
         });
-        
+
         return {
             estadoRegistro: 'PENDIENTE',
             requiereNotificacion: true,
             notificacion
         };
     }
-    
+
     // Documentación completa
     console.log('✅ [DOCUMENTACIÓN COMPLETA]:', {
         estudiante: `${datosEstudiante.nombre} ${datosEstudiante.apellido}`,
         dni: datosEstudiante.dni,
         estadoFinal: 'PROCESADO'
     });
-    
+
     return {
         estadoRegistro: 'PROCESADO',
         requiereNotificacion: false,
@@ -352,23 +352,23 @@ export const procesarNotificacionDocumentacion = (estadoDocumentacion, datosEstu
 };
 export const tieneDocumentosAdjuntados = (files = {}, previews = {}) => {
     const documentos = [
-        "foto", "archivo_dni", "archivo_cuil", "archivo_fichaMedica", 
-        "archivo_partidaNacimiento", "archivo_solicitudPase", 
+        "foto", "archivo_dni", "archivo_cuil", "archivo_fichaMedica",
+        "archivo_partidaNacimiento", "archivo_solicitudPase",
         "archivo_analiticoParcial", "archivo_certificadoNivelPrimario"
     ];
-    
+
     // Contar documentos adjuntados
-    const documentosSubidos = documentos.filter(doc => 
+    const documentosSubidos = documentos.filter(doc =>
         files[doc] || previews[doc]?.url
     );
-    
+
     const cantidadSubidos = documentosSubidos.length;
     console.log(`📄 Documentos subidos: ${cantidadSubidos}/${documentos.length}`, documentosSubidos);
-    
+
     // Requerir al menos 4 documentos para considerarlo "completo"
     // (esto es configurable según los requerimientos del sistema)
     const MINIMO_DOCUMENTOS = 4;
-    
+
     return cantidadSubidos >= MINIMO_DOCUMENTOS;
 };
 
@@ -377,7 +377,7 @@ export const guardarRegistroSinDocumentacion = (datosEstudiante, estadoDocumenta
     try {
         const ahora = new Date();
         const fechaVencimiento = new Date(ahora.getTime() + (7 * 24 * 60 * 60 * 1000)); // +7 días (1 semana)
-        
+
         // Obtener registros existentes del localStorage
         const registrosExistentes = JSON.parse(
             localStorage.getItem('registrosSinDocumentacion') || '[]'
@@ -393,7 +393,7 @@ export const guardarRegistroSinDocumentacion = (datosEstudiante, estadoDocumenta
         if (indiceExistente !== -1) {
             // Ya existe un registro para este DNI - ACTUALIZAR en lugar de crear duplicado
             const registroExistente = registrosVigentes[indiceExistente];
-            
+
             console.log(`🔄 Actualizando registro existente para DNI ${dniEstudiante}:`, {
                 anterior: {
                     tipo: registroExistente.tipoRegistro,
@@ -462,7 +462,7 @@ export const guardarRegistroSinDocumentacion = (datosEstudiante, estadoDocumenta
 
             return registro;
         }
-        
+
     } catch (error) {
         console.error('❌ Error al guardar/actualizar registro pendiente:', error);
         throw error;
@@ -475,20 +475,20 @@ const crearArchivoJSONDescargable = (registros) => {
         const contenidoJSON = JSON.stringify(registros, null, 2);
         const blob = new Blob([contenidoJSON], { type: 'application/json' });
         const url = URL.createObjectURL(blob);
-        
+
         // Crear un enlace temporal para descarga
         const link = document.createElement('a');
         link.href = url;
         link.download = `registros-sin-documentacion-${new Date().toISOString().split('T')[0]}.json`;
-        
+
         // Agregar al DOM temporalmente y hacer clic
         document.body.appendChild(link);
         // No descargar automáticamente, solo preparar para descarga manual si se desea
         document.body.removeChild(link);
-        
+
         // Limpiar la URL
         URL.revokeObjectURL(url);
-        
+
         console.log('📄 Archivo JSON preparado para descarga');
     } catch (error) {
         console.error('❌ Error al crear archivo JSON:', error);
@@ -500,15 +500,18 @@ export const limpiarRegistrosVencidos = (registros = null) => {
     try {
         const registrosActuales = registros || obtenerRegistrosSinDocumentacion();
         const ahora = new Date();
-        
+
         const registrosVigentes = registrosActuales.filter(registro => {
+            // Si el registro ya está procesado, no vence y se mantiene
+            if (registro.estado === 'PROCESADO') return true;
+
             const fechaVencimiento = new Date(registro.fechaVencimiento);
             const estaVigente = ahora < fechaVencimiento;
-            
+
             if (!estaVigente) {
                 console.log(`🗑️ Eliminando registro vencido: ${registro.nombre} ${registro.apellido} (DNI: ${registro.dni})`);
             }
-            
+
             return estaVigente;
         });
 
@@ -534,7 +537,7 @@ export const programarLimpiezaAutomatica = () => {
     if (intervaloLimpieza) {
         clearInterval(intervaloLimpieza);
     }
-    
+
     // Limpiar cada 6 horas (21600000 ms = 6 horas) - más frecuente para mejor UX
     // Los registros vencen en 7 días, pero es mejor verificar más seguido
     intervaloLimpieza = setInterval(() => {
@@ -542,7 +545,7 @@ export const programarLimpiezaAutomatica = () => {
         const registrosAntesLimpieza = obtenerRegistrosSinDocumentacion().length;
         limpiarRegistrosVencidos();
         const registrosDespuesLimpieza = obtenerRegistrosSinDocumentacion().length;
-        
+
         if (registrosAntesLimpieza !== registrosDespuesLimpieza) {
             const eliminados = registrosAntesLimpieza - registrosDespuesLimpieza;
             console.log(`🧹 Limpieza automática completada: ${eliminados} registro(s) vencido(s) eliminado(s)`);
@@ -550,7 +553,7 @@ export const programarLimpiezaAutomatica = () => {
             console.log('✅ Limpieza automática: No hay registros vencidos para eliminar');
         }
     }, 21600000); // 6 horas
-    
+
     console.log('⏲️ Limpieza automática programada cada 6 horas');
 };
 
@@ -608,7 +611,7 @@ export const obtenerInfoVencimiento = (registro) => {
 export const descargarRegistrosJSON = () => {
     try {
         const registros = obtenerRegistrosSinDocumentacion();
-        
+
         if (registros.length === 0) {
             alert('No hay registros sin documentación para descargar.');
             return;
@@ -617,17 +620,17 @@ export const descargarRegistrosJSON = () => {
         const contenidoJSON = JSON.stringify(registros, null, 2);
         const blob = new Blob([contenidoJSON], { type: 'application/json' });
         const url = URL.createObjectURL(blob);
-        
+
         const link = document.createElement('a');
         link.href = url;
         link.download = `registros-sin-documentacion-${new Date().toISOString().split('T')[0]}.json`;
-        
+
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
-        
+
         URL.revokeObjectURL(url);
-        
+
         console.log(`📥 Descargado archivo con ${registros.length} registros`);
         return true;
     } catch (error) {
@@ -640,7 +643,7 @@ export const descargarRegistrosJSON = () => {
 export const descargarRegistrosCSV = () => {
     try {
         const registros = obtenerRegistrosSinDocumentacion();
-        
+
         if (registros.length === 0) {
             alert('No hay registros sin documentación para descargar.');
             return;
@@ -649,7 +652,7 @@ export const descargarRegistrosCSV = () => {
         // Crear headers del CSV
         const headers = [
             'Apellido',
-            'Nombre', 
+            'Nombre',
             'DNI',
             'Email',
             'Modalidad',
@@ -679,7 +682,7 @@ export const descargarRegistrosCSV = () => {
         const tiposDocumentosMap = {
             'foto': '📷 Foto 4x4',
             'archivo_dni': '📄 DNI',
-            'archivo_cuil': '📄 CUIL', 
+            'archivo_cuil': '📄 CUIL',
             'archivo_fichaMedica': '🏥 Ficha Médica',
             'archivo_partidaNacimiento': '📜 Partida de Nacimiento',
             'archivo_solicitudPase': '📝 Solicitud de Pase',
@@ -694,7 +697,7 @@ export const descargarRegistrosCSV = () => {
             const infoVencimiento = obtenerInfoVencimiento(registro);
             const docsSubidos = registro.documentosSubidos || [];
             const docsFaltantes = todosDocumentos.filter(doc => !docsSubidos.includes(doc));
-            
+
             // Listas legibles de documentos
             const listaSubidos = docsSubidos.map(doc => tiposDocumentosMap[doc] || doc).join('; ');
             const listaFaltantes = docsFaltantes.map(doc => tiposDocumentosMap[doc] || doc).join('; ');
@@ -726,17 +729,17 @@ export const descargarRegistrosCSV = () => {
         // Crear blob y descargar
         const blob = new Blob([contenidoCSV], { type: 'text/csv;charset=utf-8;' });
         const url = URL.createObjectURL(blob);
-        
+
         const link = document.createElement('a');
         link.href = url;
         link.download = `Registros-Pendientes-${new Date().toISOString().split('T')[0]}.csv`;
-        
+
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
-        
+
         URL.revokeObjectURL(url);
-        
+
         console.log(`📊 Descargado CSV con ${registros.length} registros en formato Excel-compatible`);
         return true;
     } catch (error) {
@@ -759,7 +762,7 @@ export const eliminarDuplicadosPorDNI = (registros) => {
         if (!dni) return; // Saltar registros sin DNI
 
         const existente = registrosUnicos.get(dni);
-        
+
         if (!existente) {
             // Es el primer registro para este DNI
             registrosUnicos.set(dni, registro);
@@ -767,7 +770,7 @@ export const eliminarDuplicadosPorDNI = (registros) => {
             // Ya existe un registro para este DNI, decidir cuál mantener
             const fechaExistente = new Date(existente.fechaUltimaActualizacion || existente.fechaRegistroSinDocumentacion);
             const fechaNueva = new Date(registro.fechaUltimaActualizacion || registro.fechaRegistroSinDocumentacion);
-            
+
             if (fechaNueva > fechaExistente) {
                 // El registro actual es más reciente, reemplazar
                 console.log(`🔄 Reemplazando registro duplicado para DNI ${dni}:`, {
@@ -783,7 +786,7 @@ export const eliminarDuplicadosPorDNI = (registros) => {
     });
 
     const resultado = Array.from(registrosUnicos.values());
-    
+
     if (resultado.length !== registros.length) {
         const eliminados = registros.length - resultado.length;
         console.log(`✅ Deduplicación completada: ${eliminados} registro(s) duplicado(s) eliminado(s)`);
@@ -807,10 +810,13 @@ export const obtenerRegistrosSinDocumentacion = (todos = false) => {
                     // Devuelve todos los registros
                     return registros;
                 }
-                // Filtrar los que realmente no tienen documentación y no están PROCESADO si son web
+                // Filtrar los que realmente no tienen documentación o son PROCESADO
                 const registrosSinDoc = registros.filter(r => {
+                    // Si ya está procesado, lo mantenemos visible
+                    if (r.estado === 'PROCESADO') return true;
+
                     const esWeb = r.origen === 'web' || r.tipo === 'web';
-                    if (esWeb && r.estado === 'PROCESADO') return false;
+                    // lógica original para mostrar solo los faltantes
                     return !r.tieneDocumentacion || (r.documentosSubidos && r.documentosSubidos.length === 0);
                 });
                 return registrosSinDoc;
@@ -832,35 +838,35 @@ export const obtenerRegistrosSinDocumentacion = (todos = false) => {
 export const limpiarDuplicadosManualmente = () => {
     try {
         console.log('🧹 Iniciando limpieza manual de duplicados...');
-        
+
         const registros = JSON.parse(localStorage.getItem('registrosSinDocumentacion') || '[]');
         const registrosOriginales = registros.length;
-        
+
         // Limpiar vencidos
         const registrosVigentes = limpiarRegistrosVencidos(registros);
-        
+
         // Eliminar duplicados
         const registrosDedupicados = eliminarDuplicadosPorDNI(registrosVigentes);
-        
+
         // Guardar cambios
         localStorage.setItem('registrosSinDocumentacion', JSON.stringify(registrosDedupicados, null, 2));
-        
+
         const eliminados = registrosOriginales - registrosDedupicados.length;
-        
+
         console.log(`✅ Limpieza manual completada:`, {
             originales: registrosOriginales,
             finales: registrosDedupicados.length,
             eliminados: eliminados,
             dniUnicos: new Set(registrosDedupicados.map(r => r.dni)).size
         });
-        
+
         return {
             success: true,
             eliminados,
             registrosFinales: registrosDedupicados.length,
             mensaje: `Limpieza completada: ${eliminados} registro(s) eliminado(s)`
         };
-        
+
     } catch (error) {
         console.error('❌ Error en limpieza manual:', error);
         return {
@@ -874,7 +880,7 @@ export const limpiarDuplicadosManualmente = () => {
 export const verificarDuplicados = () => {
     try {
         const registros = JSON.parse(localStorage.getItem('registrosSinDocumentacion') || '[]');
-        
+
         // Contar DNIs
         const dniMap = new Map();
         registros.forEach(registro => {
@@ -883,7 +889,7 @@ export const verificarDuplicados = () => {
                 dniMap.set(dni, (dniMap.get(dni) || 0) + 1);
             }
         });
-        
+
         // Encontrar duplicados
         const duplicados = Array.from(dniMap.entries())
             .filter(([, cantidad]) => cantidad > 1)
@@ -897,21 +903,21 @@ export const verificarDuplicados = () => {
                     tipo: r.tipoRegistro
                 }))
             }));
-        
+
         console.log('📊 Estado de duplicados:', {
             totalRegistros: registros.length,
             dnisUnicos: dniMap.size,
             duplicados: duplicados.length,
             detalles: duplicados
         });
-        
+
         return {
             totalRegistros: registros.length,
             dnisUnicos: dniMap.size,
             cantidadDuplicados: duplicados.length,
             duplicados
         };
-        
+
     } catch (error) {
         console.error('❌ Error al verificar duplicados:', error);
         return null;
@@ -924,10 +930,10 @@ export const testearSistema7Dias = () => {
         const ahora = new Date();
         console.log('🧪 === TESTING SISTEMA 7 DÍAS ===');
         console.log(`📅 Fecha actual: ${ahora.toLocaleString()}`);
-        
+
         const registros = obtenerRegistrosSinDocumentacion();
         console.log(`📋 Total registros: ${registros.length}`);
-        
+
         if (registros.length === 0) {
             console.log('ℹ️ No hay registros para analizar');
             return {
@@ -937,7 +943,7 @@ export const testearSistema7Dias = () => {
                 detalles: []
             };
         }
-        
+
         const detalles = registros.map(registro => {
             const fechaCreacion = new Date(registro.fechaRegistroSinDocumentacion);
             const fechaVencimiento = new Date(registro.fechaVencimiento);
@@ -945,11 +951,11 @@ export const testearSistema7Dias = () => {
             const diasRestantes = Math.ceil(msRestantes / (1000 * 60 * 60 * 24));
             const horasRestantes = Math.ceil(msRestantes / (1000 * 60 * 60));
             const vencido = msRestantes <= 0;
-            
+
             // Verificar si la fecha de vencimiento es correcta (7 días después de creación)
             const diasEsperados = Math.ceil((fechaVencimiento.getTime() - fechaCreacion.getTime()) / (1000 * 60 * 60 * 24));
             const vencimientoCorrectoCalculado = diasEsperados === 7;
-            
+
             const detalle = {
                 dni: registro.dni,
                 nombre: `${registro.nombre} ${registro.apellido}`,
@@ -961,7 +967,7 @@ export const testearSistema7Dias = () => {
                 diasEsperados,
                 vencimientoCorrectoCalculado
             };
-            
+
             console.log(`👤 ${detalle.nombre} (DNI: ${detalle.dni}):`);
             console.log(`   📅 Creado: ${detalle.fechaCreacion}`);
             console.log(`   ⏰ Vence: ${detalle.fechaVencimiento}`);
@@ -969,20 +975,20 @@ export const testearSistema7Dias = () => {
             console.log(`   🎯 Días calculados correctamente: ${vencimientoCorrectoCalculado ? '✅ SÍ' : '❌ NO'} (${diasEsperados} días)`);
             console.log(`   ⏳ Tiempo restante: ${vencido ? 'Vencido' : `${diasRestantes} días, ${horasRestantes} horas`}`);
             console.log('   ---');
-            
+
             return detalle;
         });
-        
+
         const vigentes = detalles.filter(d => !d.vencido).length;
         const vencidos = detalles.filter(d => d.vencido).length;
         const calculosCorrectos = detalles.filter(d => d.vencimientoCorrectoCalculado).length;
-        
+
         console.log('📊 === RESUMEN ===');
         console.log(`✅ Registros vigentes: ${vigentes}`);
         console.log(`❌ Registros vencidos: ${vencidos}`);
         console.log(`🎯 Cálculos correctos: ${calculosCorrectos}/${registros.length}`);
         console.log(`⚠️ Cálculos incorrectos: ${registros.length - calculosCorrectos}/${registros.length}`);
-        
+
         return {
             fechaAnalisis: ahora.toISOString(),
             totalRegistros: registros.length,
@@ -992,7 +998,7 @@ export const testearSistema7Dias = () => {
             calculosIncorrectos: registros.length - calculosCorrectos,
             detalles
         };
-        
+
     } catch (error) {
         console.error('❌ Error en testing sistema 7 días:', error);
         return null;
@@ -1005,7 +1011,7 @@ export const simularRegistroConFecha = (datosEstudiante, diasAtras = 0) => {
         const ahora = new Date();
         const fechaCreacion = new Date(ahora.getTime() - (diasAtras * 24 * 60 * 60 * 1000));
         const fechaVencimiento = new Date(fechaCreacion.getTime() + (7 * 24 * 60 * 60 * 1000));
-        
+
         const registro = {
             ...datosEstudiante,
             fechaRegistroSinDocumentacion: fechaCreacion.toISOString(),
@@ -1018,7 +1024,7 @@ export const simularRegistroConFecha = (datosEstudiante, diasAtras = 0) => {
             id: Date.now(),
             esSimulacion: true // Marca para identificar registros de prueba
         };
-        
+
         console.log(`🧪 Registro simulado creado:`, {
             nombre: `${datosEstudiante.nombre} ${datosEstudiante.apellido}`,
             dni: datosEstudiante.dni,
@@ -1027,9 +1033,9 @@ export const simularRegistroConFecha = (datosEstudiante, diasAtras = 0) => {
             fechaVencimiento: fechaVencimiento.toLocaleString(),
             vigente: ahora < fechaVencimiento
         });
-        
+
         return registro;
-        
+
     } catch (error) {
         console.error('❌ Error al simular registro:', error);
         return null;
@@ -1042,12 +1048,12 @@ export const limpiarRegistrosDePrueba = () => {
         const registros = JSON.parse(localStorage.getItem('registrosSinDocumentacion') || '[]');
         const registrosLimpios = registros.filter(r => !r.esSimulacion);
         const eliminados = registros.length - registrosLimpios.length;
-        
+
         localStorage.setItem('registrosSinDocumentacion', JSON.stringify(registrosLimpios, null, 2));
-        
+
         console.log(`🧹 Registros de prueba eliminados: ${eliminados}`);
         return { eliminados, restantes: registrosLimpios.length };
-        
+
     } catch (error) {
         console.error('❌ Error al limpiar registros de prueba:', error);
         return null;
@@ -1068,7 +1074,7 @@ export const limpiarRegistrosAntiguos = (diasAntigüedad = 7) => {
 
         localStorage.setItem('registrosSinDocumentacion', JSON.stringify(registrosFiltrados, null, 2));
         console.log(`🧹 Limpieza completada. Registros mantenidos: ${registrosFiltrados.length}`);
-        
+
         return registrosFiltrados;
     } catch (error) {
         console.error('❌ Error al limpiar registros antiguos:', error);
@@ -1080,17 +1086,17 @@ export const limpiarRegistrosAntiguos = (diasAntigüedad = 7) => {
 export const verificarRegistroPendiente = (dni) => {
     try {
         if (!dni) return null;
-        
+
         const registros = obtenerRegistrosSinDocumentacion();
         const registro = registros.find(r => r.dni === dni);
-        
+
         if (registro) {
             console.log(`🔍 Registro pendiente encontrado para DNI ${dni}:`, {
                 tipo: registro.tipoRegistro,
                 vencimiento: new Date(registro.fechaVencimiento).toLocaleString()
             });
         }
-        
+
         return registro || null;
     } catch (error) {
         console.error('❌ Error al verificar registro pendiente:', error);
@@ -1102,16 +1108,16 @@ export const verificarRegistroPendiente = (dni) => {
 export const eliminarRegistroPendiente = (dni) => {
     try {
         if (!dni) return false;
-        
+
         const registros = obtenerRegistrosSinDocumentacion();
         const registrosFiltrados = registros.filter(r => r.dni !== dni);
-        
+
         if (registrosFiltrados.length < registros.length) {
             localStorage.setItem('registrosSinDocumentacion', JSON.stringify(registrosFiltrados, null, 2));
             console.log(`🗑️ Registro pendiente eliminado para DNI ${dni}`);
             return true;
         }
-        
+
         return false;
     } catch (error) {
         console.error('❌ Error al eliminar registro pendiente:', error);
@@ -1123,10 +1129,10 @@ export const eliminarRegistroPendiente = (dni) => {
 export const actualizarRegistroPendiente = (dni, nuevosDatos) => {
     try {
         if (!dni) return null;
-        
+
         const registros = obtenerRegistrosSinDocumentacion();
         const indiceRegistro = registros.findIndex(r => r.dni === dni);
-        
+
         if (indiceRegistro !== -1) {
             // Mantener datos importantes del registro original
             const registroOriginal = registros[indiceRegistro];
@@ -1138,14 +1144,14 @@ export const actualizarRegistroPendiente = (dni, nuevosDatos) => {
                 fechaRegistroSinDocumentacion: registroOriginal.fechaRegistroSinDocumentacion,
                 fechaVencimiento: registroOriginal.fechaVencimiento
             };
-            
+
             registros[indiceRegistro] = registroActualizado;
             localStorage.setItem('registrosSinDocumentacion', JSON.stringify(registros, null, 2));
-            
+
             console.log(`✅ Registro pendiente actualizado para DNI ${dni}`);
             return registroActualizado;
         }
-        
+
         return null;
     } catch (error) {
         console.error('❌ Error al actualizar registro pendiente:', error);
