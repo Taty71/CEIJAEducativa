@@ -190,6 +190,17 @@ const deactivateEstd = async (dni, motivo) => {
     }
 };
 
+// Reactivar estudiante
+const activateEstd = async (dni) => {
+    try {
+        const response = await axiosInstance.patch(`/eliminar-estudiante/activar/${dni}`);
+        return response.data;
+    } catch (error) {
+        const message = FormatError(error);
+        return { error: message };
+    }
+};
+
 // Obtener estado documental por idInscripcion
 const getEstadoDocumental = async (idInscripcion) => {
     try {
@@ -232,6 +243,7 @@ export default {
     updateEstd,
     deleteEstd,
     deactivateEstd,
+    activateEstd,
     getAll,
     getPaginatedEstudiantes,
     getPaginatedAllEstudiantes,

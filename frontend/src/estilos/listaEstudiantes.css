@@ -562,8 +562,15 @@ button.btn-accion-ver {
 .btn-accion:hover,
 .btn-accion-notificar:hover,
 .btn-accion-comprobante:hover,
-.btn-accion-ver:hover {
+.btn-accion-ver:hover,
+.btn-accion-activar:hover {
   background-color: rgba(0, 0, 0, 0.05) !important;
+}
+
+.btn-accion-activar:hover svg {
+  color: #218838 !important;
+  /* Verde más oscuro al hover */
+  transform: translateY(-2px) scale(1.1);
 }
 
 /* Fix tooltip clipping on last button */

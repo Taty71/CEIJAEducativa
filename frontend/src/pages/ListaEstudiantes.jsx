@@ -18,7 +18,7 @@ import ResumenEstadisticas from '../components/ListaEstudiantes/ResumenEstadisti
 import ConsultaEstd from './ConsultaEstd';
 import ModalPreviewEmail from '../components/ListaEstudiantes/ModalPreviewEmail';
 import ModalReportesEstudiantes from '../components/ListaEstudiantes/ModalReportesEstudiantes';
-import { useAlerts } from '../hooks/useAlerts';
+import { useGlobalAlerts } from '../hooks/useGlobalAlerts';
 
 const ListaEstudiantes = ({ onClose, refreshKey = 0, modalidad }) => {
   const [estudiantes, setEstudiantes] = useState([]);
@@ -187,7 +187,30 @@ const ListaEstudiantes = ({ onClose, refreshKey = 0, modalidad }) => {
   const [modalReportesOpen, setModalReportesOpen] = useState(false);
   const [estudiantesReporte, setEstudiantesReporte] = useState([]);
   const [loadingReporte, setLoadingReporte] = useState(false);
-  const { showInfo } = useAlerts();
+  const { showInfo, showSuccess, showError, showConfirmModal } = useGlobalAlerts();
+
+  const handleActivarEstudiante = async (estudiante) => {
+    showConfirmModal(
+      `¿Seguro que deseas REACTIVAR al estudiante ${estudiante.nombre} ${estudiante.apellido}?`,
+      async () => {
+        try {
+          setLoading(true);
+          const res = await service.activateEstd(estudiante.dni);
+          if (res && res.success) {
+            showSuccess('Estudiante reactivado correctamente.');
+            cargarEstudiantes(page);
+          } else {
+            showError(res && res.message ? res.message : 'Error al reactivar el estudiante.');
+          }
+        } catch (err) {
+          console.error('Error al reactivar estudiante:', err);
+          showError('No se pudo reactivar al estudiante.');
+        } finally {
+          setLoading(false);
+        }
+      }
+    );
+  };
 
   const handleVerEstudiante = async (estudiante) => {
     try {
@@ -527,6 +550,7 @@ const ListaEstudiantes = ({ onClose, refreshKey = 0, modalidad }) => {
         onEmitirComprobante={handleEmitirComprobante}
         onVerEstudiante={handleVerEstudiante}
         onPreviewNotificacion={handlePreviewNotificacion}
+        onActivarEstudiante={handleActivarEstudiante}
         formatearFecha={formatearFecha}
         modoBusqueda={modoBusqueda}
         onLimpiarBusqueda={handleLimpiarBusqueda}

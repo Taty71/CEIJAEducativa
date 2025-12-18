@@ -92,10 +92,32 @@ const generarComprobante = async (dni) => {
   }
 };
 
+const deactivateEstd = async (dni, motivo) => {
+  try {
+    const response = await axiosInstance.patch(`/eliminar-estudiante/desactivar/${dni}`, { motivo });
+    return response.data;
+  } catch (error) {
+    const message = FormatError(error);
+    return { error: message };
+  }
+};
+
+const activateEstd = async (dni) => {
+  try {
+    const response = await axiosInstance.patch(`/eliminar-estudiante/activar/${dni}`);
+    return response.data;
+  } catch (error) {
+    const message = FormatError(error);
+    return { error: message };
+  }
+};
+
 export default {
   getPaginatedAllEstudiantes,
   getPaginatedEstudiantes,
   getEstudiantePorDNI,
   buscarEstudiantes,
-  generarComprobante
+  generarComprobante,
+  deactivateEstd,
+  activateEstd
 };

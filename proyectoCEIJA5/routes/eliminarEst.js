@@ -43,6 +43,44 @@ router.patch('/desactivar/:dni', async (req, res) => {
   }
 });
 
+// Reactivar estudiante
+router.patch('/activar/:dni', async (req, res) => {
+  const dni = Number(req.params.dni);
+  if (!Number.isInteger(dni)) {
+    return res.status(400).json({ success: false, message: 'DNI inválido.' });
+  }
+
+  const conn = await db.getConnection();
+  try {
+    await conn.beginTransaction();
+
+    // Verificar si el estudiante existe
+    const [rows] = await conn.query(
+      'SELECT id FROM estudiantes WHERE dni = ?',
+      [dni]
+    );
+    if (rows.length === 0) {
+      await conn.rollback();
+      return res.status(404).json({ success: false, message: 'Estudiante no encontrado.' });
+    }
+
+    // Reactivar el estudiante: activo = 1 y limpiar motivo_baja
+    await conn.query('UPDATE estudiantes SET activo = 1, motivo_baja = NULL WHERE dni = ?', [dni]);
+
+    await conn.commit();
+    return res.json({
+      success: true,
+      message: 'Estudiante reactivado exitosamente'
+    });
+  } catch (err) {
+    await conn.rollback();
+    console.error(err);
+    return res.status(500).json({ success: false, message: 'Error interno del servidor.' });
+  } finally {
+    conn.release();
+  }
+});
+
 // Eliminar estudiante (eliminación física)
 router.delete('/:dni', async (req, res) => {
   const dni = Number(req.params.dni);

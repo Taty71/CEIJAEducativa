@@ -17,6 +17,7 @@ const TablaEstudiantes = ({
   _onEmitirComprobante,
   onVerEstudiante,
   onPreviewNotificacion,
+  onActivarEstudiante,
   formatearFecha,
   limit = 5
 }) => {
@@ -189,7 +190,24 @@ const TablaEstudiantes = ({
                           >
                             <img src={iconPDF} alt="Comprobante" />
                           </button>
-                        ) : null}
+                        ) : (
+                          /* Botón de Reactivación para inactivos */
+                          <button
+                            className="btn-accion btn-accion-activar"
+                            onClick={() => {
+                              typeof onActivarEstudiante === 'function' && onActivarEstudiante(estudiante);
+                            }}
+                            aria-label="Reactivar Estudiante"
+                            data-tooltip="Reactivar Estudiante"
+                          >
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ color: '#28a745' }}>
+                              <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                              <circle cx="8.5" cy="7" r="4"></circle>
+                              <line x1="20" y1="8" x2="20" y2="14"></line>
+                              <line x1="23" y1="11" x2="17" y2="11"></line>
+                            </svg>
+                          </button>
+                        )}
 
                         {/* Ver detalles */}
                         <button
@@ -251,7 +269,8 @@ TablaEstudiantes.propTypes = {
   page: PropTypes.number,
   totalPages: PropTypes.number,
   limit: PropTypes.number,
-  onPreviewNotificacion: PropTypes.func
+  onPreviewNotificacion: PropTypes.func,
+  onActivarEstudiante: PropTypes.func
 };
 
 export default TablaEstudiantes;
